@@ -173,13 +173,6 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            Matrix<MatrixNumber>[] array = new Matrix<MatrixNumber>[3];
-            array[0] = A;
-            array[1] = B;
-            array[2] = cram;
-            resultSingle = Vypocty.Rovnice("X = A * B + C", array);
-            WriteMatrix(resultSingle, resultSingle, "X = A * B + C");
-
             /*
              * 
              * Operace s jednou maticí...
@@ -194,7 +187,7 @@ namespace MatrixTestApp
 
             WriteSeparator();
 
-            resultSingle = Upravit.Transponuj(A);
+            resultSingle = AlteringOperations.Transposition(A);
             WriteMatrix(A, resultSingle, "Transponovaná");
 
             Console.WriteLine();
@@ -218,17 +211,17 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            resultSingle = Upravit.Gauss(B);
+            resultSingle = AlteringOperations.Gauss(B);
             WriteMatrix(B, resultSingle, "Gauss");
 
             Console.WriteLine();
 
-            resultSingle = Upravit.GaussJordan(B);
+            resultSingle = AlteringOperations.GaussJordan(B);
             WriteMatrix(B, resultSingle, "GaussJordan");
 
             Console.WriteLine();
 
-            resultSingle = Upravit.Adjungovana(A);
+            resultSingle = AlteringOperations.Adjungovana(A);
             WriteMatrix(A, resultSingle, "Adjungovaná");
 
             Console.WriteLine();
@@ -263,17 +256,17 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            resultSingle = Upravit.Inverzni(A);
+            resultSingle = AlteringOperations.Inverzni(A);
             WriteMatrix(A, resultSingle, "Inverzní");
 
             Console.WriteLine();
 
-            resultSingle = Upravit.Zesymetrizuj(A);
+            resultSingle = AlteringOperations.Symmetric(A);
             WriteMatrix(A, resultSingle, "Zesymetrizování");
 
             Console.WriteLine();
 
-            resultSingle = Upravit.Ortogonalizace(B);
+            resultSingle = AlteringOperations.Ortogonalizace(B);
             WriteMatrix(B, resultSingle, "Ortogonalizace");
 
             Console.WriteLine();
@@ -325,6 +318,7 @@ namespace MatrixTestApp
             Console.WriteLine("Press ENTER to continue calculations...");
             Console.ReadLine();
             /********************************* Big matrixes ***********************************/
+
 
             WriteSeparator(); WriteSeparator("BIG MATRIXES");
             int rowsAndCols = 100;
@@ -398,14 +392,14 @@ namespace MatrixTestApp
 
 
             /********** StrassenWinograd **********/
-            /*Console.WriteLine("StrassenWinograd...");
+            Console.WriteLine("StrassenWinograd...");
             stopwatchSingle.Restart();
             resultSingle = ClassicOperations.StrassenWinograd(A, B);
             stopwatchSingle.Stop();
 
             Console.WriteLine("Multi-threaded StrassenWinograd...");
             stopwatchMulti.Restart();
-            //resultMulti = ClassicOperations.StrassenWinograd_MultiThreaded(A, B);
+            resultMulti = ClassicOperations.StrassenWinograd_MultiThreaded(A, B);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }

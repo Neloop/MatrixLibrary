@@ -17,7 +17,7 @@ namespace MatrixLibrary
              */
 
             Matrix<T> vysledek;
-            Matrix<T> symetricka = Upravit.Zesymetrizuj(matice);
+            Matrix<T> symetricka = AlteringOperations.Symmetric(matice);
             if (Vlastnosti.Definitnost(symetricka) == 1)
             {
                 int rozmer;

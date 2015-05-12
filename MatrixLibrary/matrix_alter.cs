@@ -5,46 +5,67 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
-    public static class Upravit
+    public static class AlteringOperations
     {
-        public static Matrix<T> Transponuj<T>(Matrix<T> matice) where T : MatrixNumberBase, new()
+        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
-            Matrix<T> vysledek;
-            int radky, sloupce;
-            radky = matice.Rows;
-            sloupce = matice.Cols;
-            vysledek = new Matrix<T>(sloupce, radky);
+            Matrix<T> result;
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+            result = new Matrix<T>(cols, rows);
 
-            for (int i = 0; i < sloupce; i++)
+            for (int i = 0; i < cols; i++)
             {
-                for (int j = 0; j < radky; j++)
+                for (int j = 0; j < rows; j++)
                 {
-                    vysledek.WriteNumber(i, j, matice.GetNumber(j, i));
+                    result.WriteNumber(i, j, matrix.GetNumber(j, i));
                 }
             }
             
-            return vysledek;
+            return result;
         }
-        public static Matrix<T> Zesymetrizuj<T>(Matrix<T> matice) where T : MatrixNumberBase, new() // Zesymetrizuje zadanou matici, v případě nerovnosti řádků a sloupců vyhazuje vyjimku
+
+        public static Matrix<T> Transposition_MultiThreaded<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
-            Matrix<T> vysledek;
-            if (matice.Rows == matice.Cols)
+            Matrix<T> result;
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+            result = new Matrix<T>(cols, rows);
+
+            Parallel.ForEach(result.GetRowChunks(), (pair) =>
             {
-                int rozmer;
-                rozmer = matice.Rows;
-                vysledek = new Matrix<T>(rozmer, rozmer);
-
-                Matrix<T> transponovana;
-                transponovana = Upravit.Transponuj(matice);
-                vysledek = ClassicOperations.Addition(matice, transponovana);
-
-                T dva = new T();
-                dva.AddInt(2);
-                for (int i = 0; i < rozmer; i++) // Vydělí všechna čísla dvěma
+                for (int i = pair.Item1; i < pair.Item2; i++)
                 {
-                    for (int j = 0; j < rozmer; j++)
+                    for (int j = 0; j < rows; j++)
                     {
-                        vysledek.WriteNumber(i, j, (T)(vysledek.GetNumber(i, j) / dva));
+                        result.WriteNumber(i, j, matrix.GetNumber(j, i));
+                    }
+                }
+            });
+
+            return result;
+        }
+
+        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Zesymetrizuje zadanou matici, v případě nerovnosti řádků a sloupců vyhazuje vyjimku
+        {
+            Matrix<T> result;
+            if (matrix.Rows == matrix.Cols)
+            {
+                int dim;
+                dim = matrix.Rows;
+                result = new Matrix<T>(dim, dim);
+
+                Matrix<T> transpose;
+                transpose = AlteringOperations.Transposition(matrix);
+                result = ClassicOperations.Addition(matrix, transpose);
+
+                T two = new T();
+                two.AddInt(2);
+                for (int i = 0; i < dim; i++) // Vydělí všechna čísla dvěma
+                {
+                    for (int j = 0; j < dim; j++)
+                    {
+                        result.WriteNumber(i, j, (T)(result.GetNumber(i, j) / two));
                     }
                 }
             }
@@ -52,8 +73,42 @@ namespace MatrixLibrary
             {
                 throw new MatrixLibraryException("Given matrix does not have same number of rows and columns");
             }
-            return vysledek;
+            return result;
         }
+
+        public static Matrix<T> Symmetric_MultiThreaded<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Zesymetrizuje zadanou matici, v případě nerovnosti řádků a sloupců vyhazuje vyjimku
+        {
+            Matrix<T> result;
+            if (matrix.Rows == matrix.Cols)
+            {
+                int dim;
+                dim = matrix.Rows;
+                result = new Matrix<T>(dim, dim);
+
+                Matrix<T> transpose;
+                transpose = AlteringOperations.Transposition_MultiThreaded(matrix);
+                result = ClassicOperations.Addition_MultiThreaded(matrix, transpose);
+
+                T two = new T();
+                two.AddInt(2);
+                Parallel.ForEach(result.GetRowChunks(), (pair) =>
+                {
+                    for (int i = pair.Item1; i < pair.Item2; i++) // Vydělí všechna čísla dvěma
+                    {
+                        for (int j = 0; j < dim; j++)
+                        {
+                            result.WriteNumber(i, j, (T)(result.GetNumber(i, j) / two));
+                        }
+                    }
+                });
+            }
+            else
+            {
+                throw new MatrixLibraryException("Given matrix does not have same number of rows and columns");
+            }
+            return result;
+        }
+
         public static Matrix<T> Gauss<T>(Matrix<T> matice) where T : MatrixNumberBase, new() // Pouze Gaussova eliminace, postupně se prochází řádky matice a "hledají" se pivoty
         {
             Matrix<T> vysledek;
@@ -152,7 +207,7 @@ namespace MatrixLibrary
             if ((sloupce % 2) == 0) { pulka_sloupce = sloupce / 2; }
             else { pulka_sloupce = (sloupce / 2) + 1; }
 
-            vysledek = Upravit.Gauss(matice); // První Gaussovka
+            vysledek = AlteringOperations.Gauss(matice); // První Gaussovka
 
             int nul_radek_1, nul_radek_2;
             bool nul_radek = false;
@@ -171,7 +226,7 @@ namespace MatrixLibrary
                 }
                 if (nul_radek_1 == sloupce || nul_radek_2 == sloupce) { nul_radek = true; }
             }
-            if (nul_radek == false) { vysledek = Upravit.Gauss(vysledek); }
+            if (nul_radek == false) { vysledek = AlteringOperations.Gauss(vysledek); }
 
             for (int i = 0; i < pulka_radky; i++) // Vymění se prvky v matici a vrátí výsledek
             {
@@ -223,7 +278,7 @@ namespace MatrixLibrary
                     }
                 }
 
-                upravit = Upravit.Gauss(upravit); // První Gaussovka
+                upravit = AlteringOperations.Gauss(upravit); // První Gaussovka
 
                 // Převrácení a druhá Gaussovka:
 
@@ -239,7 +294,7 @@ namespace MatrixLibrary
                     }
                 }
 
-                upravit = Upravit.Gauss(upravit); // Druhá Gaussovka
+                upravit = AlteringOperations.Gauss(upravit); // Druhá Gaussovka
 
                 for (int i = 0; i < radky; i++) // Převrácení a složení výsledné matice
                 {

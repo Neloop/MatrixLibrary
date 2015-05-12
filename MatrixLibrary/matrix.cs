@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define NULLS_IN_MATRIX
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,8 +23,8 @@ namespace MatrixLibrary
 
     public abstract class MatrixNumberBase
     {
-        public abstract void AddInt(int add);
-        public abstract void AddDouble(double add);
+        public abstract MatrixNumberBase AddInt(int add);
+        public abstract MatrixNumberBase AddDouble(double add);
         public abstract MatrixNumberBase Copy();
         public abstract double ToDouble();
         public abstract bool IsZero();
@@ -281,20 +283,22 @@ namespace MatrixLibrary
         public int Denominator { get; private set; }
         public double RealPart { get; private set; } // Iracionální čísla (přičítá se ke zlomku) reprezentovaná doublem
 
-        public override void AddInt(int add)
+        public override MatrixNumberBase AddInt(int add)
         {
             MatrixNumber tmp = (MatrixNumber)__Addition(new MatrixNumber(add));
             Numerator = tmp.Numerator;
             Denominator = tmp.Denominator;
             RealPart = tmp.RealPart;
+            return this;
         }
 
-        public override void AddDouble(double add)
+        public override MatrixNumberBase AddDouble(double add)
         {
             MatrixNumber tmp = (MatrixNumber)__Addition(new MatrixNumber(add));
             Numerator = tmp.Numerator;
             Denominator = tmp.Denominator;
             RealPart = tmp.RealPart;
+            return this;
         }
 
         static public MatrixNumber Zero { get; private set; }
@@ -699,7 +703,7 @@ namespace MatrixLibrary
     
     public class Matrix<T> where T : MatrixNumberBase, new()
     {
-        private T[,] MatrixInternal;
+        private T[] MatrixInternal;
         public int Rows { get; private set; }
         public int Cols { get; private set; }
 
@@ -707,84 +711,102 @@ namespace MatrixLibrary
         {
             Rows = input.GetLength(0);
             Cols = input.GetLength(1);
-            MatrixInternal = new T[Rows, Cols];
-            for (int i = 0; i < Rows; i++)
+            MatrixInternal = new T[Rows * Cols + PaddingFromBegin];
+
+            Parallel.ForEach(GetRowChunks(), (pair) => 
             {
-                for (int j = 0; j < Cols; j++)
+                for (int i = pair.Item1; i < pair.Item2; i++)
                 {
-                    MatrixInternal[i, j] = new T();
-                    MatrixInternal[i, j].AddInt(input[i, j]);
+                    for (int j = 0; j < Cols; j++)
+                    {
+                        MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)new T().AddInt(input[i, j]);
+                    }
                 }
-            }
+            });
         }
 
         public Matrix(double[,] input)
         {
             Rows = input.GetLength(0);
             Cols = input.GetLength(1);
-            MatrixInternal = new T[Rows, Cols];
-            for (int i = 0; i < Rows; i++)
+            MatrixInternal = new T[Rows * Cols + PaddingFromBegin];
+
+            Parallel.ForEach(GetRowChunks(), (pair) =>
             {
-                for (int j = 0; j < Cols; j++)
+                for (int i = pair.Item1; i < pair.Item2; i++)
                 {
-                    MatrixInternal[i, j] = new T();
-                    MatrixInternal[i, j].AddDouble(input[i, j]);
+                    for (int j = 0; j < Cols; j++)
+                    {
+                        MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)new T().AddDouble(input[i, j]);
+                    }
                 }
-            }
+            });
         }
 
         public Matrix(T[,] input)
         {
             Rows = input.GetLength(0);
             Cols = input.GetLength(1);
-            MatrixInternal = new T[Rows, Cols];
-            for (int i = 0; i < Rows; i++)
+            MatrixInternal = new T[Rows * Cols + PaddingFromBegin];
+
+            Parallel.ForEach(GetRowChunks(), (pair) =>
             {
-                for (int j = 0; j < Cols; j++)
+                for (int i = pair.Item1; i < pair.Item2; i++)
                 {
-                    MatrixInternal[i, j] = (T)input[i, j].Copy();
+                    for (int j = 0; j < Cols; j++)
+                    {
+                        MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)input[i, j].Copy();
+                    }
                 }
-            }
+            });
         }
 
         public Matrix(int rows, int cols)
         {
             Rows = rows;
             Cols = cols;
-            MatrixInternal = new T[rows, cols];
+            MatrixInternal = new T[Rows * Cols + PaddingFromBegin];
 
+#if !NULLS_IN_MATRIX
             Parallel.ForEach(GetRowChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; ++i)
                 {
                     for (int j = 0; j < cols; j++)
                     {
-                        MatrixInternal[i, j] = new T();
+                        MatrixInternal[(i * Cols) + j + PaddingFromBegin] = new T();
                     }
                 }
             });
+#endif
         }
 
         public Matrix(Matrix<T> matrix)
         {
             Rows = matrix.Rows;
             Cols = matrix.Cols;
-            MatrixInternal = new T[Rows, Cols];
-            for (int i = 0; i < Rows; i++)
+            MatrixInternal = new T[Rows * Cols + PaddingFromBegin];
+
+            Parallel.ForEach(GetRowChunks(), (pair) =>
             {
-                for (int j = 0; j < Cols; j++)
+                for (int i = pair.Item1; i < pair.Item2; i++)
                 {
-                    MatrixInternal[i, j] = (T)matrix.GetNumber(i, j).Copy();
+                    for (int j = 0; j < Cols; j++)
+                    {
+                        MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)matrix.GetNumber(i, j).Copy();
+                    }
                 }
-            }
+            });
         }
 
         public T GetNumber(int i, int j)
         {
             if (i >= Rows || j >= Cols) { throw new MatrixLibraryException("Bad indices specified!"); }
 
-            //if (MatrixInternal[i, j] == null) { MatrixInternal[i, j] = new T(); }
-            return MatrixInternal[i, j];
+#if NULLS_IN_MATRIX
+            if (ReferenceEquals(MatrixInternal[(i * Cols) + j + PaddingFromBegin], null)) { MatrixInternal[(i * Cols) + j + PaddingFromBegin] = new T(); }
+#endif
+            return MatrixInternal[(i * Cols) + j + PaddingFromBegin];
         }
         public T[] GetRow(int row)
         {
@@ -793,8 +815,10 @@ namespace MatrixLibrary
             T[] result = new T[Cols];
             for (int i = 0; i < Cols; i++)
             {
-                //if (MatrixInternal[row, i] == null) { MatrixInternal[row, i] = new T(); }
-                result[i] = MatrixInternal[row, i];
+#if NULLS_IN_MATRIX
+                if (ReferenceEquals(MatrixInternal[(row * Cols) + i + PaddingFromBegin], null)) { MatrixInternal[(row * Cols) + i + PaddingFromBegin] = new T(); }
+#endif
+                result[i] = MatrixInternal[(row * Cols) + i + PaddingFromBegin];
             }
             return result;
         }
@@ -805,14 +829,16 @@ namespace MatrixLibrary
             T[] result = new T[Rows];
             for (int i = 0; i < Rows; i++)
             {
-                //if (MatrixInternal[i, col] == null) { MatrixInternal[i, col] = new T(); }
-                result[i] = MatrixInternal[i, col];
+#if NULLS_IN_MATRIX
+                if (ReferenceEquals(MatrixInternal[(i * Cols) + col + PaddingFromBegin], null)) { MatrixInternal[(i * Cols) + col + PaddingFromBegin] = new T(); }
+#endif
+                result[i] = MatrixInternal[(i * Cols) + col + PaddingFromBegin];
             }
             return result;
         }
         public void WriteNumber(int i, int j, T number)
         {
-            MatrixInternal[i, j] = (T)number.Copy();
+            MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)number.Copy();
         }
         public void WriteRow(int i, T[] row)
         {
@@ -821,7 +847,7 @@ namespace MatrixLibrary
 
             for (int j = 0; j < row.Length; ++j)
             {
-                MatrixInternal[i, j] = (T)row[j].Copy();
+                MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)row[j].Copy();
             }
         }
         public void WriteCol(int j, T[] col)
@@ -831,16 +857,16 @@ namespace MatrixLibrary
 
             for (int i = 0; i < col.Length; ++i)
             {
-                MatrixInternal[i, j] = (T)col[i].Copy();
+                MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)col[i].Copy();
             }
         }
         public void SwapElements(int firstRow, int firstCol, int secondRow, int secondCol)
         {
             if (firstRow >= Rows || secondRow >= Rows || firstCol >= Cols || secondCol >= Cols) { throw new MatrixLibraryException("Bad indices specified!"); }
 
-            T temp = MatrixInternal[firstRow, firstCol];
-            MatrixInternal[firstRow, firstCol] = MatrixInternal[secondRow, secondCol];
-            MatrixInternal[secondRow, secondCol] = temp;
+            T temp = MatrixInternal[(firstRow * Cols) + firstCol + PaddingFromBegin];
+            MatrixInternal[(firstRow * Cols) + firstCol + PaddingFromBegin] = MatrixInternal[(secondRow * Cols) + secondCol + PaddingFromBegin];
+            MatrixInternal[(secondRow * Cols) + secondCol + PaddingFromBegin] = temp;
         }
 
         public IEnumerable<Tuple<int, int>> GetRowChunks()
@@ -852,15 +878,16 @@ namespace MatrixLibrary
             else
             {
                 for (int i = 0; i < Rows; i += chunkLength)
-            {
-                int end = i + chunkLength;
-                if (end > Rows) { end = Rows; }
+                {
+                    int end = i + chunkLength;
+                    if (end > Rows) { end = Rows; }
 
-                yield return new Tuple<int, int>(i, end);
-            }
+                    yield return new Tuple<int, int>(i, end);
+                }
             }
         }
 
+        public static int PaddingFromBegin = 32; // Taken from this: http://blog.mischel.com/2011/12/29/more-about-cache-contention/
         public static Matrix<T> IdentityMatrix(int dimension) // Jednotková matice
         {
             int[,] mat = new int[dimension, dimension];
@@ -899,7 +926,7 @@ namespace MatrixLibrary
             {
                 for (int j = 0; j < Cols; ++j)
                 {
-                    result += string.Format("{0,4} ", MatrixInternal[i, j].ToDouble());
+                    result += string.Format("{0,4} ", MatrixInternal[(i * Cols) + j + PaddingFromBegin].ToDouble());
                 }
                 result += System.Environment.NewLine;
             }

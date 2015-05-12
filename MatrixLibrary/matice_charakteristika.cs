@@ -16,7 +16,7 @@ namespace MatrixLibrary
             {
                 Matrix<T> Q, R, RQ;
                 Rozklady.QRRozklad(matice, out Q, out R);
-                RQ = Upravit.Transponuj(Q) * matice * Q;
+                RQ = AlteringOperations.Transposition(Q) * matice * Q;
 
                 bool skoncit_1 = false;
                 bool skoncit_2 = false;
@@ -28,7 +28,7 @@ namespace MatrixLibrary
                     if (prvni == false)
                     {
                         Rozklady.QRRozklad(RQ, out Q, out R);
-                        RQ = Upravit.Transponuj(Q) * RQ * Q;
+                        RQ = AlteringOperations.Transposition(Q) * RQ * Q;
                     }
                     prvni = false;
                     for (int i = 1; i < RQ.Rows; i++)

@@ -28,7 +28,7 @@ namespace MatrixLibrary
                     }
                 }
 
-                docasna = Upravit.Gauss(docasna);
+                docasna = AlteringOperations.Gauss(docasna);
                 for (int i = 0; i < matice.Rows; i++)
                 {
                     for (int j = 0; j < matice.Cols; j++)
@@ -49,7 +49,7 @@ namespace MatrixLibrary
         {
             int vysledek = matice.Rows;
 
-            Matrix<T> gauss = Upravit.Gauss(matice);
+            Matrix<T> gauss = AlteringOperations.Gauss(matice);
 
             for (int i = 0; i < gauss.Rows; i++)
             {
@@ -73,7 +73,7 @@ namespace MatrixLibrary
 
             if (radky == sloupce)
             {
-                Matrix<T> transponovana = Upravit.Transponuj(matice);
+                Matrix<T> transponovana = AlteringOperations.Transposition(matice);
                 nasobena = ClassicOperations.StrassenWinograd(transponovana, matice);
 
                 for (int i = 0; i < nasobena.Rows; i++)
