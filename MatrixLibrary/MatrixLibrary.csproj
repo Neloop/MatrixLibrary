@@ -67,7 +67,7 @@
     <Compile Include="matrix.cs" />
     <Compile Include="matice_rozklady.cs" />
     <Compile Include="matrix_alter.cs" />
-    <Compile Include="matice_vlastnosti.cs" />
+    <Compile Include="matrix_properties.cs" />
     <Compile Include="matice_vypocty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

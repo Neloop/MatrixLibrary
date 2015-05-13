@@ -209,8 +209,24 @@ namespace MatrixLibrary
             divisor = GCD(Numerator, Denominator);
             if (divisor != 0 && divisor != 1)
             {
-                Numerator /= divisor;
-                Denominator /= divisor;
+                int tmpNumerator = Numerator;
+                try { Numerator /= divisor; }
+                catch (OverflowException)
+                {
+                    RealPart = (double)Numerator / (double)Denominator;
+                    Numerator = 0;
+                    Denominator = 0;
+                    DecomposeRealPart();
+                }
+                try { Denominator /= divisor; }
+                catch(OverflowException)
+                {
+                    RealPart = (double)tmpNumerator / (double)Denominator;
+                    Numerator = 0;
+                    Denominator = 0;
+                    DecomposeRealPart();
+                }
+                
                 RealPart /= (double)divisor;
             }
             if (Denominator == 0 || Numerator == 0)
@@ -222,6 +238,12 @@ namespace MatrixLibrary
             {
                 Numerator = Numerator * (-1);
                 Denominator = Denominator * (-1);
+            }
+
+            if(Numerator > HalfOfMaxInt || Numerator < HalfOfMinInt || Denominator > HalfOfMaxInt || Denominator < HalfOfMinInt)
+            {
+                RealPart = (double)Numerator / (double)Denominator;
+                DecomposeRealPart();
             }
         }
 
@@ -675,6 +697,8 @@ namespace MatrixLibrary
             return first;
         }
         private static double Accuracy = 0.0000001;
+        private static int HalfOfMaxInt = int.MaxValue / 2;
+        private static int HalfOfMinInt = int.MinValue / 2;
     }
     
     public class Vl_cisla<T> where T : MatrixNumberBase, new() // slouží víceméně jen k prohlížení, ne k měnění, či počítání
@@ -761,25 +785,32 @@ namespace MatrixLibrary
             });
         }
 
-        public Matrix(int rows, int cols)
+        private Matrix(int rows, int cols, bool initialize)
         {
             Rows = rows;
             Cols = cols;
             MatrixInternal = new T[Rows * Cols + PaddingFromBegin];
 
-#if !NULLS_IN_MATRIX
-            Parallel.ForEach(GetRowChunks(), (pair) =>
+            if (initialize == true)
             {
-                for (int i = pair.Item1; i < pair.Item2; ++i)
+                Parallel.ForEach(GetRowChunks(), (pair) =>
                 {
-                    for (int j = 0; j < cols; j++)
+                    for (int i = pair.Item1; i < pair.Item2; ++i)
                     {
-                        MatrixInternal[(i * Cols) + j + PaddingFromBegin] = new T();
+                        for (int j = 0; j < cols; j++)
+                        {
+                            MatrixInternal[(i * Cols) + j + PaddingFromBegin] = new T();
+                        }
                     }
-                }
-            });
-#endif
+                });
+            }
         }
+
+#if !NULLS_IN_MATRIX
+        public Matrix(int rows, int cols) : this(rows, cols, true) { }
+#else
+        public Matrix(int rows, int cols) : this(rows, cols, false) { }
+#endif
 
         public Matrix(Matrix<T> matrix)
         {
@@ -838,6 +869,8 @@ namespace MatrixLibrary
         }
         public void WriteNumber(int i, int j, T number)
         {
+            if (i >= Rows || j >= Cols) { throw new MatrixLibraryException("Bad indices specified!"); }
+
             MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)number.Copy();
         }
         public void WriteRow(int i, T[] row)
@@ -882,9 +915,15 @@ namespace MatrixLibrary
                     int end = i + chunkLength;
                     if (end > Rows) { end = Rows; }
 
+                    //Console.WriteLine("{0} {1}", i, end);
                     yield return new Tuple<int, int>(i, end);
                 }
             }
+        }
+
+        public static Matrix<T> GetUninitializedMatrix(int rows, int cols)
+        {
+            return new Matrix<T>(rows, cols, false);
         }
 
         public static int PaddingFromBegin = 32; // Taken from this: http://blog.mischel.com/2011/12/29/more-about-cache-contention/

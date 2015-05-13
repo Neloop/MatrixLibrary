@@ -18,7 +18,7 @@ namespace MatrixLibrary
 
             Matrix<T> vysledek;
             Matrix<T> symetricka = AlteringOperations.Symmetric(matice);
-            if (Vlastnosti.Definitnost(symetricka) == 1)
+            if (Properties.Definity(symetricka) == Properties.DefinityClassification.PositiveDefinite)
             {
                 int rozmer;
                 rozmer = matice.Rows;

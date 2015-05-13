@@ -221,12 +221,12 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.Adjungovana(A);
+            resultSingle = AlteringOperations.Adjugate(A);
             WriteMatrix(A, resultSingle, "Adjungovaná");
 
             Console.WriteLine();
 
-            bool regular = Vlastnosti.Regularnost(B);
+            bool regular = Properties.IsInvertible(B);
             int[,] number = new int[1, 1];
             resultSingle = new Matrix<MatrixNumber>(number);
             MatrixNumber one = new MatrixNumber(1, 1);
@@ -238,7 +238,7 @@ namespace MatrixTestApp
             Console.WriteLine();
             inputMatrix = new int[4, 4];
             Matrix<MatrixNumber> D = new Matrix<MatrixNumber>(inputMatrix);
-            regular = Vlastnosti.Regularnost(D);
+            regular = Properties.IsInvertible(D);
             number = new int[1, 1];
             resultSingle = new Matrix<MatrixNumber>(number);
             if (regular == true) { resultSingle.WriteNumber(0, 0, one); }
@@ -247,7 +247,7 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            bool orthogonal = Vlastnosti.Ortogonalnost(B);
+            bool orthogonal = Properties.IsOrthogonal(B);
             number = new int[1, 1];
             resultSingle = new Matrix<MatrixNumber>(number);
             if (orthogonal == true) { resultSingle.WriteNumber(0, 0, one); }
@@ -266,7 +266,7 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.Ortogonalizace(B);
+            resultSingle = AlteringOperations.Orthogonal(B);
             WriteMatrix(B, resultSingle, "Ortogonalizace");
 
             Console.WriteLine();
@@ -319,20 +319,24 @@ namespace MatrixTestApp
             Console.ReadLine();
             /********************************* Big matrixes ***********************************/
 
-
             WriteSeparator(); WriteSeparator("BIG MATRIXES");
-            int rowsAndCols = 100;
+            int rowsAndCols = 200;
             Console.WriteLine("Matrixes will have {0} rows and cols", rowsAndCols);
             Console.WriteLine("Generating matrixes...");
             Random rdm = new Random();
-            A = new Matrix<MatrixNumber>(rowsAndCols, rowsAndCols);
-            B = new Matrix<MatrixNumber>(rowsAndCols, rowsAndCols);
+            A = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+            B = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+            bool resultSingleBool;
+            bool resultMultiBool;
+            int resultSingleInt;
+            int resultMultiInt;
 
             for (int i = 0; i < rowsAndCols; i++)
             {
                 for (int j = 0; j < rowsAndCols; j++)
                 {
-                    A.WriteNumber(i, j, new MatrixNumber(rdm.Next()));
+                    A.WriteNumber(i, j, new MatrixNumber(rdm.Next(-1, 1)));
+                    B.WriteNumber(i, j, new MatrixNumber(rdm.Next(-1, 1)));
                 }
             }
             WriteSeparator();
@@ -429,7 +433,7 @@ namespace MatrixTestApp
 
 
             /********** Exponentiate **********/
-            int exponent = 4;
+            /*int exponent = 4;
             Console.WriteLine("Exponentiate...");
             stopwatchSingle.Restart();
             resultSingle = ClassicOperations.Exponentiate(A, exponent);
@@ -441,6 +445,78 @@ namespace MatrixTestApp
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+            /********** Adjugate **********/
+            /*Console.WriteLine("Adjugate...");
+            stopwatchSingle.Restart();
+            resultSingle = AlteringOperations.Adjugate(A);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded adjugate...");
+            stopwatchMulti.Restart();
+            resultMulti = AlteringOperations.Adjugate_MultiThreaded(A);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+            
+
+            /********** IsInvertible **********/
+            /*Console.WriteLine("IsInvertible...");
+            stopwatchSingle.Restart();
+            resultSingleBool = Properties.IsInvertible(A);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded IsInvertible...");
+            stopwatchMulti.Restart();
+            resultMultiBool = Properties.IsInvertible_MultiThreaded(A);
+            stopwatchMulti.Stop();
+
+            if (resultSingleBool == resultMultiBool) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+            /********** Rank **********/
+            /*Console.WriteLine("Rank...");
+            stopwatchSingle.Restart();
+            resultSingleInt = Properties.Rank(A);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded rank...");
+            stopwatchMulti.Restart();
+            resultMultiInt = Properties.Rank_MultiThreaded(A);
+            stopwatchMulti.Stop();
+
+            if (resultSingleInt == resultMultiInt) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+            /********** IsOrthogonal **********/
+            Console.WriteLine("IsOrthogonal...");
+            stopwatchSingle.Restart();
+            resultSingleBool = Properties.IsOrthogonal(A);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded IsOrthogonal...");
+            stopwatchMulti.Restart();
+            resultMultiBool = Properties.IsOrthogonal_MultiThreaded(A);
+            stopwatchMulti.Stop();
+
+            if (resultSingleBool == resultMultiBool) { Console.WriteLine("Results are the same."); }
             else { Console.WriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 

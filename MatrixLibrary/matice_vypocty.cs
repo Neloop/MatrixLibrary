@@ -70,7 +70,7 @@ namespace MatrixLibrary
                                 {
                                     pricti++;
                                     j = j + pricti;
-                                    if (pricti == upravena.Cols) { return new T(); }
+                                    if (pricti >= upravena.Cols) { return new T(); }
                                 }
                             }
                         }

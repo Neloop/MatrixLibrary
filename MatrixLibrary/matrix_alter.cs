@@ -12,7 +12,7 @@ namespace MatrixLibrary
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            result = new Matrix<T>(cols, rows);
+            result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
             for (int i = 0; i < cols; i++)
             {
@@ -30,7 +30,7 @@ namespace MatrixLibrary
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            result = new Matrix<T>(cols, rows);
+            result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
             Parallel.ForEach(result.GetRowChunks(), (pair) =>
             {
@@ -51,12 +51,9 @@ namespace MatrixLibrary
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
             {
-                int dim;
-                dim = matrix.Rows;
-                result = new Matrix<T>(dim, dim);
+                int dim = matrix.Rows;
 
-                Matrix<T> transpose;
-                transpose = AlteringOperations.Transposition(matrix);
+                Matrix<T> transpose = AlteringOperations.Transposition(matrix);
                 result = ClassicOperations.Addition(matrix, transpose);
 
                 T two = new T();
@@ -81,12 +78,9 @@ namespace MatrixLibrary
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
             {
-                int dim;
-                dim = matrix.Rows;
-                result = new Matrix<T>(dim, dim);
+                int dim = matrix.Rows;
 
-                Matrix<T> transpose;
-                transpose = AlteringOperations.Transposition_MultiThreaded(matrix);
+                Matrix<T> transpose = AlteringOperations.Transposition_MultiThreaded(matrix);
                 result = ClassicOperations.Addition_MultiThreaded(matrix, transpose);
 
                 T two = new T();
@@ -115,15 +109,7 @@ namespace MatrixLibrary
             int radky, sloupce;
             radky = matice.Rows;
             sloupce = matice.Cols;
-            vysledek = new Matrix<T>(radky, sloupce);
-
-            for (int i = 0; i < radky; i++) // naplnění matice vysledek
-            {
-                for (int j = 0; j < sloupce; j++)
-                {
-                    vysledek.WriteNumber(i, j, matice.GetNumber(i, j));
-                }
-            }
+            vysledek = new Matrix<T>(matice);
 
             for (int i = 0; i < radky; i++)
             {
@@ -193,6 +179,84 @@ namespace MatrixLibrary
 
             return vysledek;
         }
+
+        public static Matrix<T> Gauss_MultiThreaded<T>(Matrix<T> matice) where T : MatrixNumberBase, new() // Pouze Gaussova eliminace, postupně se prochází řádky matice a "hledají" se pivoty
+        {
+            Matrix<T> vysledek;
+            int radky, sloupce;
+            radky = matice.Rows;
+            sloupce = matice.Cols;
+            vysledek = new Matrix<T>(matice);
+
+            for (int i = 0; i < radky; i++)
+            {
+                for (int j = i; j < sloupce; j++)
+                {
+                    if (vysledek.GetNumber(i, j).IsZero())
+                    {
+                        // pokud je prvek nula, tak se koukne pod něj a případně prohodí řádek a vydělí řádky pod ním (potom se breakne), 
+                        // pokud i pod ním jsou nuly, pak se breakne (nemusí prostě se nechá doběhnout) cyklus a jde na další sloupec
+                        for (int k = i + 1; k < radky; k++)
+                        {
+                            if (!vysledek.GetNumber(k, j).IsZero())
+                            {
+                                for (int l = j; l < sloupce; l++)
+                                {
+                                    vysledek.WriteNumber(k, l, vysledek.GetNumber(i, l));
+                                    vysledek.WriteNumber(i, l, vysledek.GetNumber(k, l));
+                                }
+
+                                T vydelit = vysledek.GetNumber(i, j);
+                                for (int l = j; l < sloupce; l++)
+                                {
+                                    vysledek.WriteNumber(i, l, (T)(vysledek.GetNumber(i, l) / vydelit));
+                                }
+
+                                for (int a = i + 1; a < radky; a++)
+                                {
+                                    vydelit = vysledek.GetNumber(k, j);
+                                    if (!vydelit.IsZero())
+                                    {
+                                        for (int b = j; b < sloupce; b++)
+                                        {
+                                            vysledek.WriteNumber(a, b, (T)(vysledek.GetNumber(a, b) / vydelit));
+                                            vysledek.WriteNumber(a, b, (T)(vysledek.GetNumber(a, b) - vysledek.GetNumber(i, b)));
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    else // Pokud se narazilo na nenulový prvek (=pivot)
+                    {
+                        T vydelit = vysledek.GetNumber(i, j);
+                        for (int k = j; k < sloupce; k++)
+                        {
+                            vysledek.WriteNumber(i, k, (T)(vysledek.GetNumber(i, k) / vydelit));
+                        }
+
+                        for (int k = i + 1; k < radky; k++)
+                        {
+                            vydelit = vysledek.GetNumber(k, j);
+                            if (!vydelit.IsZero())
+                            {
+                                for (int l = j; l < sloupce; l++)
+                                {
+                                    vysledek.WriteNumber(k, l, (T)(vysledek.GetNumber(k, l) / vydelit));
+                                    vysledek.WriteNumber(k, l, (T)(vysledek.GetNumber(k, l) - vysledek.GetNumber(i, l)));
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            return vysledek;
+        }
+
         public static Matrix<T> GaussJordan<T>(Matrix<T> matice) where T : MatrixNumberBase, new() // K počítání se používá pouze normální Gaussova eliminace, nejdříve na původní matici a pak na "obrácenou"
         {
             Matrix<T> vysledek;
@@ -243,7 +307,7 @@ namespace MatrixLibrary
         public static Matrix<T> Inverzni<T>(Matrix<T> matice) where T : MatrixNumberBase, new() // Pokud matice není regulární, tak vyhazuje vyjimku
         {
             Matrix<T> vysledek;
-            if (Vlastnosti.Regularnost(matice) == true)
+            if (Properties.IsInvertible(matice) == true)
             {
                 int radky, sloupce;
                 radky = matice.Rows;
@@ -310,102 +374,128 @@ namespace MatrixLibrary
             }
             return vysledek;
         }
-        public static Matrix<T> Adjungovana<T>(Matrix<T> matice) where T : MatrixNumberBase, new()
+
+        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
-            Matrix<T> vysledek;
-            int radky, sloupce;
-            radky = matice.Rows;
-            sloupce = matice.Cols;
-            vysledek = new Matrix<T>(radky, sloupce);
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
-            for (int i = 0; i < radky; i++)
+            for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j < sloupce; j++)
+                for (int j = 0; j < cols; j++)
                 {
-                    T nasobit;
-                    if ((i + j) % 2 == 0) { nasobit = new T(); nasobit.AddInt(1); }
-                    else { nasobit = new T(); nasobit.AddInt(-1); }
+                    T multiply;
+                    if ((i + j) % 2 == 0) { multiply = new T(); multiply.AddInt(1); }
+                    else { multiply = new T(); multiply.AddInt(-1); }
 
-                    Matrix<T> upravena;
-                    upravena = new Matrix<T>(radky - 1, sloupce - 1);
+                    Matrix<T> modified = Matrix<T>.GetUninitializedMatrix(rows - 1, cols - 1);
+                    int subtractK = 0;
 
-                    int odectik = 0;
-
-                    for (int k = 0; k < radky; k++)
+                    for (int k = 0; k < rows; k++)
                     {
-                        if (k == j) { odectik = 1; continue; }
-                        int odectil = 0;
+                        if (k == j) { subtractK = 1; continue; }
+                        int subtractL = 0;
 
-                        for (int l = 0; l < sloupce; l++)
+                        for (int l = 0; l < cols; l++)
                         {
-                            if (l == i)
-                            {
-                                odectil = 1; continue;
-                            }
+                            if (l == i) { subtractL = 1; continue; }
                             else
                             {
-                                T zapis = matice.GetNumber(k, l);
-                                upravena.WriteNumber(k - odectik, l - odectil, zapis);
+                                modified.WriteNumber(k - subtractK, l - subtractL, matrix.GetNumber(k, l));
                             }
                         }
                     }
-
-                    T tmp = Vypocty.Determinant(upravena);
-                    tmp = (T)(nasobit * tmp);
-
-                    vysledek.WriteNumber(i, j, tmp);
+                    T tmp = Vypocty.Determinant(modified);
+                    result.WriteNumber(i, j, (T)(multiply * tmp));
                 }
             }
 
-            return vysledek;
+            return result;
         }
-        public static Matrix<T> Ortogonalizace<T>(Matrix<T> matice) where T : MatrixNumberBase, new() // Využívá Gram-Schmidtovu ortogonalizaci, vstupem by měli být lineárně nezávislé vektory
+
+        public static Matrix<T> Adjugate_MultiThreaded<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
-            Matrix<T> vysledek;
-            int radky, sloupce;
-            radky = matice.Rows;
-            sloupce = matice.Cols;
-            vysledek = new Matrix<T>(radky, sloupce);
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
-            for (int i = 0; i < radky; i++) // řádky
+            Parallel.ForEach(result.GetRowChunks(), (pair) =>
             {
-                for (int j = 0; j < sloupce; j++) // sloupce
+                for (int i = pair.Item1; i < pair.Item2; i++)
                 {
-                    T suma = new T();
-                    for (int k = 0; k < i; k++) // suma...
+                    for (int j = 0; j < cols; j++)
                     {
-                        T skal_soucin = new T();
-                        for (int l = 0; l < sloupce; l++) // skal. součin
-                        {
-                            T x = (T)matice.GetNumber(i, l).Copy();
-                            T z = (T)vysledek.GetNumber(k, l).Copy();
+                        T multiply;
+                        if ((i + j) % 2 == 0) { multiply = new T(); multiply.AddInt(1); }
+                        else { multiply = new T(); multiply.AddInt(-1); }
 
-                            skal_soucin = (T)((x * z) + skal_soucin);
+                        Matrix<T> modified = Matrix<T>.GetUninitializedMatrix(rows - 1, cols - 1);
+                        int subtractK = 0;
+
+                        for (int k = 0; k < rows; k++)
+                        {
+                            if (k == j) { subtractK = 1; continue; }
+                            int subtractL = 0;
+
+                            for (int l = 0; l < cols; l++)
+                            {
+                                if (l == i) { subtractL = 1; continue; }
+                                else
+                                {
+                                    modified.WriteNumber(k - subtractK, l - subtractL, matrix.GetNumber(k, l));
+                                }
+                            }
                         }
 
-                        T krat = (T)vysledek.GetNumber(k, j).Copy();
-                        krat = (T)(skal_soucin * krat);
+                        result.WriteNumber(i, j, (T)(multiply * Vypocty.Determinant(modified)));
+                    }
+                }
+            });
 
-                        suma = (T)(suma + krat);
+            return result;
+        }
+
+        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Využívá Gram-Schmidtovu ortogonalizaci, vstupem by měli být lineárně nezávislé vektory
+        {
+            Matrix<T> result;
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+            result = new Matrix<T>(rows, cols);
+
+            for (int i = 0; i < rows; i++) // řádky
+            {
+                for (int j = 0; j < cols; j++) // sloupce
+                {
+                    T sum = new T();
+                    for (int k = 0; k < i; k++) // suma...
+                    {
+                        T dotProduct = new T();
+                        for (int l = 0; l < cols; l++) // skal. součin
+                        {
+                            dotProduct = (T)((matrix.GetNumber(i, l) * result.GetNumber(k, l)) + dotProduct);
+                        }
+
+                        T times = (T)(dotProduct * result.GetNumber(k, j));
+                        sum = (T)(sum + times);
                     }
 
-                    T zapis = (T)(matice.GetNumber(i, j) - suma);
-                    vysledek.WriteNumber(i, j, zapis);
+                    result.WriteNumber(i, j, (T)(matrix.GetNumber(i, j) - sum));
                 }
 
-                T norma = new T();
-                for (int j = 0; j < sloupce; j++) // vypočítá normu
+                T norm = new T();
+                for (int j = 0; j < cols; j++) // vypočítá normu
                 {
-                    norma = (T)(norma + vysledek.GetNumber(i, j).__Exponentiate(2));
+                    norm = (T)(norm + result.GetNumber(i, j).__Exponentiate(2));
                 }
-                norma = (T)norma.__SquareRoot();
-                for (int j = 0; j < sloupce; j++) // vydělí všechny složky vektoru
+                norm = (T)norm.__SquareRoot();
+                for (int j = 0; j < cols; j++) // vydělí všechny složky vektoru
                 {
-                    vysledek.WriteNumber(i, j, (T)(vysledek.GetNumber(i, j) / norma));
+                    result.WriteNumber(i, j, (T)(result.GetNumber(i, j) / norm));
                 }
             }
 
-            return vysledek;
+            return result;
         }
     }
 }
