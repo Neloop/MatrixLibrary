@@ -198,7 +198,7 @@ namespace MatrixLibrary
                             det.WriteNumber(k, l, matrix.GetNumber(k, l));
                         }
                     }
-                    determinant[i] = Vypocty.Determinant(det);
+                    determinant[i] = Computations.Determinant(det);
                 }
 
                 int positive = 0;
@@ -248,7 +248,7 @@ namespace MatrixLibrary
                                 det.WriteNumber(k, l, matrix.GetNumber(k, l));
                             }
                         }
-                        determinant[i] = Vypocty.Determinant(det);
+                        determinant[i] = Computations.Determinant(det);
                     }
                 });
 

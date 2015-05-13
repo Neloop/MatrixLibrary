@@ -699,7 +699,7 @@ namespace MatrixLibrary
                 Matrix<T> S = null;
                 if (tryEigenvalues == true)
                 {
-                    try { exponentiate = Charakteristika.Diagonalizovat(matrix, out S, 1000); }
+                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 1000); }
                     catch (EigenValuesNotFoundException) { exponentiate = null; }
                 }
 
@@ -718,7 +718,7 @@ namespace MatrixLibrary
                         exponentiate.WriteNumber(i, i, (T)exponentiate.GetNumber(i, i).__Exponentiate(exponent));
                     }
 
-                    result = S * exponentiate * AlteringOperations.Inverzni(S);
+                    result = S * exponentiate * AlteringOperations.Inverse(S);
                 }
             }
             else
@@ -737,7 +737,7 @@ namespace MatrixLibrary
                 Matrix<T> S = null;
                 if (tryEigenvalues == true)
                 {
-                    try { exponentiate = Charakteristika.Diagonalizovat(matrix, out S, 1000); }
+                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 1000); }
                     catch (EigenValuesNotFoundException) { exponentiate = null; }
                 }
 
@@ -760,7 +760,7 @@ namespace MatrixLibrary
                     });
 
                     result = Multiplication_MultiThreaded(S, exponentiate);
-                    result = Multiplication_MultiThreaded(result, AlteringOperations.Inverzni(S));
+                    result = Multiplication_MultiThreaded(result, AlteringOperations.Inverse(S));
                 }
             }
             else

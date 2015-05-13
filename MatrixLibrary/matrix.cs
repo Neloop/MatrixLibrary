@@ -1,4 +1,4 @@
-﻿//#define NULLS_IN_MATRIX
+﻿#define UNCHECKED_BOUNDARIES
 
 using System;
 using System.Collections.Generic;
@@ -175,6 +175,13 @@ namespace MatrixLibrary
             Denominator = denominator;
             RealPart = 0;
         }
+
+        public MatrixNumber(MatrixNumber source)
+        {
+            Numerator = source.Numerator;
+            Denominator = source.Denominator;
+            RealPart = source.RealPart;
+        }
         
         public override double ToDouble() // Vrací hodnotu objektu Cislo v reálném čísle
         {
@@ -193,12 +200,7 @@ namespace MatrixLibrary
 
         public override MatrixNumberBase Copy()
         {
-            MatrixNumber copy = new MatrixNumber();
-
-            copy.Numerator = Numerator;
-            copy.Denominator = Denominator;
-            copy.RealPart = RealPart;
-
+            MatrixNumber copy = new MatrixNumber(this);
             return copy;
         }
 
@@ -345,26 +347,25 @@ namespace MatrixLibrary
             {
                 MatrixNumber tmpSecond = (MatrixNumber)second;
 
-                if(Numerator == 0)
-                {
-                    result.Numerator = tmpSecond.Numerator;
-                    result.Denominator = tmpSecond.Denominator;
-                    result.RealPart = RealPart + tmpSecond.RealPart;
-                }
-                else if(tmpSecond.Numerator == 0)
-                {
-                    result.Numerator = Numerator;
-                    result.Denominator = Denominator;
-                    result.RealPart = RealPart + tmpSecond.RealPart;
-                }
-                else
+                if(Numerator != 0 && tmpSecond.Numerator != 0)
                 {
                     result.Numerator = Numerator * tmpSecond.Denominator;
                     result.Numerator += (tmpSecond.Numerator * Denominator);
                     result.Denominator = Denominator * tmpSecond.Denominator;
                     result.RealPart = RealPart + tmpSecond.RealPart;
                 }
-
+                else if (Numerator == 0)
+                {
+                    result.Numerator = tmpSecond.Numerator;
+                    result.Denominator = tmpSecond.Denominator;
+                    result.RealPart = RealPart + tmpSecond.RealPart;
+                }
+                else // tmpSecond.Numerator == 0
+                {
+                    result.Numerator = Numerator;
+                    result.Denominator = Denominator;
+                    result.RealPart = RealPart + tmpSecond.RealPart;
+                }
             }
             else
             {
@@ -386,27 +387,21 @@ namespace MatrixLibrary
                 if (Numerator != 0 && tmpSecond.Numerator != 0)
                 {
                     result.Numerator = Numerator * tmpSecond.Denominator;
-
-                    result.Numerator = result.Numerator - (tmpSecond.Numerator * Denominator);
-
+                    result.Numerator -= (tmpSecond.Numerator * Denominator);
                     result.Denominator = Denominator * tmpSecond.Denominator;
-
                     result.RealPart = RealPart - tmpSecond.RealPart;
                 }
-                else
+                else if (Numerator == 0)
                 {
-                    if (Numerator == 0)
-                    {
-                        result.Numerator = -tmpSecond.Numerator;
-                        result.Denominator = tmpSecond.Denominator;
-                        result.RealPart = RealPart - tmpSecond.RealPart;
-                    }
-                    else
-                    {
-                        result.Numerator = Numerator;
-                        result.Denominator = Denominator;
-                        result.RealPart = RealPart - tmpSecond.RealPart;
-                    }
+                    result.Numerator = -tmpSecond.Numerator;
+                    result.Denominator = tmpSecond.Denominator;
+                    result.RealPart = RealPart - tmpSecond.RealPart;
+                }
+                else // tmpSecond.Numerator == 0
+                {
+                    result.Numerator = Numerator;
+                    result.Denominator = Denominator;
+                    result.RealPart = RealPart - tmpSecond.RealPart;
                 }
             }
             else
@@ -428,7 +423,6 @@ namespace MatrixLibrary
                 MatrixNumber tmp = (MatrixNumber)second;
 
                 result.Numerator = Numerator * tmp.Numerator;
-
                 result.Denominator = Denominator * tmp.Denominator;
 
                 double fraction1, fraction2;
@@ -438,8 +432,8 @@ namespace MatrixLibrary
                 else { fraction2 = 0; }
 
                 result.RealPart = fraction1 * tmp.RealPart;
-                result.RealPart = result.RealPart + (RealPart * fraction2);
-                result.RealPart = result.RealPart + (RealPart * tmp.RealPart);
+                result.RealPart += (RealPart * fraction2);
+                result.RealPart += (RealPart * tmp.RealPart);
             }
             else
             {
@@ -466,12 +460,7 @@ namespace MatrixLibrary
                 }
                 else
                 {
-                    if (Numerator == 0 && Denominator == 0 && tmpSecond.Numerator == 0 && tmpSecond.Denominator == 0)
-                    {
-                        if (RealPart != 0 && tmpSecond.RealPart != 0) { result.RealPart = RealPart / tmpSecond.RealPart; }
-                        else { result.RealPart = 0; }
-                    }
-                    else
+                    if (Numerator != 0 || Denominator != 0 || tmpSecond.Numerator != 0 || tmpSecond.Denominator != 0)
                     {
                         if (tmpSecond.RealPart == 0)
                         {
@@ -504,6 +493,11 @@ namespace MatrixLibrary
                             else { result.RealPart = 0; }
                         }
                     }
+                    else
+                    {
+                        if (RealPart != 0 && tmpSecond.RealPart != 0) { result.RealPart = RealPart / tmpSecond.RealPart; }
+                        else { result.RealPart = 0; }
+                    }
                 }
             }
             else
@@ -530,8 +524,8 @@ namespace MatrixLibrary
                 else { fraction_num = 0; }
 
                 tmp = fraction_res * RealPart;
-                tmp = tmp + (result.RealPart * fraction_num);
-                tmp = tmp + (result.RealPart * RealPart);
+                tmp += (result.RealPart * fraction_num);
+                tmp += (result.RealPart * RealPart);
                 result.RealPart = tmp;
 
                 result.Numerator *= Numerator;
@@ -701,27 +695,28 @@ namespace MatrixLibrary
         private static int HalfOfMinInt = int.MinValue / 2;
     }
     
-    public class Vl_cisla<T> where T : MatrixNumberBase, new() // slouží víceméně jen k prohlížení, ne k měnění, či počítání
+    public class EigenValues<T> where T : MatrixNumberBase, new() // slouží víceméně jen k prohlížení, ne k měnění, či počítání
     {
-        int pocet;
-        T[] vl_cisla;
-        public Vl_cisla(T[] vstup, int pocet)
-        {
-            this.pocet = pocet;
-            vl_cisla = new T[pocet];
+        T[] EigenValuesInternal;
 
-            for (int i = 0; i < pocet; i++)
+        public EigenValues(T[] input)
+        {
+            EigenValuesInternal = new T[input.Length];
+
+            for (int i = 0; i < input.Length; i++)
             {
-                vl_cisla[i] = (T)vstup[i].Copy();
+                EigenValuesInternal[i] = (T)input[i].Copy();
             }
         }
-        public T Vrat_cislo(int i)
+
+        public T GetEigenValue(int i)
         {
-            return vl_cisla[i];
+            return EigenValuesInternal[i];
         }
-        public int Pocet()
+
+        public int Count()
         {
-            return pocet;
+            return EigenValuesInternal.Length;
         }
     }
     
@@ -806,11 +801,7 @@ namespace MatrixLibrary
             }
         }
 
-#if !NULLS_IN_MATRIX
         public Matrix(int rows, int cols) : this(rows, cols, true) { }
-#else
-        public Matrix(int rows, int cols) : this(rows, cols, false) { }
-#endif
 
         public Matrix(Matrix<T> matrix)
         {
@@ -832,51 +823,52 @@ namespace MatrixLibrary
 
         public T GetNumber(int i, int j)
         {
+#if !UNCHECKED_BOUNDARIES
             if (i >= Rows || j >= Cols) { throw new MatrixLibraryException("Bad indices specified!"); }
-
-#if NULLS_IN_MATRIX
-            if (ReferenceEquals(MatrixInternal[(i * Cols) + j + PaddingFromBegin], null)) { MatrixInternal[(i * Cols) + j + PaddingFromBegin] = new T(); }
 #endif
+
             return MatrixInternal[(i * Cols) + j + PaddingFromBegin];
         }
         public T[] GetRow(int row)
         {
+#if !UNCHECKED_BOUNDARIES
             if (row >= Rows) { throw new MatrixLibraryException("Bad index of row specified!"); }
+#endif
 
             T[] result = new T[Cols];
             for (int i = 0; i < Cols; i++)
             {
-#if NULLS_IN_MATRIX
-                if (ReferenceEquals(MatrixInternal[(row * Cols) + i + PaddingFromBegin], null)) { MatrixInternal[(row * Cols) + i + PaddingFromBegin] = new T(); }
-#endif
                 result[i] = MatrixInternal[(row * Cols) + i + PaddingFromBegin];
             }
             return result;
         }
         public T[] GetCol(int col)
         {
+#if !UNCHECKED_BOUNDARIES
             if (col >= Cols) { throw new MatrixLibraryException("Bad index of column specified!"); }
+#endif
 
             T[] result = new T[Rows];
             for (int i = 0; i < Rows; i++)
             {
-#if NULLS_IN_MATRIX
-                if (ReferenceEquals(MatrixInternal[(i * Cols) + col + PaddingFromBegin], null)) { MatrixInternal[(i * Cols) + col + PaddingFromBegin] = new T(); }
-#endif
                 result[i] = MatrixInternal[(i * Cols) + col + PaddingFromBegin];
             }
             return result;
         }
         public void WriteNumber(int i, int j, T number)
         {
+#if !UNCHECKED_BOUNDARIES
             if (i >= Rows || j >= Cols) { throw new MatrixLibraryException("Bad indices specified!"); }
+#endif
 
             MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)number.Copy();
         }
         public void WriteRow(int i, T[] row)
         {
+#if !UNCHECKED_BOUNDARIES
             if (row.Length != Cols) { throw new MatrixLibraryException("Row does not have the same number of cols as matrix!"); }
             if (i >= Rows) { throw new MatrixLibraryException("Bad index of row specified!"); }
+#endif
 
             for (int j = 0; j < row.Length; ++j)
             {
@@ -885,8 +877,10 @@ namespace MatrixLibrary
         }
         public void WriteCol(int j, T[] col)
         {
+#if !UNCHECKED_BOUNDARIES
             if (col.Length != Rows) { throw new MatrixLibraryException("Col does not have the same number of rows as matrix!"); }
             if (j >= Cols) { throw new MatrixLibraryException("Bad index of column specified!"); }
+#endif
 
             for (int i = 0; i < col.Length; ++i)
             {
@@ -895,7 +889,9 @@ namespace MatrixLibrary
         }
         public void SwapElements(int firstRow, int firstCol, int secondRow, int secondCol)
         {
+#if !UNCHECKED_BOUNDARIES
             if (firstRow >= Rows || secondRow >= Rows || firstCol >= Cols || secondCol >= Cols) { throw new MatrixLibraryException("Bad indices specified!"); }
+#endif
 
             T temp = MatrixInternal[(firstRow * Cols) + firstCol + PaddingFromBegin];
             MatrixInternal[(firstRow * Cols) + firstCol + PaddingFromBegin] = MatrixInternal[(secondRow * Cols) + secondCol + PaddingFromBegin];
@@ -927,6 +923,7 @@ namespace MatrixLibrary
         }
 
         public static int PaddingFromBegin = 32; // Taken from this: http://blog.mischel.com/2011/12/29/more-about-cache-contention/
+        
         public static Matrix<T> IdentityMatrix(int dimension) // Jednotková matice
         {
             int[,] mat = new int[dimension, dimension];

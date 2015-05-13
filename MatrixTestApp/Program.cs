@@ -149,7 +149,7 @@ namespace MatrixTestApp
             Matrix<MatrixNumber> b = new Matrix<MatrixNumber>(inputMatrix);
 
             Console.WriteLine("Cramer");
-            resultSingle = Vypocty.Cramer(cram, b);
+            resultSingle = Computations.Cramer(cram, b);
             WriteTwoMatrixes(cram, b, resultSingle, "=");
 
             Console.WriteLine();
@@ -158,7 +158,8 @@ namespace MatrixTestApp
             b = new Matrix<MatrixNumber>(inputMatrix);
 
             Console.WriteLine("Soustava rovnic");
-            resultSingle = Vypocty.SoustavaRovnic(B, b);
+            try { resultSingle = Computations.SolveLinearEquations(B, b); }
+            catch (MatrixLibraryException) { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteTwoMatrixes(B, b, resultSingle, "=");
 
             Console.WriteLine();
@@ -192,7 +193,7 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            MatrixNumber det = Vypocty.Determinant(B);
+            MatrixNumber det = Computations.Determinant(B);
             zeroM = new int[1, 1];
             resultSingle = new Matrix<MatrixNumber>(zeroM);
             resultSingle.WriteNumber(0, 0, det);
@@ -204,7 +205,7 @@ namespace MatrixTestApp
 
             Matrix<MatrixNumber> C = new Matrix<MatrixNumber>(inputMatrix);
 
-            det = Vypocty.Determinant(C);
+            det = Computations.Determinant(C);
             resultSingle = new Matrix<MatrixNumber>(zeroM);
             resultSingle.WriteNumber(0, 0, det);
             WriteMatrix(C, resultSingle, "Determinant");
@@ -256,7 +257,7 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.Inverzni(A);
+            resultSingle = AlteringOperations.Inverse(A);
             WriteMatrix(A, resultSingle, "Inverzní");
 
             Console.WriteLine();
@@ -271,14 +272,14 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            try { resultSingle = Rozklady.CholeskyRozklad(A); }
+            try { resultSingle = Decompositions.CholeskyDecomposition(A); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             finally { WriteMatrix(A, resultSingle, "Choleského rozklad"); }
 
             Console.WriteLine();
 
             Matrix<MatrixNumber> Q, R;
-            resultSingle = Rozklady.QRRozklad(A, out Q, out R);
+            resultSingle = Decompositions.QRDecomposition(A, out Q, out R);
             WriteMatrix(A, resultSingle, "QR-rozklad");
 
             Console.WriteLine();
@@ -286,23 +287,23 @@ namespace MatrixTestApp
             zeroM = new int[2, 2] {{2, 1}, {0, 1}};
             A = new Matrix<MatrixNumber>(zeroM);
 
-            Vl_cisla<MatrixNumber> tmp = Charakteristika.Vlastni_cisla(A, 0);
-            resultSingle = new Matrix<MatrixNumber>(tmp.Pocet(), 1);
+            EigenValues<MatrixNumber> tmp = Characteristics.GetEigenValues(A, 0);
+            resultSingle = new Matrix<MatrixNumber>(tmp.Count(), 1);
             for (int i = 0; i < resultSingle.Rows; i++)
             {
-                resultSingle.WriteNumber(i, 0, tmp.Vrat_cislo(i));
+                resultSingle.WriteNumber(i, 0, tmp.GetEigenValue(i));
             }
             WriteMatrix(A, resultSingle, "Vlastní čísla");
 
             Console.WriteLine();
 
-            resultSingle = Charakteristika.Vlastni_vektory(A, out tmp, 0);
+            resultSingle = Characteristics.GetEigenVectors(A, out tmp, 0);
             WriteMatrix(A, resultSingle, "Vlastní vektory");
 
             Console.WriteLine();
 
             Matrix<MatrixNumber> S;
-            resultSingle = Charakteristika.Diagonalizovat(A, out S, 0);
+            resultSingle = Characteristics.Diagonal(A, out S, 0);
             WriteMatrix(A, resultSingle, "Diagonalizovat");
 
             Console.WriteLine();
@@ -320,7 +321,7 @@ namespace MatrixTestApp
             /********************************* Big matrixes ***********************************/
 
             WriteSeparator(); WriteSeparator("BIG MATRIXES");
-            int rowsAndCols = 200;
+            int rowsAndCols = 30;
             Console.WriteLine("Matrixes will have {0} rows and cols", rowsAndCols);
             Console.WriteLine("Generating matrixes...");
             Random rdm = new Random();
@@ -335,8 +336,8 @@ namespace MatrixTestApp
             {
                 for (int j = 0; j < rowsAndCols; j++)
                 {
-                    A.WriteNumber(i, j, new MatrixNumber(rdm.Next(-1, 1)));
-                    B.WriteNumber(i, j, new MatrixNumber(rdm.Next(-1, 1)));
+                    A.WriteNumber(i, j, new MatrixNumber(rdm.Next()));
+                    B.WriteNumber(i, j, new MatrixNumber(rdm.Next()));
                 }
             }
             WriteSeparator();
@@ -433,7 +434,7 @@ namespace MatrixTestApp
 
 
             /********** Exponentiate **********/
-            /*int exponent = 4;
+            int exponent = 4;
             Console.WriteLine("Exponentiate...");
             stopwatchSingle.Restart();
             resultSingle = ClassicOperations.Exponentiate(A, exponent);
@@ -452,7 +453,7 @@ namespace MatrixTestApp
 
 
             /********** Adjugate **********/
-            /*Console.WriteLine("Adjugate...");
+            Console.WriteLine("Adjugate...");
             stopwatchSingle.Restart();
             resultSingle = AlteringOperations.Adjugate(A);
             stopwatchSingle.Stop();
@@ -470,7 +471,7 @@ namespace MatrixTestApp
             
 
             /********** IsInvertible **********/
-            /*Console.WriteLine("IsInvertible...");
+            Console.WriteLine("IsInvertible...");
             stopwatchSingle.Restart();
             resultSingleBool = Properties.IsInvertible(A);
             stopwatchSingle.Stop();
@@ -488,7 +489,7 @@ namespace MatrixTestApp
 
 
             /********** Rank **********/
-            /*Console.WriteLine("Rank...");
+            Console.WriteLine("Rank...");
             stopwatchSingle.Restart();
             resultSingleInt = Properties.Rank(A);
             stopwatchSingle.Stop();

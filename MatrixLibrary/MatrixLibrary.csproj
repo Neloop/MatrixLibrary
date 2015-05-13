@@ -62,13 +62,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="matice_charakteristika.cs" />
+    <Compile Include="matrix_characteristics.cs" />
     <Compile Include="matrix_operations.cs" />
     <Compile Include="matrix.cs" />
-    <Compile Include="matice_rozklady.cs" />
+    <Compile Include="matrix_decompositions.cs" />
     <Compile Include="matrix_alter.cs" />
     <Compile Include="matrix_properties.cs" />
-    <Compile Include="matice_vypocty.cs" />
+    <Compile Include="matrix_computation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
