@@ -32,7 +32,7 @@ namespace MatrixLibrary
             int cols = matrix.Cols;
             result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
-            Parallel.ForEach(result.GetRowChunks(), (pair) =>
+            Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; i++)
                 {
@@ -85,7 +85,7 @@ namespace MatrixLibrary
 
                 T two = new T();
                 two.AddInt(2);
-                Parallel.ForEach(result.GetRowChunks(), (pair) =>
+                Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++) // Vydělí všechna čísla dvěma
                     {
@@ -124,8 +124,7 @@ namespace MatrixLibrary
                             {
                                 for (int l = j; l < cols; l++)
                                 {
-                                    result.WriteNumber(k, l, result.GetNumber(i, l));
-                                    result.WriteNumber(i, l, result.GetNumber(k, l));
+                                    result.SwapElements(k, l, i, l);
                                 }
 
                                 T divide = result.GetNumber(i, j);
@@ -136,13 +135,14 @@ namespace MatrixLibrary
 
                                 for (int a = i + 1; a < rows; a++)
                                 {
-                                    divide = result.GetNumber(k, j);
+                                    divide = result.GetNumber(a, j);
                                     if (!divide.IsZero())
                                     {
                                         for (int b = j; b < cols; b++)
                                         {
-                                            result.WriteNumber(a, b, (T)(result.GetNumber(a, b) / divide));
-                                            result.WriteNumber(a, b, (T)(result.GetNumber(a, b) - result.GetNumber(i, b)));
+                                            T tmp = (T)(result.GetNumber(a, b) / divide);
+                                            tmp = (T)(tmp - result.GetNumber(i, b));
+                                            result.WriteNumber(a, b, tmp);
                                         }
                                     }
                                 }
@@ -165,8 +165,9 @@ namespace MatrixLibrary
                             {
                                 for (int l = j; l < cols; l++)
                                 {
-                                    result.WriteNumber(k, l, (T)(result.GetNumber(k, l) / divide));
-                                    result.WriteNumber(k, l, (T)(result.GetNumber(k, l) - result.GetNumber(i, l)));
+                                    T tmp = (T)(result.GetNumber(k, l) / divide);
+                                    tmp = (T)(tmp - result.GetNumber(i, l));
+                                    result.WriteNumber(k, l, tmp);
                                 }
                             }
                         }
@@ -200,28 +201,35 @@ namespace MatrixLibrary
                             {
                                 for (int l = j; l < cols; l++)
                                 {
-                                    result.WriteNumber(k, l, result.GetNumber(i, l));
-                                    result.WriteNumber(i, l, result.GetNumber(k, l));
+                                    result.SwapElements(k, l, i, l);
                                 }
 
                                 T divide = result.GetNumber(i, j);
-                                for (int l = j; l < cols; l++)
+                                Parallel.ForEach(result.GetColsChunks(j), (pair) =>
                                 {
-                                    result.WriteNumber(i, l, (T)(result.GetNumber(i, l) / divide));
-                                }
-
-                                for (int a = i + 1; a < rows; a++)
-                                {
-                                    divide = result.GetNumber(k, j);
-                                    if (!divide.IsZero())
+                                    for (int l = pair.Item1; l < pair.Item2; l++)
                                     {
-                                        for (int b = j; b < cols; b++)
+                                        result.WriteNumber(i, l, (T)(result.GetNumber(i, l) / divide));
+                                    }
+                                });
+
+                                Parallel.ForEach(result.GetRowsChunks(i + 1), (pair) =>
+                                {
+                                    for (int a = pair.Item1; a < pair.Item2; a++)
+                                    {
+                                        T tmpDivide = result.GetNumber(a, j);
+                                        if (!tmpDivide.IsZero())
                                         {
-                                            result.WriteNumber(a, b, (T)(result.GetNumber(a, b) / divide));
-                                            result.WriteNumber(a, b, (T)(result.GetNumber(a, b) - result.GetNumber(i, b)));
+                                            for (int b = j; b < cols; b++)
+                                            {
+                                                T tmp = (T)(result.GetNumber(a, b) / tmpDivide);
+                                                tmp = (T)(tmp - result.GetNumber(i, b));
+                                                result.WriteNumber(a, b, tmp);
+                                            }
                                         }
                                     }
-                                }
+                                });
+
                                 break;
                             }
                         }
@@ -229,23 +237,30 @@ namespace MatrixLibrary
                     else // Pokud se narazilo na nenulový prvek (=pivot)
                     {
                         T divide = result.GetNumber(i, j);
-                        for (int k = j; k < cols; k++)
+                        Parallel.ForEach(result.GetColsChunks(j), (pair) =>
                         {
-                            result.WriteNumber(i, k, (T)(result.GetNumber(i, k) / divide));
-                        }
-
-                        for (int k = i + 1; k < rows; k++)
-                        {
-                            divide = result.GetNumber(k, j);
-                            if (!divide.IsZero())
+                            for (int k = pair.Item1; k < pair.Item2; k++)
                             {
-                                for (int l = j; l < cols; l++)
+                                result.WriteNumber(i, k, (T)(result.GetNumber(i, k) / divide));
+                            }
+                        });
+
+                        Parallel.ForEach(result.GetRowsChunks(i + 1), (pair) =>
+                        {
+                            for (int k = pair.Item1; k < pair.Item2; k++)
+                            {
+                                T tmpDivide = result.GetNumber(k, j);
+                                if (!tmpDivide.IsZero())
                                 {
-                                    result.WriteNumber(k, l, (T)(result.GetNumber(k, l) / divide));
-                                    result.WriteNumber(k, l, (T)(result.GetNumber(k, l) - result.GetNumber(i, l)));
+                                    for (int l = j; l < cols; l++)
+                                    {
+                                        T tmp = (T)(result.GetNumber(k, l) / tmpDivide);
+                                        tmp = (T)(tmp - result.GetNumber(i, l));
+                                        result.WriteNumber(k, l, tmp);
+                                    }
                                 }
                             }
-                        }
+                        });
 
                         break;
                     }
@@ -302,6 +317,58 @@ namespace MatrixLibrary
             return result;
         }
 
+        public static Matrix<T> GaussJordan_MultiThreaded<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // K počítání se používá pouze normální Gaussova eliminace, nejdříve na původní matici a pak na "obrácenou"
+        {
+            Matrix<T> result;
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+
+            int halfOfRow;
+            int halfOfCol;
+            if ((rows % 2) == 0) { halfOfRow = rows / 2; }
+            else { halfOfRow = (rows / 2) + 1; }
+            if ((cols % 2) == 0) { halfOfCol = cols / 2; }
+            else { halfOfCol = (cols / 2) + 1; }
+
+            result = AlteringOperations.Gauss_MultiThreaded(matrix); // První Gaussovka
+
+            bool isZeroRow = false;
+            Parallel.ForEach(result.GetHalfRowsChunks(), (pair) =>
+            {
+                for (int i = pair.Item1; i < pair.Item2; i++) // Vymění se prvky v matici a následně se provede "obrácená" Gaussovka
+                {
+                    int zeroRow1 = 0;
+                    int zeroRow2 = 0;
+                    for (int j = 0; j < cols; j++)
+                    {
+                        if ((rows % 2) == 1 && halfOfCol == j && (halfOfRow - 1) == i) { break; }
+
+                        if (result.GetNumber(rows - i - 1, cols - j - 1).IsZero()) { zeroRow1++; }
+                        if (result.GetNumber(i, j).IsZero()) { zeroRow2++; }
+
+                        result.SwapElements(i, j, rows - i - 1, cols - j - 1);
+                    }
+                    if (zeroRow1 == cols || zeroRow2 == cols) { isZeroRow = true; }
+                }
+            });
+            if (isZeroRow == false) { result = AlteringOperations.Gauss_MultiThreaded(result); }
+
+            Parallel.ForEach(result.GetHalfRowsChunks(), (pair) =>
+            {
+                for (int i = pair.Item1; i < pair.Item2; i++) // Vymění se prvky v matici a vrátí výsledek
+                {
+                    for (int j = 0; j < cols; j++)
+                    {
+                        if ((rows % 2) == 1 && halfOfCol == j && (halfOfRow - 1) == i) { break; }
+
+                        result.SwapElements(i, j, rows - i - 1, cols - j - 1);
+                    }
+                }
+            });
+
+            return result;
+        }
+
         public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Pokud matice není regulární, tak vyhazuje vyjimku
         {
             Matrix<T> result;
@@ -318,7 +385,7 @@ namespace MatrixLibrary
                 if ((cols % 2) == 0) { halfOfCol = cols / 2; }
                 else { halfOfCol = (cols / 2) + 1; }
 
-                Matrix<T> modify = new Matrix<T>(rows, cols * 2); // Matice upravit má stejný počet řádků jako matice a 2x větší počet sloupců
+                Matrix<T> modify = Matrix<T>.GetUninitializedMatrix(rows, cols * 2); // Matice upravit má stejný počet řádků jako matice a 2x větší počet sloupců
 
                 for (int i = 0; i < rows; i++) // Zapíše do matice upravit původní matici
                 {
@@ -372,6 +439,88 @@ namespace MatrixLibrary
             return result;
         }
 
+        public static Matrix<T> Inverse_MultiThreaded<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Pokud matice není regulární, tak vyhazuje vyjimku
+        {
+            Matrix<T> result;
+            if (Properties.IsInvertible_MultiThreaded(matrix) == true)
+            {
+                int rows = matrix.Rows;
+                int cols = matrix.Cols;
+                result = Matrix<T>.GetUninitializedMatrix(rows, cols);
+
+                int halfOfRow;
+                int halfOfCol;
+                if ((rows % 2) == 0) { halfOfRow = rows / 2; }
+                else { halfOfRow = (rows / 2) + 1; }
+                if ((cols % 2) == 0) { halfOfCol = cols / 2; }
+                else { halfOfCol = (cols / 2) + 1; }
+
+                Matrix<T> modify = Matrix<T>.GetUninitializedMatrix(rows, cols * 2); // Matice upravit má stejný počet řádků jako matice a 2x větší počet sloupců
+
+                Parallel.ForEach(modify.GetRowsChunks(), (pair) => 
+                {
+                    for (int i = pair.Item1; i < pair.Item2; i++) // Zapíše do matice upravit původní matici
+                    {
+                        for (int j = 0; j < cols; j++)
+                        {
+                            modify.WriteNumber(i, j, matrix.GetNumber(i, j));
+                        }
+                    }
+                });
+                T one = new T();
+                one.AddInt(1);
+                T zero = new T();
+                Parallel.ForEach(modify.GetRowsChunks(), (pair) =>
+                {
+                    for (int i = pair.Item1; i < pair.Item2; i++) // Zapíše do matice upravit jednotkovou matici
+                    {
+                        for (int j = cols; j < (cols * 2); j++)
+                        {
+                            if (i == (j - cols)) { modify.WriteNumber(i, j, one); }
+                            else { modify.WriteNumber(i, j, zero); }
+                        }
+                    }
+                });
+
+                modify = AlteringOperations.Gauss_MultiThreaded(modify); // První Gaussovka
+
+                // Převrácení a druhá Gaussovka:
+
+                Parallel.ForEach(modify.GetHalfRowsChunks(), (pair) =>
+                {
+                    for (int i = pair.Item1; i < pair.Item2; i++) // Převrácení
+                    {
+                        for (int j = 0; j < cols; j++)
+                        {
+                            if ((rows % 2) == 1 && halfOfCol == j && (halfOfRow - 1) == i) { break; }
+                            modify.SwapElements(i, j, rows - i - 1, cols - j - 1);
+
+                            // Převrácení původně jednotkové matice:
+                            modify.SwapElements(i, cols + j, rows - i - 1, (cols * 2) - j - 1);
+                        }
+                    }
+                });
+
+                modify = AlteringOperations.Gauss_MultiThreaded(modify); // Druhá Gaussovka
+
+                Parallel.ForEach(result.GetRowsChunks(), (pair) =>
+                {
+                    for (int i = pair.Item1; i < pair.Item2; i++) // Převrácení a složení výsledné matice
+                    {
+                        for (int j = 0; j < cols; j++)
+                        {
+                            result.WriteNumber(rows - i - 1, cols - j - 1, modify.GetNumber(i, j + cols));
+                        }
+                    }
+                });
+            }
+            else
+            {
+                throw new MatrixLibraryException("Given matrix is not regular");
+            }
+            return result;
+        }
+
         public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             int rows = matrix.Rows;
@@ -417,7 +566,7 @@ namespace MatrixLibrary
             int cols = matrix.Cols;
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
-            Parallel.ForEach(result.GetRowChunks(), (pair) =>
+            Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; i++)
                 {

@@ -45,7 +45,7 @@ namespace MatrixLibrary
                 int cols = matrix.Cols;
 
                 Matrix<T> temporaryM = AlteringOperations.Gauss_MultiThreaded(matrix);
-                Parallel.ForEach(temporaryM.GetRowChunks(), (pair, loopState) => 
+                Parallel.ForEach(temporaryM.GetRowsChunks(), (pair, loopState) => 
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
                     {
@@ -94,7 +94,7 @@ namespace MatrixLibrary
 
             Matrix<T> gauss = AlteringOperations.Gauss_MultiThreaded(matrix);
 
-            Parallel.ForEach(gauss.GetRowChunks(), (pair) =>
+            Parallel.ForEach(gauss.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; i++)
                 {
@@ -146,7 +146,7 @@ namespace MatrixLibrary
                 Matrix<T> transposition = AlteringOperations.Transposition_MultiThreaded(matrix);
                 Matrix<T> multiplied = ClassicOperations.Multiplication_MultiThreaded(transposition, matrix);
 
-                Parallel.ForEach(multiplied.GetRowChunks(), (pair, loopState) =>
+                Parallel.ForEach(multiplied.GetRowsChunks(), (pair, loopState) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
                     {
@@ -236,7 +236,7 @@ namespace MatrixLibrary
                 int rows = matrix.Rows;
                 T[] determinant = new T[rows];
 
-                Parallel.ForEach(matrix.GetRowChunks(), (pair) =>
+                Parallel.ForEach(matrix.GetRowsChunks(), (pair) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
                     {
@@ -256,7 +256,7 @@ namespace MatrixLibrary
                 int positive = 0;
                 bool negative = true;
                 T zero = new T();
-                Parallel.ForEach(matrix.GetRowChunks(), (pair) =>
+                Parallel.ForEach(matrix.GetRowsChunks(), (pair) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
                     {

@@ -162,7 +162,7 @@ namespace MatrixLibrary
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, 1);
             T determinant = Computations.Determinant(matrix);
 
-            Parallel.ForEach(result.GetRowChunks(), (pair) =>
+            Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; i++)
                 {

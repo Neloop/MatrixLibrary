@@ -41,7 +41,7 @@ namespace MatrixLibrary
 
                 result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
-                Parallel.ForEach(result.GetRowChunks(), (pair) => 
+                Parallel.ForEach(result.GetRowsChunks(), (pair) => 
                 {
                     for (int i = pair.Item1; i < pair.Item2; ++i)
                     {
@@ -83,7 +83,7 @@ namespace MatrixLibrary
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
-            Parallel.ForEach(result.GetRowChunks(), (pair) =>
+            Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; ++i)
                 {
@@ -126,7 +126,7 @@ namespace MatrixLibrary
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
-            Parallel.ForEach(result.GetRowChunks(), (pair) =>
+            Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; ++i)
                 {
@@ -178,7 +178,7 @@ namespace MatrixLibrary
                 int cols = matrix1.Cols;
                 result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
-                Parallel.ForEach(result.GetRowChunks(), (pair) =>
+                Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; ++i)
                     {
@@ -238,7 +238,7 @@ namespace MatrixLibrary
             {
                 result = Matrix<T>.GetUninitializedMatrix(rows1, cols2);
 
-                Parallel.ForEach(result.GetRowChunks(), (pair) =>
+                Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; ++i)
                     {
@@ -280,7 +280,7 @@ namespace MatrixLibrary
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
 
-            Parallel.ForEach(result.GetRowChunks(), (pair) =>
+            Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; ++i)
                 {
@@ -511,7 +511,7 @@ namespace MatrixLibrary
                 {
                     Matrix<T> A_11 = Matrix<T>.GetUninitializedMatrix(del, del);
                     Matrix<T> B_11 = Matrix<T>.GetUninitializedMatrix(del, del);
-                    Parallel.ForEach(A_11.GetRowChunks(), (pair) =>
+                    Parallel.ForEach(A_11.GetRowsChunks(), (pair) =>
                     {
                         for (int i = pair.Item1; i < pair.Item2; i++)
                         {
@@ -535,7 +535,7 @@ namespace MatrixLibrary
                 {
                     Matrix<T> A_12 = Matrix<T>.GetUninitializedMatrix(del, del);
                     Matrix<T> B_21 = Matrix<T>.GetUninitializedMatrix(del, del);
-                    Parallel.ForEach(A_12.GetRowChunks(), (pair) =>
+                    Parallel.ForEach(A_12.GetRowsChunks(), (pair) =>
                     {
                         for (int i = pair.Item1; i < pair.Item2; i++)
                         {
@@ -570,7 +570,7 @@ namespace MatrixLibrary
                 Task<Matrix<T>> N_6 = Task<Matrix<T>>.Run(() =>
                 {
                     Matrix<T> B_22 = Matrix<T>.GetUninitializedMatrix(del, del);
-                    Parallel.ForEach(B_22.GetRowChunks(), (pair) =>
+                    Parallel.ForEach(B_22.GetRowsChunks(), (pair) =>
                     {
                         for (int i = pair.Item1; i < pair.Item2; i++)
                         {
@@ -590,7 +590,7 @@ namespace MatrixLibrary
                 Task<Matrix<T>> N_7 = Task<Matrix<T>>.Run(() =>
                 {
                     Matrix<T> A_22 = Matrix<T>.GetUninitializedMatrix(del, del);
-                    Parallel.ForEach(A_22.GetRowChunks(), (pair) =>
+                    Parallel.ForEach(A_22.GetRowsChunks(), (pair) =>
                     {
                         for (int i = pair.Item1; i < pair.Item2; i++)
                         {
@@ -751,7 +751,7 @@ namespace MatrixLibrary
                 }
                 else
                 {
-                    Parallel.ForEach(exponentiate.GetRowChunks(), (pair) =>
+                    Parallel.ForEach(exponentiate.GetRowsChunks(), (pair) =>
                     {
                         for (int i = pair.Item1; i < pair.Item2; i++)
                         {

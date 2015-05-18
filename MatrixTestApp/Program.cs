@@ -321,7 +321,7 @@ namespace MatrixTestApp
             /********************************* Big matrixes ***********************************/
 
             WriteSeparator(); WriteSeparator("BIG MATRIXES");
-            int rowsAndCols = 30;
+            int rowsAndCols = 300;
             Console.WriteLine("Matrixes will have {0} rows and cols", rowsAndCols);
             Console.WriteLine("Generating matrixes...");
             Random rdm = new Random();
@@ -379,7 +379,7 @@ namespace MatrixTestApp
 
 
             /********** Multiplication **********/
-            Console.WriteLine("Multiplication...");
+            /*Console.WriteLine("Multiplication...");
             stopwatchSingle.Restart();
             resultSingle = ClassicOperations.Multiplication(A, B);
             stopwatchSingle.Stop();
@@ -397,7 +397,7 @@ namespace MatrixTestApp
 
 
             /********** StrassenWinograd **********/
-            Console.WriteLine("StrassenWinograd...");
+            /*Console.WriteLine("StrassenWinograd...");
             stopwatchSingle.Restart();
             resultSingle = ClassicOperations.StrassenWinograd(A, B);
             stopwatchSingle.Stop();
@@ -434,7 +434,7 @@ namespace MatrixTestApp
 
 
             /********** Exponentiate **********/
-            int exponent = 4;
+            /*int exponent = 4;
             Console.WriteLine("Exponentiate...");
             stopwatchSingle.Restart();
             resultSingle = ClassicOperations.Exponentiate(A, exponent);
@@ -453,7 +453,7 @@ namespace MatrixTestApp
 
 
             /********** Adjugate **********/
-            Console.WriteLine("Adjugate...");
+            /*Console.WriteLine("Adjugate...");
             stopwatchSingle.Restart();
             resultSingle = AlteringOperations.Adjugate(A);
             stopwatchSingle.Stop();
@@ -518,6 +518,42 @@ namespace MatrixTestApp
             stopwatchMulti.Stop();
 
             if (resultSingleBool == resultMultiBool) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+            /********** Inverse **********/
+            /*Console.WriteLine("Inverse...");
+            stopwatchSingle.Restart();
+            resultSingle = AlteringOperations.Inverse(A);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded inverse...");
+            stopwatchMulti.Restart();
+            resultMulti = AlteringOperations.Inverse_MultiThreaded(A);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+            /********** Gauss **********/
+            Console.WriteLine("Gauss...");
+            stopwatchSingle.Restart();
+            resultSingle = AlteringOperations.Gauss(A);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded gauss...");
+            stopwatchMulti.Restart();
+            resultMulti = AlteringOperations.Gauss_MultiThreaded(A);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
             else { Console.WriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
