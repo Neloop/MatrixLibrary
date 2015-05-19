@@ -5,6 +5,118 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
+    public static class ConcurrentDecompositions
+    {
+        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
+        {
+            /*
+             * 
+             * Choleského rozklad: A = L * L^(T)
+             *  - matice A musí být Positivně-definitní a typu n*n
+             * 
+             */
+
+            Matrix<T> result;
+            Matrix<T> symmetric = ConcurrentAlteringOperations.Symmetric(matrix);
+            if (ConcurrentProperties.Definity(symmetric) == DefinityClassification.PositiveDefinite)
+            {
+                int dim = matrix.Rows;
+                result = new Matrix<T>(dim, dim);
+
+                for (int i = 0; i < dim; i++)
+                {
+                    T multiply = new T();
+                    for (int j = 0; j < i; j++)
+                    {
+                        multiply = (T)(multiply + result.GetNumber(i, j).__Exponentiate(2));
+                    }
+                    T write = (T)(symmetric.GetNumber(i, i) - multiply);
+                    write = (T)write.__SquareRoot();
+                    result.WriteNumber(i, i, write);
+
+                    Parallel.ForEach(result.GetRowsChunks(i + 1), (pair) =>
+                    {
+                        for (int j = pair.Item1; j < pair.Item2; j++)
+                        {
+                            T tmpMultiply = new T();
+                            for (int k = 0; k < i; k++)
+                            {
+                                tmpMultiply = (T)(tmpMultiply + result.GetNumber(i, k) * result.GetNumber(j, k));
+                            }
+                            T tmpWrite = (T)(symmetric.GetNumber(j, i) - tmpMultiply);
+                            tmpWrite = (T)(tmpWrite / result.GetNumber(i, i));
+                            result.WriteNumber(j, i, tmpWrite);
+                        }
+                    });
+                }
+            }
+            else
+            {
+                throw new MatrixLibraryException("Given matrix is not positive-definite");
+            }
+            return result;
+        }
+
+        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new() // Vrácena je matice R*Q
+        {
+            Matrix<T> result;
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+            Matrix<T> tmpQ = new Matrix<T>(rows, cols);
+            Matrix<T> tmpR = Matrix<T>.GetUninitializedMatrix(rows, cols);
+
+            for (int i = 0; i < rows; i++) // řádky
+            {
+                for (int j = 0; j < cols; j++) // sloupce
+                {
+                    T sum = new T();
+                    object sumLock = new object();
+                    Parallel.ForEach(tmpR.GetRowsChunks(0, i), (pair) =>
+                    {
+                        for (int k = pair.Item1; k < pair.Item2; k++) // suma...
+                        {
+                            T dotProduct = new T();
+                            for (int l = 0; l < cols; l++) // skal. součin
+                            {
+                                dotProduct = (T)((matrix.GetNumber(i, l) * tmpQ.GetNumber(k, l)) + dotProduct);
+                            }
+
+                            tmpR.WriteNumber(k, i, dotProduct);
+
+                            T times = (T)(dotProduct * tmpQ.GetNumber(k, j));
+                            lock (sumLock) { sum = (T)(sum + times); }
+                        }
+                    });
+
+                    T write = (T)(matrix.GetNumber(i, j) - sum);
+                    tmpQ.WriteNumber(i, j, write);
+                }
+
+                T norm = new T();
+                for (int j = 0; j < cols; j++) // vypočítá normu
+                {
+                    norm = (T)(norm + tmpQ.GetNumber(i, j).__Exponentiate(2));
+                }
+                norm = (T)norm.__SquareRoot();
+                tmpR.WriteNumber(i, i, norm);
+
+                Parallel.ForEach(tmpQ.GetColsChunks(), (pair) =>
+                {
+                    for (int j = pair.Item1; j < pair.Item2; j++) // vydělí všechny složky vektoru
+                    {
+                        tmpQ.WriteNumber(i, j, (T)(tmpQ.GetNumber(i, j) / norm));
+                    }
+                });
+            }
+
+            result = ConcurrentClassicOperations.Multiplication(tmpR, tmpQ);
+            Q = tmpQ;
+            R = tmpR;
+
+            return result;
+        }
+    }
+
     public static class Decompositions
     {
         public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
@@ -18,7 +130,7 @@ namespace MatrixLibrary
 
             Matrix<T> result;
             Matrix<T> symmetric = AlteringOperations.Symmetric(matrix);
-            if (Properties.Definity(symmetric) == Properties.DefinityClassification.PositiveDefinite)
+            if (Properties.Definity(symmetric) == DefinityClassification.PositiveDefinite)
             {
                 int dim = matrix.Rows;
                 result = new Matrix<T>(dim, dim);
@@ -36,10 +148,10 @@ namespace MatrixLibrary
 
                     for (int j = i + 1; j < dim; j++)
                     {
+                        multiply = new T();
                         for (int k = 0; k < i; k++)
                         {
-                            if (k != 0) { multiply = (T)(multiply + result.GetNumber(i, k) * result.GetNumber(j, k)); }
-                            else { multiply = (T)(result.GetNumber(i, k) * result.GetNumber(j, k)); }
+                            multiply = (T)(multiply + result.GetNumber(i, k) * result.GetNumber(j, k));
                         }
                         write = (T)(symmetric.GetNumber(j, i) - multiply);
                         write = (T)(write / result.GetNumber(i, i));
@@ -72,22 +184,16 @@ namespace MatrixLibrary
                         T dotProduct = new T();
                         for (int l = 0; l < cols; l++) // skal. součin
                         {
-                            T x = (T)matrix.GetNumber(i, l).Copy();
-                            T z = (T)Q.GetNumber(k, l).Copy();
-
-                            dotProduct = (T)((x * z) + dotProduct);
+                            dotProduct = (T)((matrix.GetNumber(i, l) * Q.GetNumber(k, l)) + dotProduct);
                         }
 
                         R.WriteNumber(k, i, dotProduct);
 
                         T times = (T)(dotProduct * Q.GetNumber(k, j));
-
                         sum = (T)(sum + times);
                     }
 
-                    T write = (T)matrix.GetNumber(i, j).Copy();
-                    write = (T)(write - sum);
-
+                    T write = (T)(matrix.GetNumber(i, j) - sum);
                     Q.WriteNumber(i, j, write);
                 }
 

@@ -617,7 +617,7 @@ namespace MatrixLibrary
                 MatrixNumber tmp = (MatrixNumber)second;
                 if (Numerator != tmp.Numerator) { return false; }
                 if (Denominator != tmp.Denominator) { return false; }
-                if (RealPart != tmp.RealPart) { return false; }
+                if (RealPart < (tmp.RealPart - Accuracy) || RealPart > (tmp.RealPart + Accuracy)) { return false; }
                 return true;
             }
             else
@@ -625,7 +625,7 @@ namespace MatrixLibrary
                 double first_d, second_d;
                 first_d = ToDouble();
                 second_d = second.ToDouble();
-                if (first_d == second_d) { return true; }
+                if (first_d >= (second_d - Accuracy) && first_d <= (second_d + Accuracy)) { return true; }
                 else { return false; }
             }
         }
@@ -933,6 +933,26 @@ namespace MatrixLibrary
                 }
             }
         }
+        public IEnumerable<Tuple<int, int>> GetRowsChunks(int startPos, int length)
+        {
+#if !UNCHECKED_BOUNDARIES
+            if ((startPos + length) > Rows || startPos >= Rows) { throw new MatrixLibraryException("Bad indices specified!"); }
+#endif
+            int chunkCount = 2 * Environment.ProcessorCount;
+            int chunkLength = length / chunkCount;
+
+            if (chunkCount >= length) { yield return new Tuple<int, int>(startPos, startPos + length); }
+            else
+            {
+                for (int i = startPos; i < (startPos + length); i += chunkLength)
+                {
+                    int end = i + chunkLength;
+                    if (end > (startPos + length)) { end = startPos + length; }
+
+                    yield return new Tuple<int, int>(i, end);
+                }
+            }
+        }
         public IEnumerable<Tuple<int, int>> GetHalfRowsChunks()
         {
             int halfOfRows;
@@ -1016,7 +1036,7 @@ namespace MatrixLibrary
             return new Matrix<T>(rows, cols, false);
         }
 
-        public static int PaddingFromBegin = 32; // Taken from this: http://blog.mischel.com/2011/12/29/more-about-cache-contention/
+        public static int PaddingFromBegin = 0; // Taken from this: http://blog.mischel.com/2011/12/29/more-about-cache-contention/
         
         public static Matrix<T> IdentityMatrix(int dimension) // Jednotková matice
         {
@@ -1095,7 +1115,11 @@ namespace MatrixLibrary
                 {
                     for (int j = 0; j < first.Cols; j++)
                     {
-                        if (first.GetNumber(i, j) != second.GetNumber(i, j)) { result = false; }
+                        if (first.GetNumber(i, j) != second.GetNumber(i, j))
+                        {
+                            //Console.WriteLine("Different in: {0}; {1}", first.GetNumber(i, j), second.GetNumber(i, j));
+                            result = false;
+                        }
                     }
                 }
             }
