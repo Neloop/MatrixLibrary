@@ -7,7 +7,132 @@ namespace MatrixLibrary
 {
     public static class ConcurrentComputations
     {
-        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new() // Vrací vlastně vektor n*1; vstupem musí být regulární matice
+        /// <summary>
+        /// Pokud matice není regulární je vracena 0
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static T Determinant<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        {
+            T multiplyResult = new T();
+            multiplyResult.AddInt(1);
+            object multiplyResultLock = new object();
+
+            Matrix<T> modified = new Matrix<T>(matrix);
+
+            for (int i = 0; i < modified.Rows; ++i)
+            {
+                for (int j = i; j < modified.Cols; ++j)
+                {
+                    if (modified.GetNumber(i, j).IsZero()) // na miste kde mel byt pivot je nula, zkusi se najit nenulove cislo ve stejnem sloupci
+                    {
+                        // pokud je prvek nula, tak se koukne pod něj a případně prohodí řádek a vydělí řádky pod ním (potom se breakne), 
+                        // pokud i pod ním jsou nuly, pak se breakne (nemusí prostě se nechá doběhnout) cyklus a jde na další sloupec
+                        bool end = false;
+                        for (int k = i + 1; k < modified.Rows; k++)
+                        {
+                            if (!modified.GetNumber(k, j).IsZero())
+                            {
+                                for (int l = j; l < modified.Cols; l++) // cyklus ktery vymeni prvky na dvou radcich
+                                {
+                                    modified.SwapElements(k, l, i, l);
+                                }
+                                multiplyResult = (T)(-multiplyResult);
+
+                                T divide = modified.GetNumber(i, j); // cislo kterym se bude delit cely radek
+                                multiplyResult = (T)(divide * multiplyResult);
+                                Parallel.ForEach(modified.GetColsChunks(j), (pair) =>
+                                {
+                                    for (int l = pair.Item1; l < pair.Item2; l++) // radek ktery byl posunut nahoru bude vydelen tak aby pivot byl 1
+                                    {
+                                        modified.WriteNumber(i, l, (T)(modified.GetNumber(i, l) / divide));
+                                    }
+                                });
+
+                                Parallel.ForEach(modified.GetRowsChunks(i + 1), (pair) =>
+                                {
+                                    for (int a = pair.Item1; a < pair.Item2; a++) // vynuluje sloupce pod aktualnim sloupcem j
+                                    {
+                                        T tmpDivide = modified.GetNumber(a, j);
+                                        if (!tmpDivide.IsZero())
+                                        {
+                                            lock (multiplyResultLock) { multiplyResult = (T)(tmpDivide * multiplyResult); }
+
+                                            for (int b = j; b < modified.Cols; b++)
+                                            {
+                                                T tmp = (T)(modified.GetNumber(a, b) / tmpDivide);
+                                                tmp = (T)(tmp - modified.GetNumber(i, b));
+                                                modified.WriteNumber(a, b, tmp);
+                                            }
+                                        }
+                                    }
+                                });
+                                end = true;
+                                break;
+                            }
+
+                            if (k == (modified.Rows - 1)) { return new T(); }
+                        }
+
+                        if (end == true) { break; }
+                    }
+                    else // na miste pivotu je nenulove cislo, tudiz se zmeni na jednicku a vynuluji se sloupce pod nim
+                    {
+                        T divide = modified.GetNumber(i, j);
+                        multiplyResult = (T)(divide * multiplyResult);
+                        Parallel.ForEach(modified.GetColsChunks(j), (pair) =>
+                        {
+                            for (int k = pair.Item1; k < pair.Item2; k++) // vydeli aktualni radek cislem na zacatku tak, aby byl pivot 1
+                            {
+                                modified.WriteNumber(i, k, (T)(modified.GetNumber(i, k) / divide));
+                            }
+                        });
+
+                        Parallel.ForEach(modified.GetRowsChunks(i + 1), (pair) =>
+                        {
+                            for (int k = pair.Item1; k < pair.Item2; k++) // tento cyklus vynuluje sloupce pod sloupcem j
+                            {
+                                T tmpDivide = modified.GetNumber(k, j);
+                                if (!tmpDivide.IsZero())
+                                {
+                                    multiplyResult = (T)(tmpDivide * multiplyResult);
+
+                                    for (int l = j; l < modified.Cols; l++)
+                                    {
+                                        T tmp = (T)(modified.GetNumber(k, l) / tmpDivide);
+                                        tmp = (T)(tmp - modified.GetNumber(i, l));
+                                        modified.WriteNumber(k, l, tmp);
+                                    }
+                                }
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+
+
+            T result = new T();
+            result.AddInt(1);
+            /*for (int i = 0; i < modified.Rows; i++) // Vynásobí prvky na diagonále (meli by byt vsechno jednicky, takze je tato operace vicemene zbytecna)
+            {
+                result = (T)(modified.GetNumber(i, i) * result);
+            }*/
+
+            result = (T)(multiplyResult * result);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Vrací vlastně vektor n*1; vstupem musí být regulární matice
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
         {
             /* sice pocita determinanty paralelne, ale kvuli tomu potrebuje mit pro kazdou iteraci docasne vytvorenou stejne velkou matici jako je vstupni,
              * diky tomu je to velmi pametove narocne 
@@ -20,7 +145,7 @@ namespace MatrixLibrary
             if (b.Rows != matrix.Rows) { throw new MatrixLibraryException("Given matrix and vector b do not have same number of rows!"); }
 
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, 1);
-            T determinant = Computations.Determinant(matrix);
+            T determinant = ConcurrentComputations.Determinant(matrix);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
@@ -53,7 +178,14 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new() // Vrací sloupcové vektory: první je partikulární část, další jsou obecné části (jeden sloupec = jeden parametr)
+        /// <summary>
+        /// Vrací sloupcové vektory: první je partikulární část, další jsou obecné části (jeden sloupec = jeden parametr)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
         {
             /*
              * 
@@ -216,108 +348,119 @@ namespace MatrixLibrary
 
     public static class Computations
     {
-        public static T Determinant<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Pokud matice není regulární je vracena 0
+        /// <summary>
+        /// Pokud matice není regulární je vracena 0
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static T Determinant<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             T multiplyResult = new T();
             multiplyResult.AddInt(1);
 
-            int rows = matrix.Rows;
-            int cols = matrix.Cols;
             Matrix<T> modified = new Matrix<T>(matrix);
 
-            int add = 0;
-
-            for (int i = 0; i < rows; i++) // První cyklus projde všechny řádky a od každého spustí další cyklus na vynulování sloupce pod pivotem
+            for (int i = 0; i < modified.Rows; ++i)
             {
-                bool pivot = true;
-                for (int j = i + add; j < rows; j++)
+                for (int j = i; j < modified.Cols; ++j)
                 {
-                    if (pivot == true) // Pivot na každém řádku se změní na jedničku
+                    if(modified.GetNumber(i, j).IsZero()) // na miste kde mel byt pivot je nula, zkusi se najit nenulove cislo ve stejnem sloupci
                     {
-                        pivot = false;
-                        T divide = (T)modified.GetNumber(i, j).Copy();
-
-                        if (modified.GetNumber(i, j).IsZero())
+                        // pokud je prvek nula, tak se koukne pod něj a případně prohodí řádek a vydělí řádky pod ním (potom se breakne), 
+                        // pokud i pod ním jsou nuly, pak se breakne (nemusí prostě se nechá doběhnout) cyklus a jde na další sloupec
+                        bool end = false;
+                        for (int k = i + 1; k < modified.Rows; k++)
                         {
-                            bool endIt = false;
-                            for (int l = j; l < cols; l++)
+                            if (!modified.GetNumber(k, j).IsZero())
                             {
-                                for (int k = i + 1; k < rows; k++)
+                                for (int l = j; l < modified.Cols; l++) // cyklus ktery vymeni prvky na dvou radcich
                                 {
-                                    if (!modified.GetNumber(k, l).IsZero() && modified.GetNumber(i, l).IsZero()) // Vymění dva řádky, aby ten s méně nenulovými sloupci byl na vrchu
+                                    modified.SwapElements(k, l, i, l);
+                                }
+                                multiplyResult = (T)(-multiplyResult);
+
+                                T divide = modified.GetNumber(i, j); // cislo kterym se bude delit cely radek
+                                multiplyResult = (T)(divide * multiplyResult);
+                                for (int l = j; l < modified.Cols; l++) // radek ktery byl posunut nahoru bude vydelen tak aby pivot byl 1
+                                {
+                                    modified.WriteNumber(i, l, (T)(modified.GetNumber(i, l) / divide));
+                                }
+
+                                for (int a = i + 1; a < modified.Rows; a++) // vynuluje sloupce pod aktualnim sloupcem j
+                                {
+                                    divide = modified.GetNumber(a, j);
+                                    if (!divide.IsZero())
                                     {
-                                        for (int s = l; s < cols; s++)
+                                        multiplyResult = (T)(divide * multiplyResult);
+
+                                        for (int b = j; b < modified.Cols; b++)
                                         {
-                                            modified.SwapElements(k, s, i, s);
+                                            T tmp = (T)(modified.GetNumber(a, b) / divide);
+                                            tmp = (T)(tmp - modified.GetNumber(i, b));
+                                            modified.WriteNumber(a, b, tmp);
                                         }
-
-                                        multiplyResult = (T)(-multiplyResult);
-
-                                        add = add + (l - j);
-                                        j = j + add;
-                                        endIt = true;
-                                        break;
                                     }
                                 }
-                                if (endIt == true) // Pokud se povedlo vyměnit dva řádky
-                                {
-                                    divide = (T)modified.GetNumber(i, j).Copy();
-                                    multiplyResult = (T)(divide * multiplyResult);
-                                    break;
-                                }
-                                if (modified.GetNumber(i, l).IsZero()) // Pouze v případě, že byl celý sloupec nulový, tak se přičte 1 ke zpracovávaným indexům sloupců
-                                {
-                                    add++;
-                                    j = j + add;
-                                    if (add >= modified.Cols) { return new T(); }
-                                }
+                                end = true;
+                                break;
                             }
+
+                            if (k == (modified.Rows - 1)) { return new T(); }
                         }
 
-                        multiplyResult = (T)(divide * multiplyResult); // Číslo, kterým se bude determinant ve výsledku násobit
-
-                        for (int k = i + add; k < cols; k++)
+                        if (end == true) { break; }
+                    }
+                    else // na miste pivotu je nenulove cislo, tudiz se zmeni na jednicku a vynuluji se sloupce pod nim
+                    {
+                        T divide = modified.GetNumber(i, j);
+                        multiplyResult = (T)(divide * multiplyResult);
+                        for (int k = j; k < modified.Cols; k++) // vydeli aktualni radek cislem na zacatku tak, aby byl pivot 1
                         {
                             modified.WriteNumber(i, k, (T)(modified.GetNumber(i, k) / divide));
                         }
-                    }
-                    else
-                    {
-                        T divide = (T)modified.GetNumber(j, i + add).Copy();
 
-                        if (divide.IsZero()) // pokud je už prvek vynulován, pokračuje se na dalším řádku
+                        for (int k = i + 1; k < modified.Rows; k++) // tento cyklus vynuluje sloupce pod sloupcem j
                         {
-                            continue;
-                        }
+                            divide = modified.GetNumber(k, j);
+                            if (!divide.IsZero())
+                            {
+                                multiplyResult = (T)(divide * multiplyResult);
 
-                        multiplyResult = (T)(divide * multiplyResult);
-
-                        for (int k = i + add; k < cols; k++)
-                        {
-                            modified.WriteNumber(j, k, (T)(modified.GetNumber(j, k) / divide));
+                                for (int l = j; l < modified.Cols; l++)
+                                {
+                                    T tmp = (T)(modified.GetNumber(k, l) / divide);
+                                    tmp = (T)(tmp - modified.GetNumber(i, l));
+                                    modified.WriteNumber(k, l, tmp);
+                                }
+                            }
                         }
-                        for (int l = i + add; l < cols; l++)
-                        {
-                            T tmp = (T)(modified.GetNumber(j, l) - modified.GetNumber(i, l));
-                            modified.WriteNumber(j, l, tmp);
-                        }
+                        break;
                     }
                 }
             }
 
+
             T result = new T();
             result.AddInt(1);
-            for (int i = 0; i < rows; i++) // Vynásobí prvky na diagonále
+            /*for (int i = 0; i < modified.Rows; i++) // Vynásobí prvky na diagonále (meli by byt vsechno jednicky, takze je tato operace vicemene zbytecna)
             {
                 result = (T)(modified.GetNumber(i, i) * result);
-            }
+            }*/
 
             result = (T)(multiplyResult * result);
 
             return result;
         }
 
-        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new() // Vrací vlastně vektor n*1; vstupem musí být regulární matice
+        /// <summary>
+        /// Vrací vlastně vektor n*1; vstupem musí být regulární matice
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
         {
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -356,7 +499,14 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new() // Vrací sloupcové vektory: první je partikulární část, další jsou obecné části (jeden sloupec = jeden parametr)
+        /// <summary>
+        /// Vrací sloupcové vektory: první je partikulární část, další jsou obecné části (jeden sloupec = jeden parametr)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
         {
             /*
              * 

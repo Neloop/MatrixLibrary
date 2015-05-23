@@ -334,11 +334,13 @@ namespace MatrixTestApp
 
             ExitOrContinue();
             /**********************************************************************************/
+            /**********************************************************************************/
             /********************************* Big matrixes ***********************************/
+            /**********************************************************************************/
             /**********************************************************************************/
 
             WriteSeparator(); WriteSeparator("BIG MATRIXES");
-            int rowsAndCols = 50;
+            int rowsAndCols = 3000;
             Console.WriteLine("Matrixes will have {0} rows and cols", rowsAndCols);
             Console.WriteLine("Generating matrixes...");
             Random rdm = new Random();
@@ -348,6 +350,8 @@ namespace MatrixTestApp
             bool resultMultiBool;
             int resultSingleInt;
             int resultMultiInt;
+            MatrixNumber resultSingleMatrixNumber;
+            MatrixNumber resultMultiMatrixNumber;
 
             for (int i = 0; i < rowsAndCols; i++)
             {
@@ -395,42 +399,6 @@ namespace MatrixTestApp
             WriteSeparator();
 
 
-            /********** Multiplication **********/
-            Console.WriteLine("Multiplication...");
-            stopwatchSingle.Restart();
-            resultSingle = ClassicOperations.Multiplication(A, B);
-            stopwatchSingle.Stop();
-
-            Console.WriteLine("Multi-threaded multiplication...");
-            stopwatchMulti.Restart();
-            resultMulti = ConcurrentClassicOperations.Multiplication(A, B);
-            stopwatchMulti.Stop();
-
-            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
-            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
-
-            WriteSeparator();
-
-
-            /********** StrassenWinograd **********/
-            Console.WriteLine("StrassenWinograd...");
-            stopwatchSingle.Restart();
-            resultSingle = ClassicOperations.StrassenWinograd(A, B);
-            stopwatchSingle.Stop();
-
-            Console.WriteLine("Multi-threaded StrassenWinograd...");
-            stopwatchMulti.Restart();
-            resultMulti = ConcurrentClassicOperations.StrassenWinograd(A, B);
-            stopwatchMulti.Stop();
-
-            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
-            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
-
-            WriteSeparator();
-
-
             /********** MultiplyWithNumber **********/
             MatrixNumber multiplyNumber = new MatrixNumber(100);
             Console.WriteLine("MultiplyWithNumber...");
@@ -441,6 +409,51 @@ namespace MatrixTestApp
             Console.WriteLine("Multi-threaded multiply with number...");
             stopwatchMulti.Restart();
             resultMulti = ConcurrentClassicOperations.MultiplyWithNumber(A, multiplyNumber);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+
+
+            /**********************************************************************************/
+            /***************************** New smaller matrixes *******************************/
+            /**********************************************************************************/
+            ExitOrContinue();
+            WriteSeparator();
+            rowsAndCols = 300;
+            Console.WriteLine("Matrixes will have {0} rows and cols", rowsAndCols);
+            Console.WriteLine("Generating matrixes...");
+            A = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+            B = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+
+            for (int i = 0; i < rowsAndCols; i++)
+            {
+                for (int j = 0; j < rowsAndCols; j++)
+                {
+                    A.WriteNumber(i, j, new MatrixNumber(rdm.Next(-10, 10)));
+                    B.WriteNumber(i, j, new MatrixNumber(rdm.Next(-10, 10)));
+                }
+            }
+            WriteSeparator();
+
+
+
+
+
+            /********** Multiplication **********/
+            Console.WriteLine("Multiplication...");
+            stopwatchSingle.Restart();
+            resultSingle = ClassicOperations.Multiplication(A, B);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded multiplication...");
+            stopwatchMulti.Restart();
+            resultMulti = ConcurrentClassicOperations.Multiplication(A, B);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
@@ -468,24 +481,6 @@ namespace MatrixTestApp
 
             WriteSeparator();
 
-
-            /********** Adjugate **********/
-            Console.WriteLine("Adjugate...");
-            stopwatchSingle.Restart();
-            resultSingle = AlteringOperations.Adjugate(A);
-            stopwatchSingle.Stop();
-
-            Console.WriteLine("Multi-threaded adjugate...");
-            stopwatchMulti.Restart();
-            resultMulti = ConcurrentAlteringOperations.Adjugate(A);
-            stopwatchMulti.Stop();
-
-            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
-            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
-
-            WriteSeparator();
-            
 
             /********** IsInvertible **********/
             Console.WriteLine("IsInvertible...");
@@ -541,15 +536,15 @@ namespace MatrixTestApp
             WriteSeparator();
 
 
-            /********** Inverse **********/
-            Console.WriteLine("Inverse...");
+            /********** Determinant **********/
+            Console.WriteLine("Determinant...");
             stopwatchSingle.Restart();
-            resultSingle = AlteringOperations.Inverse(A);
+            resultSingleMatrixNumber = Computations.Determinant(A);
             stopwatchSingle.Stop();
 
-            Console.WriteLine("Multi-threaded inverse...");
+            Console.WriteLine("Multi-threaded determinant...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentAlteringOperations.Inverse(A);
+            resultMultiMatrixNumber = ConcurrentComputations.Determinant(A);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
@@ -595,6 +590,94 @@ namespace MatrixTestApp
             WriteSeparator();
 
 
+
+
+
+            /**********************************************************************************/
+            /***************************** New smaller matrixes *******************************/
+            /**********************************************************************************/
+            ExitOrContinue();
+            WriteSeparator();
+            rowsAndCols = 100;
+            Console.WriteLine("Matrixes will have {0} rows and cols", rowsAndCols);
+            Console.WriteLine("Generating matrixes...");
+            A = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+            B = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+
+            for (int i = 0; i < rowsAndCols; i++)
+            {
+                for (int j = 0; j < rowsAndCols; j++)
+                {
+                    A.WriteNumber(i, j, new MatrixNumber(rdm.Next(-10, 10)));
+                    B.WriteNumber(i, j, new MatrixNumber(rdm.Next(-10, 10)));
+                }
+            }
+            WriteSeparator();
+
+
+
+
+
+            /********** Inverse **********/
+            Console.WriteLine("Inverse...");
+            bool inverseExceptionCaught = false;
+            stopwatchSingle.Restart();
+            try { resultSingle = AlteringOperations.Inverse(A); }
+            catch (MatrixLibraryException e) { Console.WriteLine(e.Message); inverseExceptionCaught = true; }
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded inverse...");
+            stopwatchMulti.Restart();
+            try { resultMulti = ConcurrentAlteringOperations.Inverse(A); }
+            catch (MatrixLibraryException e) { Console.WriteLine(e.Message); inverseExceptionCaught = true; }
+            stopwatchMulti.Stop();
+
+            if (inverseExceptionCaught == false)
+            {
+                if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+                else { Console.WriteLine("Results are different!"); }
+            }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+            /********** StrassenWinograd **********/
+            Console.WriteLine("StrassenWinograd...");
+            stopwatchSingle.Restart();
+            resultSingle = ClassicOperations.StrassenWinograd(A, B);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded StrassenWinograd...");
+            stopwatchMulti.Restart();
+            resultMulti = ConcurrentClassicOperations.StrassenWinograd(A, B);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+            /********** Orthogonal **********/
+            Console.WriteLine("Orthogonal...");
+            stopwatchSingle.Restart();
+            resultSingle = AlteringOperations.Orthogonal(A);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded Orthogonal...");
+            stopwatchMulti.Restart();
+            resultMulti = ConcurrentAlteringOperations.Orthogonal(A);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
             /********** CholeskyDecomposition **********/
             Console.WriteLine("CholeskyDecomposition...");
             bool choleskyExceptionCaught = false;
@@ -628,6 +711,50 @@ namespace MatrixTestApp
             Console.WriteLine("Multi-threaded QRDecomposition...");
             stopwatchMulti.Restart();
             resultMulti = ConcurrentDecompositions.QRDecomposition(A, out Q, out R);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+
+
+            /**********************************************************************************/
+            /***************************** New smaller matrixes *******************************/
+            /**********************************************************************************/
+            ExitOrContinue();
+            WriteSeparator();
+            rowsAndCols = 40;
+            Console.WriteLine("Matrixes will have {0} rows and cols", rowsAndCols);
+            Console.WriteLine("Generating matrixes...");
+            A = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+            B = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+
+            for (int i = 0; i < rowsAndCols; i++)
+            {
+                for (int j = 0; j < rowsAndCols; j++)
+                {
+                    A.WriteNumber(i, j, new MatrixNumber(rdm.Next(-10, 10)));
+                    B.WriteNumber(i, j, new MatrixNumber(rdm.Next(-10, 10)));
+                }
+            }
+            WriteSeparator();
+
+
+
+
+            /********** Adjugate **********/
+            Console.WriteLine("Adjugate...");
+            stopwatchSingle.Restart();
+            resultSingle = AlteringOperations.Adjugate(A);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded adjugate...");
+            stopwatchMulti.Restart();
+            resultMulti = ConcurrentAlteringOperations.Adjugate(A);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }

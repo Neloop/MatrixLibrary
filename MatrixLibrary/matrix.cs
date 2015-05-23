@@ -1117,7 +1117,7 @@ namespace MatrixLibrary
                     {
                         if (first.GetNumber(i, j) != second.GetNumber(i, j))
                         {
-                            //Console.WriteLine("Different in: {0}; {1}", first.GetNumber(i, j), second.GetNumber(i, j));
+                            Console.WriteLine("!!! Different Numbers: {0}; {1}", first.GetNumber(i, j), second.GetNumber(i, j));
                             result = false;
                         }
                     }

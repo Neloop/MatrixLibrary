@@ -7,6 +7,12 @@ namespace MatrixLibrary
 {
     public static class ConcurrentAlteringOperations
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
@@ -28,7 +34,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Zesymetrizuje zadanou matici, v případě nerovnosti řádků a sloupců vyhazuje vyjimku
+        /// <summary>
+        /// Zesymetrizuje zadanou matici, v případě nerovnosti řádků a sloupců vyhazuje vyjimku
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
@@ -58,7 +70,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Pouze Gaussova eliminace, postupně se prochází řádky matice a "hledají" se pivoty
+        /// <summary>
+        /// Pouze Gaussova eliminace, postupně se prochází řádky matice a "hledají" se pivoty
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows = matrix.Rows;
@@ -73,6 +91,7 @@ namespace MatrixLibrary
                     {
                         // pokud je prvek nula, tak se koukne pod něj a případně prohodí řádek a vydělí řádky pod ním (potom se breakne), 
                         // pokud i pod ním jsou nuly, pak se breakne (nemusí prostě se nechá doběhnout) cyklus a jde na další sloupec
+                        bool end = false;
                         for (int k = i + 1; k < rows; k++)
                         {
                             if (!result.GetNumber(k, j).IsZero())
@@ -107,10 +126,12 @@ namespace MatrixLibrary
                                         }
                                     }
                                 });
-
+                                end = true;
                                 break;
                             }
                         }
+
+                        if (end == true) { break; }
                     }
                     else // Pokud se narazilo na nenulový prvek (=pivot)
                     {
@@ -148,7 +169,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // K počítání se používá pouze normální Gaussova eliminace, nejdříve na původní matici a pak na "obrácenou"
+        /// <summary>
+        /// K počítání se používá pouze normální Gaussova eliminace, nejdříve na původní matici a pak na "obrácenou"
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows = matrix.Rows;
@@ -200,7 +227,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Pokud matice není regulární, tak vyhazuje vyjimku
+        /// <summary>
+        /// Pokud matice není regulární, tak vyhazuje vyjimku
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (ConcurrentProperties.IsInvertible(matrix) == true)
@@ -282,6 +315,12 @@ namespace MatrixLibrary
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             int rows = matrix.Rows;
@@ -323,10 +362,73 @@ namespace MatrixLibrary
 
             return result;
         }
+
+        /// <summary>
+        /// Využívá Gram-Schmidtovu ortogonalizaci, vstupem by měli být lineárně nezávislé vektory
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        {
+            Matrix<T> result;
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+            result = new Matrix<T>(rows, cols);
+
+            for (int i = 0; i < rows; i++) // řádky
+            {
+                for (int j = 0; j < cols; j++) // sloupce
+                {
+                    T sum = new T();
+                    object sumLock = new object();
+
+                    Parallel.ForEach(result.GetRowsChunks(0, i), (pair) =>
+                    {
+                        for (int k = pair.Item1; k < pair.Item2; k++) // suma...
+                        {
+                            T dotProduct = new T();
+                            for (int l = 0; l < cols; l++) // skal. součin
+                            {
+                                dotProduct = (T)((matrix.GetNumber(i, l) * result.GetNumber(k, l)) + dotProduct);
+                            }
+
+                            T times = (T)(dotProduct * result.GetNumber(k, j));
+                            lock (sumLock) { sum = (T)(sum + times); }
+                        }
+                    });
+
+                    result.WriteNumber(i, j, (T)(matrix.GetNumber(i, j) - sum));
+                }
+
+                T norm = new T();
+                for (int j = 0; j < cols; j++) // vypočítá normu
+                {
+                    norm = (T)(norm + result.GetNumber(i, j).__Exponentiate(2));
+                }
+                norm = (T)norm.__SquareRoot();
+
+                Parallel.ForEach(result.GetColsChunks(), (pair) =>
+                {
+                    for (int j = pair.Item1; j < pair.Item2; j++) // vydělí všechny složky vektoru
+                    {
+                        result.WriteNumber(i, j, (T)(result.GetNumber(i, j) / norm));
+                    }
+                });
+            }
+
+            return result;
+        }
     }
 
     public static class AlteringOperations
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
@@ -345,7 +447,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Zesymetrizuje zadanou matici, v případě nerovnosti řádků a sloupců vyhazuje vyjimku
+        /// <summary>
+        /// Zesymetrizuje zadanou matici, v případě nerovnosti řádků a sloupců vyhazuje vyjimku
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
@@ -372,7 +480,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Pouze Gaussova eliminace, postupně se prochází řádky matice a "hledají" se pivoty
+        /// <summary>
+        /// Pouze Gaussova eliminace, postupně se prochází řádky matice a "hledají" se pivoty
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows = matrix.Rows;
@@ -387,6 +501,7 @@ namespace MatrixLibrary
                     {
                         // pokud je prvek nula, tak se koukne pod něj a případně prohodí řádek a vydělí řádky pod ním (potom se breakne), 
                         // pokud i pod ním jsou nuly, pak se breakne (nemusí prostě se nechá doběhnout) cyklus a jde na další sloupec
+                        bool end = false;
                         for (int k = i + 1; k < rows; k++)
                         {
                             if (!result.GetNumber(k, j).IsZero())
@@ -415,9 +530,12 @@ namespace MatrixLibrary
                                         }
                                     }
                                 }
+                                end = true;
                                 break;
                             }
                         }
+
+                        if (end == true) { break; }
                     }
                     else // Pokud se narazilo na nenulový prvek (=pivot)
                     {
@@ -440,7 +558,6 @@ namespace MatrixLibrary
                                 }
                             }
                         }
-
                         break;
                     }
                 }
@@ -449,7 +566,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // K počítání se používá pouze normální Gaussova eliminace, nejdříve na původní matici a pak na "obrácenou"
+        /// <summary>
+        /// K počítání se používá pouze normální Gaussova eliminace, nejdříve na původní matici a pak na "obrácenou"
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows = matrix.Rows;
@@ -496,7 +619,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Pokud matice není regulární, tak vyhazuje vyjimku
+        /// <summary>
+        /// Pokud matice není regulární, tak vyhazuje vyjimku
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (Properties.IsInvertible(matrix) == true)
@@ -566,6 +695,12 @@ namespace MatrixLibrary
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             int rows = matrix.Rows;
@@ -605,7 +740,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Využívá Gram-Schmidtovu ortogonalizaci, vstupem by měli být lineárně nezávislé vektory
+        /// <summary>
+        /// Využívá Gram-Schmidtovu ortogonalizaci, vstupem by měli být lineárně nezávislé vektory
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows = matrix.Rows;

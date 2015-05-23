@@ -7,6 +7,13 @@ namespace MatrixLibrary
 {
     public static class ConcurrentClassicOperations
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix1"></param>
+        /// <param name="matrix2"></param>
+        /// <returns></returns>
         public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
@@ -35,7 +42,20 @@ namespace MatrixLibrary
             return result;
         }
 
-        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new() // Sčítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// <summary>
+        /// Sčítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rowsResult"></param>
+        /// <param name="colsResult"></param>
+        /// <param name="matrix1"></param>
+        /// <param name="row1"></param>
+        /// <param name="col1"></param>
+        /// <param name="matrix2"></param>
+        /// <param name="row2"></param>
+        /// <param name="col2"></param>
+        /// <returns></returns>
+        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
@@ -58,7 +78,20 @@ namespace MatrixLibrary
             return result;
         }
 
-        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new() // Odečítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// <summary>
+        /// Odečítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rowsResult"></param>
+        /// <param name="colsResult"></param>
+        /// <param name="matrix1"></param>
+        /// <param name="row1"></param>
+        /// <param name="col1"></param>
+        /// <param name="matrix2"></param>
+        /// <param name="row2"></param>
+        /// <param name="col2"></param>
+        /// <returns></returns>
+        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
@@ -81,7 +114,14 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new() // Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// <summary>
+        /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix1"></param>
+        /// <param name="matrix2"></param>
+        /// <returns></returns>
+        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
@@ -108,7 +148,14 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new() // Pokud se počet sloupců první a počet řádků druhé matice nerovnají, pak je vyhozena vyjimka
+        /// <summary>
+        /// Pokud se počet sloupců první a počet řádků druhé matice nerovnají, pak je vyhozena vyjimka
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix1"></param>
+        /// <param name="matrix2"></param>
+        /// <returns></returns>
+        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows1, cols1, cols2;
@@ -142,6 +189,13 @@ namespace MatrixLibrary
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
         public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : MatrixNumberBase, new()
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
@@ -160,7 +214,14 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new() // Strassen-Winograd
+        /// <summary>
+        /// Strassen-Winograd
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix1"></param>
+        /// <param name="matrix2"></param>
+        /// <returns></returns>
+        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows1, rows2, cols1, cols2;
@@ -390,7 +451,15 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : MatrixNumberBase, new() // Zkusí využít vlastních čísel, pokud se v daném čase nevypočítají, přejde se k Strassenovi
+        /// <summary>
+        /// Zkusí využít vlastních čísel, pokud se v daném čase nevypočítají, přejde se k Strassenovi
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="exponent"></param>
+        /// <param name="tryEigenvalues"></param>
+        /// <returns></returns>
+        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
@@ -435,7 +504,14 @@ namespace MatrixLibrary
 
     public static class ClassicOperations
     {
-        public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new() // Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// <summary>
+        /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix1"></param>
+        /// <param name="matrix2"></param>
+        /// <returns></returns>
+        public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
@@ -459,7 +535,20 @@ namespace MatrixLibrary
             return result;
         }
 
-        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new() // Sčítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// <summary>
+        /// Sčítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rowsResult"></param>
+        /// <param name="colsResult"></param>
+        /// <param name="matrix1"></param>
+        /// <param name="row1"></param>
+        /// <param name="col1"></param>
+        /// <param name="matrix2"></param>
+        /// <param name="row2"></param>
+        /// <param name="col2"></param>
+        /// <returns></returns>
+        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
@@ -479,7 +568,20 @@ namespace MatrixLibrary
             return result;
         }
 
-        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new() // Odečítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// <summary>
+        /// Odečítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rowsResult"></param>
+        /// <param name="colsResult"></param>
+        /// <param name="matrix1"></param>
+        /// <param name="row1"></param>
+        /// <param name="col1"></param>
+        /// <param name="matrix2"></param>
+        /// <param name="row2"></param>
+        /// <param name="col2"></param>
+        /// <returns></returns>
+        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
@@ -499,7 +601,14 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new() // Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// <summary>
+        /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix1"></param>
+        /// <param name="matrix2"></param>
+        /// <returns></returns>
+        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
@@ -523,7 +632,14 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new() // Pokud se počet sloupců první a počet řádků druhé matice nerovnají, pak je vyhozena vyjimka
+        /// <summary>
+        /// Pokud se počet sloupců první a počet řádků druhé matice nerovnají, pak je vyhozena vyjimka
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix1"></param>
+        /// <param name="matrix2"></param>
+        /// <returns></returns>
+        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows1, cols1, cols2;
@@ -554,6 +670,13 @@ namespace MatrixLibrary
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
         public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : MatrixNumberBase, new()
         {
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
@@ -569,7 +692,14 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new() // Strassen-Winograd
+        /// <summary>
+        /// Strassen-Winograd
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix1"></param>
+        /// <param name="matrix2"></param>
+        /// <returns></returns>
+        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows1, rows2, cols1, cols2;
@@ -735,7 +865,15 @@ namespace MatrixLibrary
             return result;
         }
         
-        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : MatrixNumberBase, new() // Zkusí využít vlastních čísel, pokud se v daném čase nevypočítají, přejde se k Strassenovi
+        /// <summary>
+        /// Zkusí využít vlastních čísel, pokud se v daném čase nevypočítají, přejde se k Strassenovi
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="exponent"></param>
+        /// <param name="tryEigenvalues"></param>
+        /// <returns></returns>
+        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)

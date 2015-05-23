@@ -9,6 +9,12 @@ namespace MatrixLibrary
 
     public static class ConcurrentProperties
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static bool IsInvertible<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             bool result = true;
@@ -42,6 +48,12 @@ namespace MatrixLibrary
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static int Rank<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             object resultLock = new object();
@@ -65,6 +77,12 @@ namespace MatrixLibrary
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             bool result = true;
@@ -97,7 +115,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Rozlišuje se definitnost (pozitivní/negativní), indefinitnost; podle vráceného čísla
+        /// <summary>
+        /// Rozlišuje se definitnost (pozitivní/negativní), indefinitnost; podle vráceného čísla
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             /*
              * Neurčuje semi-definitnost (pozitivní/negativní)
@@ -155,6 +179,12 @@ namespace MatrixLibrary
 
     public static class Properties
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static bool IsInvertible<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             if (matrix.Rows == matrix.Cols)
@@ -183,6 +213,12 @@ namespace MatrixLibrary
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static int Rank<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             int result = matrix.Rows;
@@ -202,6 +238,12 @@ namespace MatrixLibrary
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
         public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             if (matrix.Rows == matrix.Cols)
@@ -229,7 +271,13 @@ namespace MatrixLibrary
             return true;
         }
         
-        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Rozlišuje se definitnost (pozitivní/negativní), indefinitnost; podle vráceného čísla
+        /// <summary>
+        /// Rozlišuje se definitnost (pozitivní/negativní), indefinitnost; podle vráceného čísla
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             /*
              * Neurčuje semi-definitnost (pozitivní/negativní)

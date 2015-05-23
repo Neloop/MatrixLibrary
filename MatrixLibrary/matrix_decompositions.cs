@@ -7,7 +7,13 @@ namespace MatrixLibrary
 {
     public static class ConcurrentDecompositions
     {
-        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
+        /// <summary>
+        /// Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             /*
              * 
@@ -57,7 +63,15 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new() // Vrácena je matice R*Q
+        /// <summary>
+        /// Vrácena je matice R*Q
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="Q"></param>
+        /// <param name="R"></param>
+        /// <returns></returns>
+        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows = matrix.Rows;
@@ -119,7 +133,13 @@ namespace MatrixLibrary
 
     public static class Decompositions
     {
-        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new() // Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
+        /// <summary>
+        /// Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             /*
              * 
@@ -166,7 +186,15 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new() // Vrácena je matice R*Q
+        /// <summary>
+        /// Vrácena je matice R*Q
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="Q"></param>
+        /// <param name="R"></param>
+        /// <returns></returns>
+        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows = matrix.Rows;
