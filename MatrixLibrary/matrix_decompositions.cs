@@ -77,7 +77,7 @@ namespace MatrixLibrary
             int rows = matrix.Rows;
             int cols = matrix.Cols;
             Matrix<T> tmpQ = new Matrix<T>(rows, cols);
-            Matrix<T> tmpR = Matrix<T>.GetUninitializedMatrix(rows, cols);
+            Matrix<T> tmpR = new Matrix<T>(rows, cols);
 
             for (int i = 0; i < rows; i++) // řádky
             {
@@ -200,7 +200,7 @@ namespace MatrixLibrary
             int rows = matrix.Rows;
             int cols = matrix.Cols;
             Q = new Matrix<T>(rows, cols);
-            R = Matrix<T>.GetUninitializedMatrix(rows, cols);
+            R = new Matrix<T>(rows, cols);
 
             for (int i = 0; i < rows; i++) // řádky
             {

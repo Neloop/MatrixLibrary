@@ -172,8 +172,9 @@ namespace MatrixTestApp
             b = new Matrix<MatrixNumber>(inputMatrix);
 
             Console.WriteLine("Soustava rovnic");
-            try { resultSingle = Computations.SolveLinearEquations(B, b); }
-            catch (MatrixLibraryException) { resultSingle = new Matrix<MatrixNumber>(1, 1); }
+            resultSingle = Computations.SolveLinearEquations(B, b);
+            //try { resultSingle = Computations.SolveLinearEquations(B, b); }
+            //catch (MatrixLibraryException) { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteTwoMatrixes(B, b, resultSingle, "=");
 
             Console.WriteLine();
@@ -294,6 +295,8 @@ namespace MatrixTestApp
 
             Matrix<MatrixNumber> Q, R;
             resultSingle = Decompositions.QRDecomposition(A, out Q, out R);
+            Console.WriteLine(Q);
+            Console.WriteLine(R);
             WriteMatrix(A, resultSingle, "QR-rozklad");
 
             Console.WriteLine();

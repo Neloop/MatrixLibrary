@@ -71,14 +71,14 @@ namespace MatrixLibrary
         public static bool operator ==(MatrixNumberBase first, MatrixNumberBase second)
         {
             if (ReferenceEquals(first, second)) { return true; }
-            if (ReferenceEquals(first, null) || ReferenceEquals(first, null)) { return false; }
+            if (ReferenceEquals(first, null) || ReferenceEquals(second, null)) { return false; }
 
             return first.__IsEqual(second);
         }
         public static bool operator !=(MatrixNumberBase first, MatrixNumberBase second)
         {
             if (ReferenceEquals(first, second)) { return true; }
-            if (ReferenceEquals(first, null) || ReferenceEquals(first, null)) { return false; }
+            if (ReferenceEquals(first, null) || ReferenceEquals(second, null)) { return false; }
 
             return !first.__IsEqual(second);
         }
@@ -1106,7 +1106,7 @@ namespace MatrixLibrary
         public static bool operator ==(Matrix<T> first, Matrix<T> second)
         {
             if (ReferenceEquals(first, second)) { return true; }
-            if (ReferenceEquals(first, null) || ReferenceEquals(first, null)) { return false; }
+            if (ReferenceEquals(first, null) || ReferenceEquals(second, null)) { return false; }
 
             bool result = true;
             if (first.Rows == second.Rows && first.Cols == second.Cols)
@@ -1129,7 +1129,7 @@ namespace MatrixLibrary
         public static bool operator !=(Matrix<T> first, Matrix<T> second)
         {
             if (ReferenceEquals(first, second)) { return false; }
-            if (ReferenceEquals(first, null) || ReferenceEquals(first, null)) { return false; }
+            if (ReferenceEquals(first, null) || ReferenceEquals(second, null)) { return false; }
 
             bool result = false;
             if (first.Rows == second.Rows && first.Cols == second.Cols)

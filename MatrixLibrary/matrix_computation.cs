@@ -76,6 +76,9 @@ namespace MatrixLibrary
                         }
 
                         if (end == true) { break; }
+
+                        // pouzije se v pripade, ze posledni sloupec je nulovy, v jinych pripadech by se sem nikdy nemelo dojit
+                        if (i == (modified.Rows - 1)) { return new T(); }
                     }
                     else // na miste pivotu je nenulove cislo, tudiz se zmeni na jednicku a vynuluji se sloupce pod nim
                     {
@@ -218,7 +221,7 @@ namespace MatrixLibrary
                 }
             });
 
-            tmpMatrix = AlteringOperations.Gauss(tmpMatrix); // První gaussovka
+            tmpMatrix = ConcurrentAlteringOperations.Gauss(tmpMatrix); // První gaussovka
 
             /*
              * 
@@ -250,7 +253,7 @@ namespace MatrixLibrary
 
                         tmpMatrix.SwapElements(i, j, rows - i - 1, cols - j - 1);
                     }
-                    if (zeroesInRow1 == cols)
+                    if (zeroesInRow2 == cols)
                     {
                         lock (zeroRowsLock) { zeroRows++; }
 
@@ -259,7 +262,7 @@ namespace MatrixLibrary
                             throw new MatrixLibraryException("Found row that contain all zeroes but vector b contains on the same row non-zero!");
                         }
                     }
-                    if (zeroesInRow2 == cols)
+                    if (zeroesInRow1 == cols)
                     {
                         lock (zeroRowsLock) { zeroRows++; }
 
@@ -273,7 +276,7 @@ namespace MatrixLibrary
 
             if ((rows - zeroRows) == cols) // Matice má jedno možné řešení
             {
-                tmpMatrix = AlteringOperations.Gauss(tmpMatrix);
+                tmpMatrix = ConcurrentAlteringOperations.Gauss(tmpMatrix);
                 result = Matrix<T>.GetUninitializedMatrix(rows, 1);
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
@@ -287,26 +290,31 @@ namespace MatrixLibrary
             {
                 result = new Matrix<T>(rows, zeroRows + 1);
                 List<int> parameters = new List<int>();
+                object parametersLock = new object();
                 Matrix<T> parametrise = Matrix<T>.GetUninitializedMatrix(rows - zeroRows, cols + 1);
                 int add = 0;
-                for (int i = 0; i < parametrise.Rows; i++) // Zapsání a zpřeházení z matice 'uprav' do matice 'vyparametrizuj'
+                Parallel.ForEach(parametrise.GetRowsChunks(), (pair) =>
                 {
-                    parametrise.WriteNumber(i, cols, tmpMatrix.GetNumber(rows - i - 1, cols));
+                    for (int i = pair.Item1; i < pair.Item2; i++) // Zapsání a zpřeházení z matice 'uprav' do matice 'vyparametrizuj'
+                    {
+                        parametrise.WriteNumber(i, cols, tmpMatrix.GetNumber(rows - i - 1, cols));
 
-                    for (int j = 0; j < cols; j++)
-                    {
-                        parametrise.WriteNumber(i, j, tmpMatrix.GetNumber(rows - i - 1, cols - j - 1));
-                    }
-                    for (int j = i + add; j < cols; j++) // Určení, co budou parametry
-                    {
-                        if (!parametrise.GetNumber(i, j).IsOne())
+                        for (int j = 0; j < cols; j++)
                         {
-                            parameters.Add(j);
-                            add++;
+                            parametrise.WriteNumber(i, j, tmpMatrix.GetNumber(rows - i - 1, cols - j - 1));
                         }
-                        else { break; }
+                        for (int j = i + add; j < cols; j++) // Určení, co budou parametry
+                        {
+                            if (!parametrise.GetNumber(i, j).IsOne())
+                            {
+                                lock (parametersLock) { parameters.Add(j); }
+                                add++;
+                            }
+                            else { break; }
+                        }
                     }
-                }
+                });
+                
                 for (int i = parametrise.Rows + parameters.Count; i < (parametrise.Cols - 1); i++) // Dopsání zbývající parametrů
                 {
                     parameters.Add(i);
@@ -410,6 +418,9 @@ namespace MatrixLibrary
                         }
 
                         if (end == true) { break; }
+
+                        // pouzije se v pripade, ze posledni sloupec je nulovy, v jinych pripadech by se sem nikdy nemelo dojit
+                        if (i == (modified.Rows - 1)) { return new T(); }
                     }
                     else // na miste pivotu je nenulove cislo, tudiz se zmeni na jednicku a vynuluji se sloupce pod nim
                     {
@@ -439,7 +450,6 @@ namespace MatrixLibrary
                     }
                 }
             }
-
 
             T result = new T();
             result.AddInt(1);
@@ -565,7 +575,7 @@ namespace MatrixLibrary
 
                     tmpMatrix.SwapElements(i, j, rows - i - 1, cols - j - 1);
                 }
-                if (zeroesInRow1 == cols)
+                if (zeroesInRow2 == cols)
                 {
                     zeroRows++;
 
@@ -574,7 +584,7 @@ namespace MatrixLibrary
                         throw new MatrixLibraryException("Found row that contain all zeroes but vector b contains on the same row non-zero!");
                     }
                 }
-                if (zeroesInRow2 == cols)
+                if (zeroesInRow1 == cols)
                 {
                     zeroRows++;
 
