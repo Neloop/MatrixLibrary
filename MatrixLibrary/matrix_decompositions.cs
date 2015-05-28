@@ -186,6 +186,51 @@ namespace MatrixLibrary
             return result;
         }
 
+        public static Matrix<T> NewQRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
+        {
+            Matrix<T> result;
+            int rows = matrix.Rows;
+            int cols = matrix.Cols;
+            Matrix<T> tmpMatrix = new Matrix<T>(matrix);
+            Q = new Matrix<T>(rows, rows);
+            R = new Matrix<T>(rows, cols);
+
+            for (int k = 0; k < cols && k < rows; ++k)
+            {
+                T norm = new T();
+                for (int i = 0; i < rows; ++i)
+                {
+                    norm = (T)(norm + tmpMatrix.GetNumber(i, k).__Exponentiate(2));
+                }
+                norm = (T)norm.__SquareRoot();
+                R.WriteNumber(k, k, norm);
+
+                for (int i = 0; i < rows; ++i)
+                {
+                    Q.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k) / norm));
+                }
+
+                for (int j = k + 1; j < cols; ++j)
+                {
+                    T dotProduct = new T();
+                    for(int i = 0; i < rows; ++i)
+                    {
+                        dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * Q.GetNumber(i, k)));
+                    }
+                    R.WriteNumber(k, j, (T)dotProduct);
+
+                    for (int i = 0; i < rows; ++i)
+                    {
+                        tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (R.GetNumber(k, j) * Q.GetNumber(i, k))));
+                    }
+                }
+            }
+
+            result = ClassicOperations.Multiplication(Q, R);
+
+            return result;
+        }
+
         /// <summary>
         /// Vrácena je matice R*Q
         /// </summary>

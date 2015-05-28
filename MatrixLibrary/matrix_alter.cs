@@ -18,7 +18,7 @@ namespace MatrixLibrary
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            result = Matrix<T>.GetUninitializedMatrix(rows, cols);
+            result = Matrix<T>.GetUninitializedMatrix(cols, rows);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
@@ -325,7 +325,7 @@ namespace MatrixLibrary
         {
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rows, cols);
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, rows);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
@@ -342,12 +342,12 @@ namespace MatrixLibrary
 
                         for (int k = 0; k < rows; k++)
                         {
-                            if (k == j) { subtractK = 1; continue; }
+                            if (k == i) { subtractK = 1; continue; }
                             int subtractL = 0;
 
                             for (int l = 0; l < cols; l++)
                             {
-                                if (l == i) { subtractL = 1; continue; }
+                                if (l == j) { subtractL = 1; continue; }
                                 else
                                 {
                                     modified.WriteNumber(k - subtractK, l - subtractL, matrix.GetNumber(k, l));
@@ -355,7 +355,7 @@ namespace MatrixLibrary
                             }
                         }
 
-                        result.WriteNumber(i, j, (T)(multiply * Computations.Determinant(modified)));
+                        result.WriteNumber(j, i, (T)(multiply * Computations.Determinant(modified)));
                     }
                 }
             });
@@ -434,7 +434,7 @@ namespace MatrixLibrary
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            result = Matrix<T>.GetUninitializedMatrix(rows, cols);
+            result = Matrix<T>.GetUninitializedMatrix(cols, rows);
 
             for (int i = 0; i < cols; i++)
             {
@@ -705,7 +705,7 @@ namespace MatrixLibrary
         {
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rows, cols);
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, rows);
 
             for (int i = 0; i < rows; i++)
             {
@@ -720,12 +720,12 @@ namespace MatrixLibrary
 
                     for (int k = 0; k < rows; k++)
                     {
-                        if (k == j) { subtractK = 1; continue; }
+                        if (k == i) { subtractK = 1; continue; }
                         int subtractL = 0;
 
                         for (int l = 0; l < cols; l++)
                         {
-                            if (l == i) { subtractL = 1; continue; }
+                            if (l == j) { subtractL = 1; continue; }
                             else
                             {
                                 modified.WriteNumber(k - subtractK, l - subtractL, matrix.GetNumber(k, l));
@@ -733,7 +733,7 @@ namespace MatrixLibrary
                         }
                     }
                     T tmp = Computations.Determinant(modified);
-                    result.WriteNumber(i, j, (T)(multiply * tmp));
+                    result.WriteNumber(j, i, (T)(multiply * tmp));
                 }
             }
 

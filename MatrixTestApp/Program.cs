@@ -196,7 +196,7 @@ namespace MatrixTestApp
              * 
              */
 
-            inputMatrix = new int[3, 3] {{1, 0, 5}, {1, 1, 6}, {0, 1, 7}};
+            inputMatrix = new int[4, 3] { { 1, 0, 5 }, { 1, 1, 6 }, { 0, 1, 7 }, { 10, 7, 8 } };
             //vstup = new int[4, 4] {{1, 0, 5, 6}, {1, 1, 6, 7}, {0, 1, 7, 8}, {10, 7, 8, 3}};
 
             A = new Matrix<MatrixNumber>(inputMatrix);
@@ -272,12 +272,14 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.Inverse(A);
+            try { resultSingle = AlteringOperations.Inverse(A); }
+            catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteMatrix(A, resultSingle, "Inverzní");
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.Symmetric(A);
+            try { resultSingle = AlteringOperations.Symmetric(A); }
+            catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteMatrix(A, resultSingle, "Zesymetrizování");
 
             Console.WriteLine();
@@ -294,7 +296,7 @@ namespace MatrixTestApp
             Console.WriteLine();
 
             Matrix<MatrixNumber> Q, R;
-            resultSingle = Decompositions.QRDecomposition(A, out Q, out R);
+            resultSingle = Decompositions.NewQRDecomposition(A, out Q, out R);
             Console.WriteLine(Q);
             Console.WriteLine(R);
             WriteMatrix(A, resultSingle, "QR-rozklad");
