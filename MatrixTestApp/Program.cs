@@ -196,7 +196,7 @@ namespace MatrixTestApp
              * 
              */
 
-            inputMatrix = new int[4, 3] { { 1, 0, 5 }, { 1, 1, 6 }, { 0, 1, 7 }, { 10, 7, 8 } };
+            inputMatrix = new int[3, 3] { { 1, 0, 5 }, { 1, 1, 6 }, { 0, 1, 7 } };
             //vstup = new int[4, 4] {{1, 0, 5, 6}, {1, 1, 6, 7}, {0, 1, 7, 8}, {10, 7, 8, 3}};
 
             A = new Matrix<MatrixNumber>(inputMatrix);
@@ -296,9 +296,7 @@ namespace MatrixTestApp
             Console.WriteLine();
 
             Matrix<MatrixNumber> Q, R;
-            resultSingle = Decompositions.NewQRDecomposition(A, out Q, out R);
-            Console.WriteLine(Q);
-            Console.WriteLine(R);
+            resultSingle = Decompositions.QRDecomposition(A, out Q, out R);
             WriteMatrix(A, resultSingle, "QR-rozklad");
 
             Console.WriteLine();
@@ -595,6 +593,23 @@ namespace MatrixTestApp
             WriteSeparator();
 
 
+            /********** QRDecomposition **********/
+            Console.WriteLine("QRDecomposition...");
+            stopwatchSingle.Restart();
+            resultSingle = Decompositions.QRDecomposition(A, out Q, out R);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded QRDecomposition...");
+            stopwatchMulti.Restart();
+            resultMulti = ConcurrentDecompositions.QRDecomposition(A, out Q, out R);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { Console.WriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
 
 
 
@@ -702,24 +717,6 @@ namespace MatrixTestApp
                 if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
                 else { Console.WriteLine("Results are different!"); }
             }
-            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
-
-            WriteSeparator();
-
-
-            /********** QRDecomposition **********/
-            Console.WriteLine("QRDecomposition...");
-            stopwatchSingle.Restart();
-            resultSingle = Decompositions.QRDecomposition(A, out Q, out R);
-            stopwatchSingle.Stop();
-
-            Console.WriteLine("Multi-threaded QRDecomposition...");
-            stopwatchMulti.Restart();
-            resultMulti = ConcurrentDecompositions.QRDecomposition(A, out Q, out R);
-            stopwatchMulti.Stop();
-
-            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();

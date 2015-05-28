@@ -371,48 +371,42 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
-            Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            result = new Matrix<T>(rows, cols);
+            Matrix<T> tmpMatrix = new Matrix<T>(matrix);
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rows, rows);
 
-            for (int i = 0; i < rows; i++) // řádky
+            for (int k = 0; k < cols && k < rows; ++k)
             {
-                for (int j = 0; j < cols; j++) // sloupce
-                {
-                    T sum = new T();
-                    object sumLock = new object();
-
-                    Parallel.ForEach(result.GetRowsChunks(0, i), (pair) =>
-                    {
-                        for (int k = pair.Item1; k < pair.Item2; k++) // suma...
-                        {
-                            T dotProduct = new T();
-                            for (int l = 0; l < cols; l++) // skal. součin
-                            {
-                                dotProduct = (T)((matrix.GetNumber(i, l) * result.GetNumber(k, l)) + dotProduct);
-                            }
-
-                            T times = (T)(dotProduct * result.GetNumber(k, j));
-                            lock (sumLock) { sum = (T)(sum + times); }
-                        }
-                    });
-
-                    result.WriteNumber(i, j, (T)(matrix.GetNumber(i, j) - sum));
-                }
-
                 T norm = new T();
-                for (int j = 0; j < cols; j++) // vypočítá normu
+                for (int i = 0; i < rows; ++i)
                 {
-                    norm = (T)(norm + result.GetNumber(i, j).__Exponentiate(2));
+                    norm = (T)(norm + tmpMatrix.GetNumber(i, k).__Exponentiate(2));
                 }
                 norm = (T)norm.__SquareRoot();
 
-                Parallel.ForEach(result.GetColsChunks(), (pair) =>
+                Parallel.ForEach(matrix.GetRowsChunks(), (pair) =>
                 {
-                    for (int j = pair.Item1; j < pair.Item2; j++) // vydělí všechny složky vektoru
+                    for (int i = pair.Item1; i < pair.Item2; ++i)
                     {
-                        result.WriteNumber(i, j, (T)(result.GetNumber(i, j) / norm));
+                        result.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k) / norm));
+                    }
+                });
+
+                Parallel.ForEach(matrix.GetColsChunks(k + 1), (pair) =>
+                {
+                    for (int j = pair.Item1; j < pair.Item2; ++j)
+                    {
+                        T dotProduct = new T();
+                        for (int i = 0; i < rows; ++i)
+                        {
+                            dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * result.GetNumber(i, k)));
+                        }
+
+                        for (int i = 0; i < rows; ++i)
+                        {
+                            tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (dotProduct * result.GetNumber(i, k))));
+                        }
                     }
                 });
             }
@@ -748,40 +742,37 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
-            Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            result = new Matrix<T>(rows, cols);
+            Matrix<T> tmpMatrix = new Matrix<T>(matrix);
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rows, rows);
 
-            for (int i = 0; i < rows; i++) // řádky
+            for (int k = 0; k < cols && k < rows; ++k)
             {
-                for (int j = 0; j < cols; j++) // sloupce
-                {
-                    T sum = new T();
-                    for (int k = 0; k < i; k++) // suma...
-                    {
-                        T dotProduct = new T();
-                        for (int l = 0; l < cols; l++) // skal. součin
-                        {
-                            dotProduct = (T)((matrix.GetNumber(i, l) * result.GetNumber(k, l)) + dotProduct);
-                        }
-
-                        T times = (T)(dotProduct * result.GetNumber(k, j));
-                        sum = (T)(sum + times);
-                    }
-
-                    result.WriteNumber(i, j, (T)(matrix.GetNumber(i, j) - sum));
-                }
-
                 T norm = new T();
-                for (int j = 0; j < cols; j++) // vypočítá normu
+                for (int i = 0; i < rows; ++i)
                 {
-                    norm = (T)(norm + result.GetNumber(i, j).__Exponentiate(2));
+                    norm = (T)(norm + tmpMatrix.GetNumber(i, k).__Exponentiate(2));
                 }
                 norm = (T)norm.__SquareRoot();
-                for (int j = 0; j < cols; j++) // vydělí všechny složky vektoru
+
+                for (int i = 0; i < rows; ++i)
                 {
-                    result.WriteNumber(i, j, (T)(result.GetNumber(i, j) / norm));
+                    result.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k) / norm));
+                }
+
+                for (int j = k + 1; j < cols; ++j)
+                {
+                    T dotProduct = new T();
+                    for (int i = 0; i < rows; ++i)
+                    {
+                        dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * result.GetNumber(i, k)));
+                    }
+
+                    for (int i = 0; i < rows; ++i)
+                    {
+                        tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (dotProduct * result.GetNumber(i, k))));
+                    }
                 }
             }
 

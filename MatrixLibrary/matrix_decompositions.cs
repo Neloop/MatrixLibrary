@@ -76,56 +76,50 @@ namespace MatrixLibrary
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            Matrix<T> tmpQ = new Matrix<T>(rows, cols);
+            Matrix<T> tmpMatrix = new Matrix<T>(matrix);
+            Matrix<T> tmpQ = Matrix<T>.GetUninitializedMatrix(rows, rows);
             Matrix<T> tmpR = new Matrix<T>(rows, cols);
 
-            for (int i = 0; i < rows; i++) // řádky
+            for (int k = 0; k < cols && k < rows; ++k)
             {
-                for (int j = 0; j < cols; j++) // sloupce
-                {
-                    T sum = new T();
-                    object sumLock = new object();
-                    Parallel.ForEach(tmpR.GetRowsChunks(0, i), (pair) =>
-                    {
-                        for (int k = pair.Item1; k < pair.Item2; k++) // suma...
-                        {
-                            T dotProduct = new T();
-                            for (int l = 0; l < cols; l++) // skal. součin
-                            {
-                                dotProduct = (T)((matrix.GetNumber(i, l) * tmpQ.GetNumber(k, l)) + dotProduct);
-                            }
-
-                            tmpR.WriteNumber(k, i, dotProduct);
-
-                            T times = (T)(dotProduct * tmpQ.GetNumber(k, j));
-                            lock (sumLock) { sum = (T)(sum + times); }
-                        }
-                    });
-
-                    T write = (T)(matrix.GetNumber(i, j) - sum);
-                    tmpQ.WriteNumber(i, j, write);
-                }
-
                 T norm = new T();
-                for (int j = 0; j < cols; j++) // vypočítá normu
+                for (int i = 0; i < rows; ++i)
                 {
-                    norm = (T)(norm + tmpQ.GetNumber(i, j).__Exponentiate(2));
+                    norm = (T)(norm + tmpMatrix.GetNumber(i, k).__Exponentiate(2));
                 }
                 norm = (T)norm.__SquareRoot();
-                tmpR.WriteNumber(i, i, norm);
+                tmpR.WriteNumber(k, k, norm);
 
-                Parallel.ForEach(tmpQ.GetColsChunks(), (pair) =>
+                Parallel.ForEach(matrix.GetRowsChunks(), (pair) =>
                 {
-                    for (int j = pair.Item1; j < pair.Item2; j++) // vydělí všechny složky vektoru
+                    for (int i = pair.Item1; i < pair.Item2; ++i)
                     {
-                        tmpQ.WriteNumber(i, j, (T)(tmpQ.GetNumber(i, j) / norm));
+                        tmpQ.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k) / norm));
+                    }
+                });
+
+                Parallel.ForEach(matrix.GetColsChunks(k + 1), (pair) =>
+                {
+                    for (int j = pair.Item1; j < pair.Item2; ++j)
+                    {
+                        T dotProduct = new T();
+                        for (int i = 0; i < rows; ++i)
+                        {
+                            dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * tmpQ.GetNumber(i, k)));
+                        }
+                        tmpR.WriteNumber(k, j, (T)dotProduct);
+
+                        for (int i = 0; i < rows; ++i)
+                        {
+                            tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (dotProduct * tmpQ.GetNumber(i, k))));
+                        }
                     }
                 });
             }
 
             result = ConcurrentClassicOperations.Multiplication(tmpR, tmpQ);
-            Q = tmpQ;
             R = tmpR;
+            Q = tmpQ;
 
             return result;
         }
@@ -186,13 +180,13 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> NewQRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
+        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
             Matrix<T> tmpMatrix = new Matrix<T>(matrix);
-            Q = new Matrix<T>(rows, rows);
+            Q = Matrix<T>.GetUninitializedMatrix(rows, rows);
             R = new Matrix<T>(rows, cols);
 
             for (int k = 0; k < cols && k < rows; ++k)
@@ -213,7 +207,7 @@ namespace MatrixLibrary
                 for (int j = k + 1; j < cols; ++j)
                 {
                     T dotProduct = new T();
-                    for(int i = 0; i < rows; ++i)
+                    for (int i = 0; i < rows; ++i)
                     {
                         dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * Q.GetNumber(i, k)));
                     }
@@ -223,63 +217,6 @@ namespace MatrixLibrary
                     {
                         tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (R.GetNumber(k, j) * Q.GetNumber(i, k))));
                     }
-                }
-            }
-
-            result = ClassicOperations.Multiplication(Q, R);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Vrácena je matice R*Q
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="Q"></param>
-        /// <param name="R"></param>
-        /// <returns></returns>
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
-        {
-            Matrix<T> result;
-            int rows = matrix.Rows;
-            int cols = matrix.Cols;
-            Q = new Matrix<T>(rows, cols);
-            R = new Matrix<T>(rows, cols);
-
-            for (int i = 0; i < rows; i++) // řádky
-            {
-                for (int j = 0; j < cols; j++) // sloupce
-                {
-                    T sum = new T();
-                    for (int k = 0; k < i; k++) // suma...
-                    {
-                        T dotProduct = new T();
-                        for (int l = 0; l < cols; l++) // skal. součin
-                        {
-                            dotProduct = (T)((matrix.GetNumber(i, l) * Q.GetNumber(k, l)) + dotProduct);
-                        }
-
-                        R.WriteNumber(k, i, dotProduct);
-
-                        T times = (T)(dotProduct * Q.GetNumber(k, j));
-                        sum = (T)(sum + times);
-                    }
-
-                    T write = (T)(matrix.GetNumber(i, j) - sum);
-                    Q.WriteNumber(i, j, write);
-                }
-
-                T norm = new T();
-                for (int j = 0; j < cols; j++) // vypočítá normu
-                {
-                    norm = (T)(norm + Q.GetNumber(i, j).__Exponentiate(2));
-                }
-                norm = (T)norm.__SquareRoot();
-                R.WriteNumber(i, i, norm);
-                for (int j = 0; j < cols; j++) // vydělí všechny složky vektoru
-                {
-                    Q.WriteNumber(i, j, (T)(Q.GetNumber(i, j) / norm));
                 }
             }
 
