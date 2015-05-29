@@ -7,10 +7,17 @@ namespace MatrixLibrary
 {
     public static class Characteristics
     {
-        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit) where T : MatrixNumberBase, new() // Pokud je limit nula, algoritmus počítá dokud vlastní čísla nenajde, určitý integer pak vyjadřuje počet opakování cyklu na zjištění podobné matice
+        /// <summary>
+        /// Pokud je limit nula, algoritmus počítá dokud vlastní čísla nenajde, určitý integer pak vyjadřuje počet opakování cyklu na zjištění podobné matice
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit) where T : MatrixNumberBase, new()
         {
             EigenValues<T> result;
-            if (limit < 0) { limit = -limit; }
+            if (limit < 0) { throw new MatrixLibraryException("Given limit of executions was negative."); }
 
             if (matrix.Rows == matrix.Cols)
             {
@@ -93,6 +100,14 @@ namespace MatrixLibrary
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="eigenValues"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
@@ -125,11 +140,10 @@ namespace MatrixLibrary
 
                     for (int k = 0; k < system.Rows; k++)
                     {
-                        T sum = null;
+                        T sum = new T();
                         for (int l = 0; l < system.Cols; l++)
                         {
-                            if (l != 0) { sum = (T)(sum + system.GetNumber(k, l)); }
-                            else { sum = (T)system.GetNumber(k, l); }
+                            sum = (T)(sum + system.GetNumber(k, l));
                         }
                         result.WriteNumber(i, k, sum);
                     }
@@ -143,7 +157,15 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit) where T : MatrixNumberBase, new() // Pomocí vlastních čísel určí diagonální matici a vrací jí
+        /// <summary>
+        /// Pomocí vlastních čísel určí diagonální matici a vrací jí
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="S"></param>
+        /// <param name="limit"></param>
+        /// <returns></returns>
+        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
 

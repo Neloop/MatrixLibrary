@@ -29,14 +29,14 @@ namespace MatrixLibrary
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
                     {
-                        int tmp = 0;
+                        int zeroes = 0;
 
                         for (int j = 0; j < cols; j++)
                         {
-                            tmp = j;
                             if (!temporaryM.GetNumber(i, j).IsZero()) { break; }
+                            else { zeroes++; }
                         }
-                        if ((tmp + 1) == cols && temporaryM.GetNumber(i, tmp).IsZero()) { result = false; loopState.Stop(); }
+                        if (zeroes == cols) { result = false; loopState.Stop(); }
                     }
                 });
             }
@@ -195,14 +195,14 @@ namespace MatrixLibrary
                 Matrix<T> temporaryM = AlteringOperations.Gauss(matrix);
                 for (int i = 0; i < rows; i++)
                 {
-                    int tmp = 0;
+                    int zeroes = 0;
 
                     for (int j = 0; j < cols; j++)
                     {
-                        tmp = j;
                         if (!temporaryM.GetNumber(i, j).IsZero()) { break; }
+                        else { zeroes++; }
                     }
-                    if ((tmp + 1) == cols && temporaryM.GetNumber(i, tmp).IsZero()) { return false; }
+                    if (zeroes == cols) { return false; }
                 }
             }
             else

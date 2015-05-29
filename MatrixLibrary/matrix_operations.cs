@@ -468,7 +468,7 @@ namespace MatrixLibrary
                 Matrix<T> S = null;
                 if (tryEigenvalues == true)
                 {
-                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 1000); }
+                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 10); }
                     catch (EigenValuesNotFoundException) { exponentiate = null; }
                 }
 
@@ -882,7 +882,7 @@ namespace MatrixLibrary
                 Matrix<T> S = null;
                 if (tryEigenvalues == true)
                 {
-                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 1000); }
+                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 10); }
                     catch (EigenValuesNotFoundException) { exponentiate = null; }
                 }
 
