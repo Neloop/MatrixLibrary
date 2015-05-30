@@ -14,7 +14,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit) where T : MatrixNumberBase, new()
+        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : MatrixNumberBase, new()
         {
             EigenValues<T> result;
             if (limit < 0) { throw new MatrixLibraryException("Given limit of executions was negative."); }
@@ -108,7 +108,7 @@ namespace MatrixLibrary
         /// <param name="eigenValues"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit) where T : MatrixNumberBase, new()
+        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
@@ -165,7 +165,7 @@ namespace MatrixLibrary
         /// <param name="S"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit) where T : MatrixNumberBase, new()
+        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
 

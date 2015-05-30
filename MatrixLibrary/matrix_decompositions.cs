@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
-    public static class ConcurrentDecompositions
+    public static class ParallelDecompositions
     {
         /// <summary>
         /// Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
@@ -23,8 +23,8 @@ namespace MatrixLibrary
              */
 
             Matrix<T> result;
-            Matrix<T> symmetric = ConcurrentAlteringOperations.Symmetric(matrix);
-            if (ConcurrentProperties.Definity(symmetric) == DefinityClassification.PositiveDefinite)
+            Matrix<T> symmetric = ParallelAlteringOperations.Symmetric(matrix);
+            if (ParallelProperties.Definity(symmetric) == DefinityClassification.PositiveDefinite)
             {
                 int dim = matrix.Rows;
                 result = new Matrix<T>(dim, dim);
@@ -117,7 +117,7 @@ namespace MatrixLibrary
                 });
             }
 
-            result = ConcurrentClassicOperations.Multiplication(tmpR, tmpQ);
+            result = ParallelClassicOperations.Multiplication(tmpR, tmpQ);
             R = tmpR;
             Q = tmpQ;
 

@@ -7,7 +7,7 @@ namespace MatrixLibrary
 {
     public enum DefinityClassification { Indefinite, PositiveDefinite, NegativeDefinite };
 
-    public static class ConcurrentProperties
+    public static class ParallelProperties
     {
         /// <summary>
         /// 
@@ -24,7 +24,7 @@ namespace MatrixLibrary
                 int rows = matrix.Rows;
                 int cols = matrix.Cols;
 
-                Matrix<T> temporaryM = ConcurrentAlteringOperations.Gauss(matrix);
+                Matrix<T> temporaryM = ParallelAlteringOperations.Gauss(matrix);
                 Parallel.ForEach(temporaryM.GetRowsChunks(), (pair, loopState) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
@@ -59,7 +59,7 @@ namespace MatrixLibrary
             object resultLock = new object();
             int result = matrix.Rows;
 
-            Matrix<T> gauss = ConcurrentAlteringOperations.Gauss(matrix);
+            Matrix<T> gauss = ParallelAlteringOperations.Gauss(matrix);
 
             Parallel.ForEach(gauss.GetRowsChunks(), (pair) =>
             {
@@ -89,8 +89,8 @@ namespace MatrixLibrary
 
             if (matrix.Rows == matrix.Cols)
             {
-                Matrix<T> transposition = ConcurrentAlteringOperations.Transposition(matrix);
-                Matrix<T> multiplied = ConcurrentClassicOperations.Multiplication(transposition, matrix);
+                Matrix<T> transposition = ParallelAlteringOperations.Transposition(matrix);
+                Matrix<T> multiplied = ParallelClassicOperations.Multiplication(transposition, matrix);
 
                 Parallel.ForEach(multiplied.GetRowsChunks(), (pair, loopState) =>
                 {

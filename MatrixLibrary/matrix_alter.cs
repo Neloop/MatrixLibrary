@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
-    public static class ConcurrentAlteringOperations
+    public static class ParallelAlteringOperations
     {
         /// <summary>
         /// 
@@ -47,8 +47,8 @@ namespace MatrixLibrary
             {
                 int dim = matrix.Rows;
 
-                Matrix<T> transpose = ConcurrentAlteringOperations.Transposition(matrix);
-                result = ConcurrentClassicOperations.Addition(matrix, transpose);
+                Matrix<T> transpose = ParallelAlteringOperations.Transposition(matrix);
+                result = ParallelClassicOperations.Addition(matrix, transpose);
 
                 T two = new T();
                 two.AddInt(2);
@@ -188,7 +188,7 @@ namespace MatrixLibrary
             if ((cols % 2) == 0) { halfOfCol = cols / 2; }
             else { halfOfCol = (cols / 2) + 1; }
 
-            result = ConcurrentAlteringOperations.Gauss(matrix); // První Gaussovka
+            result = ParallelAlteringOperations.Gauss(matrix); // První Gaussovka
 
             bool isZeroRow = false;
             Parallel.ForEach(result.GetHalfRowsChunks(), (pair) =>
@@ -209,7 +209,7 @@ namespace MatrixLibrary
                     if (zeroRow1 == cols || zeroRow2 == cols) { isZeroRow = true; }
                 }
             });
-            if (isZeroRow == false) { result = ConcurrentAlteringOperations.Gauss(result); }
+            if (isZeroRow == false) { result = ParallelAlteringOperations.Gauss(result); }
 
             Parallel.ForEach(result.GetHalfRowsChunks(), (pair) =>
             {
@@ -236,7 +236,7 @@ namespace MatrixLibrary
         public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
             Matrix<T> result;
-            if (ConcurrentProperties.IsInvertible(matrix) == true)
+            if (ParallelProperties.IsInvertible(matrix) == true)
             {
                 int rows = matrix.Rows;
                 int cols = matrix.Cols;
@@ -276,7 +276,7 @@ namespace MatrixLibrary
                     }
                 });
 
-                modify = ConcurrentAlteringOperations.Gauss(modify); // První Gaussovka
+                modify = ParallelAlteringOperations.Gauss(modify); // První Gaussovka
 
                 // Převrácení a druhá Gaussovka:
 
@@ -295,7 +295,7 @@ namespace MatrixLibrary
                     }
                 });
 
-                modify = ConcurrentAlteringOperations.Gauss(modify); // Druhá Gaussovka
+                modify = ParallelAlteringOperations.Gauss(modify); // Druhá Gaussovka
 
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {

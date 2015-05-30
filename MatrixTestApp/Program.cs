@@ -117,6 +117,17 @@ namespace MatrixTestApp
             while (cki.Key != ConsoleKey.Enter);
         }
 
+        static void ColoredWriteLine(string s)
+        {
+            ConsoleColor oldForegroundColor = Console.ForegroundColor;
+            ConsoleColor oldBackgroundColor = Console.BackgroundColor;
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(s);
+            Console.ForegroundColor = oldForegroundColor;
+            Console.BackgroundColor = oldBackgroundColor;
+        }
+
         static void Main(string[] args)
         {
             int[,] inputMatrix = new int[4, 4] { {1, 0, 5, 6}, {1, 1, 6, 7}, {0, 1, 7, 8}, {10, 7, 8, 3} };
@@ -374,11 +385,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded addition...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentClassicOperations.Addition(A, B);
+            resultMulti = ParallelClassicOperations.Addition(A, B);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -392,11 +403,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded subtraction...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentClassicOperations.Subtraction(A, B);
+            resultMulti = ParallelClassicOperations.Subtraction(A, B);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -411,11 +422,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded multiply with number...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentClassicOperations.MultiplyWithNumber(A, multiplyNumber);
+            resultMulti = ParallelClassicOperations.MultiplyWithNumber(A, multiplyNumber);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -433,9 +444,11 @@ namespace MatrixTestApp
             Console.WriteLine("Generating matrixes...");
             A = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
             B = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, rowsAndCols);
+            b = Matrix<MatrixNumber>.GetUninitializedMatrix(rowsAndCols, 1);
 
             for (int i = 0; i < rowsAndCols; i++)
             {
+                b.WriteNumber(i, 0, new MatrixNumber(rdm.Next(-10, 10)));
                 for (int j = 0; j < rowsAndCols; j++)
                 {
                     A.WriteNumber(i, j, new MatrixNumber(rdm.Next(-10, 10)));
@@ -456,11 +469,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded multiplication...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentClassicOperations.Multiplication(A, B);
+            resultMulti = ParallelClassicOperations.Multiplication(A, B);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -475,11 +488,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded exponentiate...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentClassicOperations.Exponentiate(A, exponent);
+            resultMulti = ParallelClassicOperations.Exponentiate(A, exponent);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -493,11 +506,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded IsInvertible...");
             stopwatchMulti.Restart();
-            resultMultiBool = ConcurrentProperties.IsInvertible(A);
+            resultMultiBool = ParallelProperties.IsInvertible(A);
             stopwatchMulti.Stop();
 
             if (resultSingleBool == resultMultiBool) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -511,11 +524,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded rank...");
             stopwatchMulti.Restart();
-            resultMultiInt = ConcurrentProperties.Rank(A);
+            resultMultiInt = ParallelProperties.Rank(A);
             stopwatchMulti.Stop();
 
             if (resultSingleInt == resultMultiInt) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -529,11 +542,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded IsOrthogonal...");
             stopwatchMulti.Restart();
-            resultMultiBool = ConcurrentProperties.IsOrthogonal(A);
+            resultMultiBool = ParallelProperties.IsOrthogonal(A);
             stopwatchMulti.Stop();
 
             if (resultSingleBool == resultMultiBool) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -547,11 +560,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded determinant...");
             stopwatchMulti.Restart();
-            resultMultiMatrixNumber = ConcurrentComputations.Determinant(A);
+            resultMultiMatrixNumber = ParallelComputations.Determinant(A);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -565,11 +578,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded gauss...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentAlteringOperations.Gauss(A);
+            resultMulti = ParallelAlteringOperations.Gauss(A);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -583,11 +596,29 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded GaussJordan...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentAlteringOperations.GaussJordan(A);
+            resultMulti = ParallelAlteringOperations.GaussJordan(A);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+            /********** SolveLinearEquations **********/
+            Console.WriteLine("SolveLinearEquations...");
+            stopwatchSingle.Restart();
+            resultSingle = Computations.SolveLinearEquations(A, b);
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded SolveLinearEquations...");
+            stopwatchMulti.Restart();
+            resultMulti = ParallelComputations.SolveLinearEquations(A, b);
+            stopwatchMulti.Stop();
+
+            if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -601,11 +632,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded QRDecomposition...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentDecompositions.QRDecomposition(A, out Q, out R);
+            resultMulti = ParallelDecompositions.QRDecomposition(A, out Q, out R);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -648,14 +679,14 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded inverse...");
             stopwatchMulti.Restart();
-            try { resultMulti = ConcurrentAlteringOperations.Inverse(A); }
+            try { resultMulti = ParallelAlteringOperations.Inverse(A); }
             catch (MatrixLibraryException e) { Console.WriteLine(e.Message); inverseExceptionCaught = true; }
             stopwatchMulti.Stop();
 
             if (inverseExceptionCaught == false)
             {
                 if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-                else { Console.WriteLine("Results are different!"); }
+                else { ColoredWriteLine("Results are different!"); }
             }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
@@ -670,11 +701,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded StrassenWinograd...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentClassicOperations.StrassenWinograd(A, B);
+            resultMulti = ParallelClassicOperations.StrassenWinograd(A, B);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -688,11 +719,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded Orthogonal...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentAlteringOperations.Orthogonal(A);
+            resultMulti = ParallelAlteringOperations.Orthogonal(A);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();
@@ -708,14 +739,14 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded CholeskyDecomposition...");
             stopwatchMulti.Restart();
-            try { resultMulti = ConcurrentDecompositions.CholeskyDecomposition(A); }
+            try { resultMulti = ParallelDecompositions.CholeskyDecomposition(A); }
             catch (MatrixLibraryException e) { Console.WriteLine(e.Message); choleskyExceptionCaught = true; }
             stopwatchMulti.Stop();
 
             if (choleskyExceptionCaught == false)
             {
                 if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-                else { Console.WriteLine("Results are different!"); }
+                else { ColoredWriteLine("Results are different!"); }
             }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
@@ -756,11 +787,11 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded adjugate...");
             stopwatchMulti.Restart();
-            resultMulti = ConcurrentAlteringOperations.Adjugate(A);
+            resultMulti = ParallelAlteringOperations.Adjugate(A);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
-            else { Console.WriteLine("Results are different!"); }
+            else { ColoredWriteLine("Results are different!"); }
             Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
 
             WriteSeparator();

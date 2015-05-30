@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
-    public static class ConcurrentComputations
+    public static class ParallelComputations
     {
         /// <summary>
         /// Pokud matice není regulární je vracena 0
@@ -148,7 +148,7 @@ namespace MatrixLibrary
             if (b.Rows != matrix.Rows) { throw new MatrixLibraryException("Given matrix and vector b do not have same number of rows!"); }
 
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, 1);
-            T determinant = ConcurrentComputations.Determinant(matrix);
+            T determinant = ParallelComputations.Determinant(matrix);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
@@ -221,7 +221,7 @@ namespace MatrixLibrary
                 }
             });
 
-            tmpMatrix = ConcurrentAlteringOperations.Gauss(tmpMatrix); // První gaussovka
+            tmpMatrix = ParallelAlteringOperations.Gauss(tmpMatrix); // První gaussovka
 
             /*
              * 
@@ -276,7 +276,7 @@ namespace MatrixLibrary
 
             if ((rows - zeroRows) == cols) // Matice má jedno možné řešení
             {
-                tmpMatrix = ConcurrentAlteringOperations.Gauss(tmpMatrix);
+                tmpMatrix = ParallelAlteringOperations.Gauss(tmpMatrix);
                 result = Matrix<T>.GetUninitializedMatrix(rows, 1);
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {

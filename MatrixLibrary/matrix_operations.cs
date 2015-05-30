@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
-    public static class ConcurrentClassicOperations
+    public static class ParallelClassicOperations
     {
         /// <summary>
         /// 
@@ -477,7 +477,7 @@ namespace MatrixLibrary
                     result = new Matrix<T>(matrix);
                     for (int i = 1; i < exponent; i++)
                     {
-                        result = ConcurrentClassicOperations.Multiplication(result, matrix);
+                        result = ParallelClassicOperations.Multiplication(result, matrix);
                     }
                 }
                 else
@@ -490,8 +490,8 @@ namespace MatrixLibrary
                         }
                     });
 
-                    result = ConcurrentClassicOperations.Multiplication(S, exponentiate);
-                    result = ConcurrentClassicOperations.Multiplication(result, AlteringOperations.Inverse(S));
+                    result = ParallelClassicOperations.Multiplication(S, exponentiate);
+                    result = ParallelClassicOperations.Multiplication(result, AlteringOperations.Inverse(S));
                 }
             }
             else
