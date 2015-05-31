@@ -22,6 +22,8 @@ namespace MatrixLibrary
              * 
              */
 
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             Matrix<T> symmetric = ParallelAlteringOperations.Symmetric(matrix);
             if (ParallelProperties.Definity(symmetric) == DefinityClassification.PositiveDefinite)
@@ -73,6 +75,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -142,6 +146,8 @@ namespace MatrixLibrary
              * 
              */
 
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             Matrix<T> symmetric = AlteringOperations.Symmetric(matrix);
             if (Properties.Definity(symmetric) == DefinityClassification.PositiveDefinite)
@@ -182,6 +188,8 @@ namespace MatrixLibrary
 
         public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;

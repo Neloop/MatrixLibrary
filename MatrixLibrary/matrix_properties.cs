@@ -17,6 +17,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static bool IsInvertible<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             bool result = true;
 
             if (matrix.Rows == matrix.Cols)
@@ -56,6 +58,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static int Rank<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             object resultLock = new object();
             int result = matrix.Rows;
 
@@ -85,6 +89,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             bool result = true;
 
             if (matrix.Rows == matrix.Cols)
@@ -132,6 +138,9 @@ namespace MatrixLibrary
              * 2: Negatině definitní
              * 
              * */
+
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             DefinityClassification result = DefinityClassification.Indefinite;
 
             if (matrix.Rows == matrix.Cols)
@@ -187,6 +196,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static bool IsInvertible<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             if (matrix.Rows == matrix.Cols)
             {
                 int rows = matrix.Rows;
@@ -221,6 +232,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static int Rank<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             int result = matrix.Rows;
 
             Matrix<T> gauss = AlteringOperations.Gauss(matrix);
@@ -246,6 +259,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             if (matrix.Rows == matrix.Cols)
             {
                 Matrix<T> transposition = AlteringOperations.Transposition(matrix);
@@ -288,6 +303,9 @@ namespace MatrixLibrary
              * 2: Negatině definitní
              * 
              * */
+
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             DefinityClassification result = DefinityClassification.Indefinite;
 
             if (matrix.Rows == matrix.Cols)

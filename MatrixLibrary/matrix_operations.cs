@@ -16,6 +16,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
             {
@@ -57,6 +59,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
@@ -93,6 +97,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
@@ -123,6 +129,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
             {
@@ -157,6 +165,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows1, cols1, cols2;
             rows1 = matrix1.Rows;
@@ -198,6 +208,9 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+            if (number == null) { throw new MatrixLibraryException("In given number reference was null value!"); }
+
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
@@ -223,6 +236,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows1, rows2, cols1, cols2;
             rows1 = matrix1.Rows;
@@ -247,25 +262,25 @@ namespace MatrixLibrary
                 Task<Matrix<T>> S_1 = Task<Matrix<T>>.Run(() => ClassicOperations.AdditionOfParts(del, del, matrix1, del, 0, matrix1, del, del));
 
                 // S_2 = S_1 - A_11
-                Task<Matrix<T>> S_2 = S_1.ContinueWith<Matrix<T>>((s_1) => ClassicOperations.SubtractionOfParts(del, del, S_1.Result, 0, 0, matrix1, 0, 0));
+                Task<Matrix<T>> S_2 = S_1.ContinueWith<Matrix<T>>((s1) => ClassicOperations.SubtractionOfParts(del, del, s1.Result, 0, 0, matrix1, 0, 0));
 
                 // S_3 = A_11 - A_21
                 Task<Matrix<T>> S_3 = Task<Matrix<T>>.Run(() => ClassicOperations.SubtractionOfParts(del, del, matrix1, 0, 0, matrix1, del, 0));
 
                 // S_4 = A_12 - S_2
-                Task<Matrix<T>> S_4 = S_2.ContinueWith<Matrix<T>>((s_2) => ClassicOperations.SubtractionOfParts(del, del, matrix1, 0, del, S_2.Result, 0, 0));
+                Task<Matrix<T>> S_4 = S_2.ContinueWith<Matrix<T>>((s2) => ClassicOperations.SubtractionOfParts(del, del, matrix1, 0, del, s2.Result, 0, 0));
 
                 // S_5 = B_12 - B_11
                 Task<Matrix<T>> S_5 = Task<Matrix<T>>.Run(() => ClassicOperations.SubtractionOfParts(del, del, matrix2, 0, del, matrix2, 0, 0));
 
                 // S_6 = B_22 - S_5
-                Task<Matrix<T>> S_6 = S_5.ContinueWith<Matrix<T>>((s_5) => ClassicOperations.SubtractionOfParts(del, del, matrix2, del, del, S_5.Result, 0, 0));
+                Task<Matrix<T>> S_6 = S_5.ContinueWith<Matrix<T>>((s5) => ClassicOperations.SubtractionOfParts(del, del, matrix2, del, del, s5.Result, 0, 0));
 
                 // S_7 = B_22 - B_12
                 Task<Matrix<T>> S_7 = Task<Matrix<T>>.Run(() => ClassicOperations.SubtractionOfParts(del, del, matrix2, del, del, matrix2, 0, del));
 
                 // S_8 = B_21 - S_6
-                Task<Matrix<T>> S_8 = S_6.ContinueWith<Matrix<T>>((s_6) => ClassicOperations.SubtractionOfParts(del, del, matrix2, del, 0, S_6.Result, 0, 0));
+                Task<Matrix<T>> S_8 = S_6.ContinueWith<Matrix<T>>((s6) => ClassicOperations.SubtractionOfParts(del, del, matrix2, del, 0, s6.Result, 0, 0));
 
                 // N_1 = A_11 * B_11
                 Task<Matrix<T>> N_1 = Task<Matrix<T>>.Run(() =>
@@ -317,15 +332,15 @@ namespace MatrixLibrary
 
                 // N_3 = S_1 * S_5
                 Task<Matrix<T>> N_3 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { S_1, S_5 },
-                    (_) => ClassicOperations.StrassenWinograd(S_1.Result, S_5.Result));
+                    tasks => ClassicOperations.StrassenWinograd(tasks[0].Result, tasks[1].Result));
 
                 // N_4 = S_2 * S_6
                 Task<Matrix<T>> N_4 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { S_2, S_6 },
-                    (_) => ClassicOperations.StrassenWinograd(S_2.Result, S_6.Result));
+                    tasks => ClassicOperations.StrassenWinograd(tasks[0].Result, tasks[1].Result));
 
                 // N_5 = S_3 * S_7
                 Task<Matrix<T>> N_5 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { S_3, S_7 },
-                    (_) => ClassicOperations.StrassenWinograd(S_3.Result, S_7.Result));
+                    tasks => ClassicOperations.StrassenWinograd(tasks[0].Result, tasks[1].Result));
 
                 // N_6 = S_4 * B_22
                 Task<Matrix<T>> N_6 = Task<Matrix<T>>.Run(() =>
@@ -369,74 +384,74 @@ namespace MatrixLibrary
 
                 // S_9 = N_1 + N_4
                 Task<Matrix<T>> S_9 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { N_1, N_4 },
-                    (_) => ClassicOperations.Addition(N_1.Result, N_4.Result));
+                    tasks => ClassicOperations.Addition(tasks[0].Result, tasks[1].Result));
 
                 // S_10 = S_9 + N_3
                 Task<Matrix<T>> S_10 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { S_9, N_3 },
-                    (_) => ClassicOperations.Addition(S_9.Result, N_3.Result));
+                    tasks => ClassicOperations.Addition(tasks[0].Result, tasks[1].Result));
 
                 // S_11 = S_9 + N_5
                 Task<Matrix<T>> S_11 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { S_9, N_5 },
-                    (_) => ClassicOperations.Addition(S_9.Result, N_5.Result));
+                    tasks => ClassicOperations.Addition(tasks[0].Result, tasks[1].Result));
 
                 // S_12 = N_1 + N_2 = C_11
                 Task<Matrix<T>> S_12 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { N_1, N_2 },
-                    (_) => ClassicOperations.Addition(N_1.Result, N_2.Result));
+                    tasks => ClassicOperations.Addition(tasks[0].Result, tasks[1].Result));
 
                 // S_13 = S_10 + N_6 = C_12
                 Task<Matrix<T>> S_13 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { S_10, N_6 },
-                    (_) => ClassicOperations.Addition(S_10.Result, N_6.Result));
+                    tasks => ClassicOperations.Addition(tasks[0].Result, tasks[1].Result));
 
                 // S_14 = S_11 + N_7 = C_21
                 Task<Matrix<T>> S_14 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { S_11, N_7 },
-                    (_) => ClassicOperations.Addition(S_11.Result, N_7.Result));
+                    tasks => ClassicOperations.Addition(tasks[0].Result, tasks[1].Result));
 
                 // S_15 = S_10 + N_5 = C_22
                 Task<Matrix<T>> S_15 = Task.Factory.ContinueWhenAll(new Task<Matrix<T>>[] { S_10, N_5 },
-                    (_) => ClassicOperations.Addition(S_10.Result, N_5.Result));
+                    tasks => ClassicOperations.Addition(tasks[0].Result, tasks[1].Result));
 
-                Task WriteC_11 = S_12.ContinueWith((s_12) =>
+                Task WriteC_11 = S_12.ContinueWith((s12) =>
                 {
                     for (int i = 0; i < del; i++)
                     {
                         for (int j = 0; j < del; j++)
                         {
-                            result.WriteNumber(i, j, S_12.Result.GetNumber(i, j)); // C_11
+                            result.WriteNumber(i, j, s12.Result.GetNumber(i, j)); // C_11
                         }
                     }
                 });
 
-                Task WriteC_12 = S_13.ContinueWith((s_13) =>
+                Task WriteC_12 = S_13.ContinueWith((s13) =>
                 {
                     for (int i = 0; i < del; i++)
                     {
                         for (int j = 0; j < del; j++)
                         {
-                            if ((del + j) < result.Cols) { result.WriteNumber(i, del + j, S_13.Result.GetNumber(i, j)); } // C_12
+                            if ((del + j) < result.Cols) { result.WriteNumber(i, del + j, s13.Result.GetNumber(i, j)); } // C_12
                             else { break; }
                         }
                     }
                 });
 
-                Task WriteC_21 = S_14.ContinueWith((s_14) =>
+                Task WriteC_21 = S_14.ContinueWith((s14) =>
                 {
                     for (int i = 0; i < del; i++)
                     {
                         for (int j = 0; j < del; j++)
                         {
-                            if ((del + i) < result.Rows) { result.WriteNumber(i + del, j, S_14.Result.GetNumber(i, j)); } // C_21
+                            if ((del + i) < result.Rows) { result.WriteNumber(i + del, j, s14.Result.GetNumber(i, j)); } // C_21
                             else { break; }
                         }
                     }
                 });
 
-                Task WriteC_22 = S_15.ContinueWith((s_15) =>
+                Task WriteC_22 = S_15.ContinueWith((s15) =>
                 {
                     for (int i = 0; i < del; i++)
                     {
                         for (int j = 0; j < del; j++)
                         {
-                            if ((del + i) < result.Rows && (del + j) < result.Cols) { result.WriteNumber(del + i, del + j, S_15.Result.GetNumber(i, j)); } // C_22
+                            if ((del + i) < result.Rows && (del + j) < result.Cols) { result.WriteNumber(del + i, del + j, s15.Result.GetNumber(i, j)); } // C_22
                             else { break; }
                         }
                     }
@@ -461,6 +476,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
             {
@@ -513,6 +530,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
             {
@@ -550,6 +569,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
             for (int i = 0; i < rowsResult; i++)
@@ -583,6 +604,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(rowsResult, colsResult);
 
             for (int i = 0; i < rowsResult; i++)
@@ -610,6 +633,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
             {
@@ -641,6 +666,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows1, cols1, cols2;
             rows1 = matrix1.Rows;
@@ -679,6 +706,9 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+            if (number == null) { throw new MatrixLibraryException("In given number reference was null value!"); }
+
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
 
             for (int i = 0; i < matrix.Rows; i++)
@@ -701,6 +731,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : MatrixNumberBase, new()
         {
+            if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows1, rows2, cols1, cols2;
             rows1 = matrix1.Rows;
@@ -875,6 +907,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
             {

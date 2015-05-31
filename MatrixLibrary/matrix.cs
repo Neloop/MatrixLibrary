@@ -805,6 +805,8 @@ namespace MatrixLibrary
 
         public Matrix(Matrix<T> matrix)
         {
+            if (matrix == null) { throw new MatrixLibraryException("Given matrix reference was null!"); }
+
             Rows = matrix.Rows;
             Cols = matrix.Cols;
             MatrixInternal = new T[Rows * Cols + PaddingFromBegin];
@@ -819,6 +821,35 @@ namespace MatrixLibrary
                     }
                 }
             });
+        }
+
+        public Matrix(Matrix<T> matrix, int col, Matrix<T> column)
+        {
+            if (matrix == null) { throw new MatrixLibraryException("Given matrix reference was null!"); }
+            if (matrix.Rows != column.Rows) { throw new MatrixLibraryException("Given column has different number of rows than matrix!"); }
+            if (col < 0 || col >= matrix.Cols) { throw new MatrixLibraryException("Number of column to replace is invalid!"); }
+
+            Rows = matrix.Rows;
+            Cols = matrix.Cols;
+            MatrixInternal = new T[Rows * Cols + PaddingFromBegin];
+
+            Parallel.ForEach(GetRowsChunks(), (pair) =>
+            {
+                for (int i = pair.Item1; i < pair.Item2; i++)
+                {
+                    for (int j = 0; j < Cols; j++)
+                    {
+                        if (j != col) { MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)matrix.GetNumber(i, j).Copy(); }
+                        else { MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)column.GetNumber(i, 0).Copy(); }
+                    }
+                }
+            });
+        }
+
+        public T this[int i, int j]
+        {
+            get { return MatrixInternal[(i * Cols) + j + PaddingFromBegin]; }
+            set { MatrixInternal[(i * Cols) + j + PaddingFromBegin] = (T)value.Copy(); }
         }
 
         public T GetNumber(int i, int j)
@@ -1070,18 +1101,18 @@ namespace MatrixLibrary
 
         public override string ToString()
         {
-            string result = "";
+            StringBuilder result = new StringBuilder();
 
             for (int i = 0; i < Rows; ++i)
             {
                 for (int j = 0; j < Cols; ++j)
                 {
-                    result += string.Format("{0,4} ", MatrixInternal[(i * Cols) + j + PaddingFromBegin].ToDouble());
+                    result.Append(string.Format("{0,4} ", MatrixInternal[(i * Cols) + j + PaddingFromBegin].ToDouble()));
                 }
-                result += System.Environment.NewLine;
+                result.AppendLine();
             }
 
-            return result;
+            return result.ToString();
         }
         public override bool Equals(object obj)
         {

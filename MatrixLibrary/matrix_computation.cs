@@ -15,11 +15,26 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static T Determinant<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            return DeterminantInternal(matrix);
+        }
+
+        /// <summary>
+        /// Pokud matice není regulární je vracena 0
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : MatrixNumberBase, new()
+        {
+            if (matrix == null || (replace == true && b == null)) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             T multiplyResult = new T();
             multiplyResult.AddInt(1);
             object multiplyResultLock = new object();
 
-            Matrix<T> modified = new Matrix<T>(matrix);
+            Matrix<T> modified;
+            if (replace == false) { modified = new Matrix<T>(matrix); }
+            else { modified = new Matrix<T>(matrix, col, b); }
 
             for (int i = 0; i < modified.Rows; ++i)
             {
@@ -59,11 +74,11 @@ namespace MatrixLibrary
                                         {
                                             lock (multiplyResultLock) { multiplyResult = (T)(tmpDivide * multiplyResult); }
 
-                                            for (int b = j; b < modified.Cols; b++)
+                                            for (int ab = j; ab < modified.Cols; ab++)
                                             {
-                                                T tmp = (T)(modified.GetNumber(a, b) / tmpDivide);
-                                                tmp = (T)(tmp - modified.GetNumber(i, b));
-                                                modified.WriteNumber(a, b, tmp);
+                                                T tmp = (T)(modified.GetNumber(a, ab) / tmpDivide);
+                                                tmp = (T)(tmp - modified.GetNumber(i, ab));
+                                                modified.WriteNumber(a, ab, tmp);
                                             }
                                         }
                                     }
@@ -137,9 +152,7 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
         {
-            /* sice pocita determinanty paralelne, ale kvuli tomu potrebuje mit pro kazdou iteraci docasne vytvorenou stejne velkou matici jako je vstupni,
-             * diky tomu je to velmi pametove narocne 
-             * (dokud nebude napsan specialni Determinant(), ktery bude umet nahrazovat sloupec v matici bez vytvoreni pomocne) */
+            if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -152,27 +165,12 @@ namespace MatrixLibrary
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
+                T tmpDeterminant = (T)determinant.Copy();
+
                 for (int i = pair.Item1; i < pair.Item2; i++)
                 {
-                    Matrix<T> det = Matrix<T>.GetUninitializedMatrix(rows, cols);
-
-                    for (int k = 0; k < rows; k++) // sestavení matice, kde je i-tý sloupec nahrazen sloupcem b
-                    {
-                        for (int l = 0; l < cols; l++)
-                        {
-                            if (i == l)
-                            {
-                                det.WriteNumber(k, l, b.GetNumber(k, 0));
-                            }
-                            else
-                            {
-                                det.WriteNumber(k, l, matrix.GetNumber(k, l));
-                            }
-                        }
-                    }
-
-                    T x = Computations.Determinant(det);
-                    x = (T)(x / determinant);
+                    T x = Computations.DeterminantInternal(matrix, true, i, b);
+                    x = (T)(x / tmpDeterminant);
 
                     result.WriteNumber(i, 0, x);
                 }
@@ -196,6 +194,8 @@ namespace MatrixLibrary
              *  - vektory jsou ve výsledné matici sloupce
              * 
              */
+
+            if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             Matrix<T> result;
             int rows = matrix.Rows;
@@ -364,16 +364,31 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static T Determinant<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            return DeterminantInternal(matrix);
+        }
+
+        /// <summary>
+        /// Pokud matice není regulární je vracena 0
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : MatrixNumberBase, new()
+        {
+            if (matrix == null || (replace == true && b == null)) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             T multiplyResult = new T();
             multiplyResult.AddInt(1);
 
-            Matrix<T> modified = new Matrix<T>(matrix);
+            Matrix<T> modified;
+            if (replace == false) { modified = new Matrix<T>(matrix); }
+            else { modified = new Matrix<T>(matrix, col, b); }
 
             for (int i = 0; i < modified.Rows; ++i)
             {
                 for (int j = i; j < modified.Cols; ++j)
                 {
-                    if(modified.GetNumber(i, j).IsZero()) // na miste kde mel byt pivot je nula, zkusi se najit nenulove cislo ve stejnem sloupci
+                    if (modified.GetNumber(i, j).IsZero()) // na miste kde mel byt pivot je nula, zkusi se najit nenulove cislo ve stejnem sloupci
                     {
                         // pokud je prvek nula, tak se koukne pod něj a případně prohodí řádek a vydělí řádky pod ním (potom se breakne), 
                         // pokud i pod ním jsou nuly, pak se breakne (nemusí prostě se nechá doběhnout) cyklus a jde na další sloupec
@@ -402,11 +417,11 @@ namespace MatrixLibrary
                                     {
                                         multiplyResult = (T)(divide * multiplyResult);
 
-                                        for (int b = j; b < modified.Cols; b++)
+                                        for (int ab = j; ab < modified.Cols; ab++)
                                         {
-                                            T tmp = (T)(modified.GetNumber(a, b) / divide);
-                                            tmp = (T)(tmp - modified.GetNumber(i, b));
-                                            modified.WriteNumber(a, b, tmp);
+                                            T tmp = (T)(modified.GetNumber(a, ab) / divide);
+                                            tmp = (T)(tmp - modified.GetNumber(i, ab));
+                                            modified.WriteNumber(a, ab, tmp);
                                         }
                                     }
                                 }
@@ -472,6 +487,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
         {
+            if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             int rows = matrix.Rows;
             int cols = matrix.Cols;
 
@@ -485,22 +502,7 @@ namespace MatrixLibrary
 
             for (int i = 0; i < cols; i++)
             {
-                for (int k = 0; k < rows; k++) // sestavení matice, kde je i-tý sloupec nahrazen sloupcem b
-                {
-                    for (int l = 0; l < cols; l++)
-                    {
-                        if (i == l)
-                        {
-                            det.WriteNumber(k, l, b.GetNumber(k, 0));
-                        }
-                        else
-                        {
-                            det.WriteNumber(k, l, matrix.GetNumber(k, l));
-                        }
-                    }
-                }
-
-                T x = Computations.Determinant(det);
+                T x = Computations.DeterminantInternal(matrix, true, i, b);
                 x = (T)(x / determinant);
 
                 result.WriteNumber(i, 0, x);
@@ -524,6 +526,8 @@ namespace MatrixLibrary
              *  - vektory jsou ve výsledné matici sloupce
              * 
              */
+
+            if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             Matrix<T> result;
             int rows = matrix.Rows;

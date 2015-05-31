@@ -15,6 +15,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -42,6 +44,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
             {
@@ -78,6 +82,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -177,6 +183,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -235,6 +243,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (ParallelProperties.IsInvertible(matrix) == true)
             {
@@ -323,6 +333,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             int rows = matrix.Rows;
             int cols = matrix.Cols;
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, rows);
@@ -371,6 +383,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             int rows = matrix.Rows;
             int cols = matrix.Cols;
             Matrix<T> tmpMatrix = new Matrix<T>(matrix);
@@ -425,6 +439,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -449,6 +465,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
             {
@@ -482,6 +500,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -568,6 +588,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
@@ -621,6 +643,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             Matrix<T> result;
             if (Properties.IsInvertible(matrix) == true)
             {
@@ -697,6 +721,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             int rows = matrix.Rows;
             int cols = matrix.Cols;
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, rows);
@@ -742,6 +768,8 @@ namespace MatrixLibrary
         /// <returns></returns>
         public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
         {
+            if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
+
             int rows = matrix.Rows;
             int cols = matrix.Cols;
             Matrix<T> tmpMatrix = new Matrix<T>(matrix);
