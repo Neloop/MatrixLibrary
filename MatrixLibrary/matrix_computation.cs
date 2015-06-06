@@ -497,7 +497,6 @@ namespace MatrixLibrary
 
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, 1);
 
-            Matrix<T> det = Matrix<T>.GetUninitializedMatrix(rows, cols);
             T determinant = Computations.Determinant(matrix);
 
             for (int i = 0; i < cols; i++)

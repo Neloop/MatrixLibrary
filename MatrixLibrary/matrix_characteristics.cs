@@ -24,25 +24,18 @@ namespace MatrixLibrary
 
             if (matrix.Rows == matrix.Cols)
             {
-                Matrix<T> Q, R, RQ;
-                ParallelDecompositions.QRDecomposition(matrix, out Q, out R);
-                RQ = ParallelClassicOperations.Multiplication(ParallelAlteringOperations.Transposition(Q), matrix);
-                RQ = ParallelClassicOperations.Multiplication(RQ, Q);
+                Matrix<T> Q, R, RQ = matrix;
 
                 bool end1 = false;
                 bool end2 = false;
-                bool first = true;
                 while (end1 == false && end2 == false)
                 {
                     end1 = true;
                     end2 = true;
-                    if (first == false)
-                    {
-                        ParallelDecompositions.QRDecomposition(RQ, out Q, out R);
-                        RQ = ParallelClassicOperations.Multiplication(ParallelAlteringOperations.Transposition(Q), RQ);
-                        RQ = ParallelClassicOperations.Multiplication(RQ, Q);
-                    }
-                    first = false;
+
+                    ParallelDecompositions.QRDecomposition(RQ, out Q, out R);
+                    RQ = ParallelClassicOperations.Multiplication(ParallelAlteringOperations.Transposition(Q), RQ);
+                    RQ = ParallelClassicOperations.Multiplication(RQ, Q);
 
                     Parallel.ForEach(RQ.GetRowsChunks(1), (pair) =>
                     {
@@ -246,23 +239,18 @@ namespace MatrixLibrary
 
             if (matrix.Rows == matrix.Cols)
             {
-                Matrix<T> Q, R, RQ;
-                Decompositions.QRDecomposition(matrix, out Q, out R);
-                RQ = AlteringOperations.Transposition(Q) * matrix * Q;
+                Matrix<T> Q, R, RQ = matrix;
 
                 bool end1 = false;
                 bool end2 = false;
-                bool first = true;
                 while (end1 == false && end2 == false)
                 {
                     end1 = true;
                     end2 = true;
-                    if (first == false)
-                    {
-                        Decompositions.QRDecomposition(RQ, out Q, out R);
-                        RQ = AlteringOperations.Transposition(Q) * RQ * Q;
-                    }
-                    first = false;
+
+                    Decompositions.QRDecomposition(RQ, out Q, out R);
+                    RQ = AlteringOperations.Transposition(Q) * RQ * Q;
+
                     for (int i = 1; i < RQ.Rows; i++)
                     {
                         for (int j = 0; j < i; j++)
