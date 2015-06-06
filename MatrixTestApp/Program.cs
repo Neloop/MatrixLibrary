@@ -268,14 +268,22 @@ namespace MatrixTestApp
 
         static void Main(string[] args)
         {
+            Matrix<MatrixNumber> A = new Matrix<MatrixNumber>(1, 1);
+            /************************VSE PRELOZIME******************************/
+            AlteringOperations.Adjugate(A); ParallelAlteringOperations.Adjugate(A);
+            AlteringOperations.Gauss(A); ParallelAlteringOperations.Gauss(A);
+            Computations.Cramer(A, A); ParallelComputations.Cramer(A, A);
+
+
             int[,] inputMatrix = new int[4, 4] { {1, 0, 5, 6}, {1, 1, 6, 7}, {0, 1, 7, 8}, {10, 7, 8, 3} };
 
-            Matrix<MatrixNumber> A = new Matrix<MatrixNumber>(inputMatrix);
+            A = new Matrix<MatrixNumber>(inputMatrix);
 
             inputMatrix = new int[4, 4] { {1, 1, -2, 3}, {4, 3, -1, 5}, {1, 0, 5, -4}, {2, 1, 3, -1} };
 
             Matrix<MatrixNumber> B = new Matrix<MatrixNumber>(inputMatrix);
 
+            int rowsAndCols;
             Matrix<MatrixNumber> resultSingle;
             Matrix<MatrixNumber> resultMulti;
             Stopwatch stopwatchSingle = new Stopwatch();
@@ -453,7 +461,9 @@ namespace MatrixTestApp
             zeroM = new int[2, 2] {{2, 1}, {0, 1}};
             A = new Matrix<MatrixNumber>(zeroM);
 
-            EigenValues<MatrixNumber> tmp = Characteristics.GetEigenValues(A, 0);
+            EigenValues<MatrixNumber> tmp;
+            try { tmp = Characteristics.GetEigenValues(A, 0); }
+            catch { tmp = new EigenValues<MatrixNumber>(new [] { new MatrixNumber(0) }); }
             resultSingle = new Matrix<MatrixNumber>(tmp.Count(), 1);
             for (int i = 0; i < resultSingle.Rows; i++)
             {
@@ -463,13 +473,15 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            resultSingle = Characteristics.GetEigenVectors(A, out tmp, 0);
+            try { resultSingle = Characteristics.GetEigenVectors(A, out tmp, 0); }
+            catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteMatrix(A, resultSingle, "Vlastní vektory");
 
             Console.WriteLine();
 
             Matrix<MatrixNumber> S;
-            resultSingle = Characteristics.Diagonal(A, out S, 0);
+            try { resultSingle = Characteristics.Diagonal(A, out S, 0); }
+            catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteMatrix(A, resultSingle, "Diagonalizovat");
 
             Console.WriteLine();
@@ -484,17 +496,16 @@ namespace MatrixTestApp
 
 
 
-
             ExitOrContinue();
             /**********************************************************************************/
-            /***************************** MATRIX PARALIZATION ********************************/
+            /***************************** ARRAYS PARALIZATION ********************************/
             /**********************************************************************************/
 
-            WriteSeparator(); WriteSeparator("MATRIX PARALIZATION");
-            int rowsAndCols = 5000;
-            Console.WriteLine("Matrix will have {0} rows and cols", rowsAndCols);
-            Console.WriteLine("Generating matrix...");
-            A = new Matrix<MatrixNumber>(rowsAndCols, rowsAndCols);
+            WriteSeparator(); WriteSeparator("ARRAYS PARALIZATION");
+            rowsAndCols = 23000;
+            Console.WriteLine("Array will have {0} rows and cols", rowsAndCols);
+            Console.WriteLine("Generating array...");
+            int [,] BB = new int[rowsAndCols, rowsAndCols];
 
             Console.WriteLine("Single-threaded multidimensional array going through...");
             stopwatchSingle.Restart();
@@ -502,7 +513,53 @@ namespace MatrixTestApp
             {
                 for (int j = 0; j < rowsAndCols; ++j)
                 {
-                    A.WriteNumber(i, j, A.GetNumber(i, j));
+                    BB[i, j] = (BB[i, j] + 5) ^ 5;
+                }
+            }
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded multidimensional array going through...");
+            stopwatchMulti.Restart();
+            Parallel.For(0, rowsAndCols, (i) =>
+            {
+                for (int j = 0; j < rowsAndCols; ++j)
+                {
+                    BB[i, j] = (BB[i, j] + 5) ^ 5;
+                }
+            });
+            stopwatchMulti.Stop();
+
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
+
+
+
+
+
+            ExitOrContinue();
+            /**********************************************************************************/
+            /***************************** MATRIX PARALIZATION ********************************/
+            /**********************************************************************************/
+
+            WriteSeparator(); WriteSeparator("MATRIX PARALIZATION");
+            rowsAndCols = 5000;
+            Console.WriteLine("Matrix will have {0} rows and cols", rowsAndCols);
+            Console.WriteLine("Generating matrix...");
+            A = new Matrix<MatrixNumber>(rowsAndCols, rowsAndCols);
+
+            Console.WriteLine("Single-threaded multidimensional array going through...");
+            stopwatchSingle.Restart();
+            MatrixNumber five = new MatrixNumber(5);
+            for (int i = 0; i < rowsAndCols; i++)
+            {
+                int ia = 0;
+                for (int j = 0; j < rowsAndCols; ++j)
+                {
+                    A.GetNumber(i, j);
+                    ia += (ia + 5) ^ 5;
+                    A.WriteNumber(i, j, five);
                 }
             }
             stopwatchSingle.Stop();
@@ -514,9 +571,12 @@ namespace MatrixTestApp
                 //Console.WriteLine(System.Threading.Thread.CurrentThread.ManagedThreadId);
                 for (int i = pair.Item1; i < pair.Item2; ++i)
                 {
+                    int ia = 0;
                     for (int j = 0; j < rowsAndCols; ++j)
                     {
-                        A.WriteNumber(i, j, A.GetNumber(i, j));
+                        A.GetNumber(i, j);
+                        ia += (ia + 5) ^ 5;
+                        A.WriteNumber(i, j, five);
                     }
                 }
             });
@@ -529,16 +589,19 @@ namespace MatrixTestApp
 
 
 
-            ExitOrContinue();
             /**********************************************************************************/
             /**********************************************************************************/
             /********************************* Big matrixes ***********************************/
             /**********************************************************************************/
             /**********************************************************************************/
-
+            ExitOrContinue();
             WriteSeparator(); WriteSeparator("BIG MATRIXES");
             int resultSingleInt;
             int resultMultiInt;
+            bool exceptCaughtSingle = false;
+            bool exceptCaughtMulti = false;
+            EigenValues<MatrixNumber> resultSingleEigen = null;
+            EigenValues<MatrixNumber> resultMultiEigen = null;
             GenerateMatrixes(3000, out A, out B, out b);
 
 
@@ -721,7 +784,30 @@ namespace MatrixTestApp
 
             /********** Adjugate **********/
             DoUnaryOpMatrix(A, AlteringOperations.Adjugate, ParallelAlteringOperations.Adjugate, "Adjugate");
-            
+
+
+            /********** GetEigenValues **********/
+            Console.WriteLine("GetEigenValues...");
+            stopwatchSingle.Restart();
+            try { resultSingle = Characteristics.GetEigenVectors(A, out resultSingleEigen, 100); }
+            catch (Exception e) { Console.WriteLine(e.Message); exceptCaughtSingle = true; }
+            stopwatchSingle.Stop();
+
+            Console.WriteLine("Multi-threaded QRDecomposition...");
+            stopwatchMulti.Restart();
+            try { resultMulti = ParallelCharacteristics.GetEigenVectors(A, out resultMultiEigen, 100); }
+            catch (Exception e) { Console.WriteLine(e.Message); exceptCaughtMulti = true; }
+            stopwatchMulti.Stop();
+
+            if ((exceptCaughtSingle == false && exceptCaughtMulti == false
+                && resultSingleEigen == resultMultiEigen && resultSingle == resultMulti)
+                || (exceptCaughtSingle == true && exceptCaughtMulti == true))
+            { Console.WriteLine("Results are the same."); }
+            else { ColoredWriteLine("Results are different!"); }
+            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
+
+            WriteSeparator();
+
             
             /**/
         }

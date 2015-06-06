@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="matrix_characteristics.cs" />
+    <Compile Include="matrix_number.cs" />
     <Compile Include="matrix_operations.cs" />
     <Compile Include="matrix.cs" />
     <Compile Include="matrix_decompositions.cs" />
