@@ -15,7 +15,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : MatrixNumberBase, new()
+        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -77,7 +77,7 @@ namespace MatrixLibrary
                     bool write = true;
                     for (int j = 0; j < tmpRes.Count; j++)
                     {
-                        if (tmpRes[j] == RQ.GetNumber(i, i)) { write = false; }
+                        if (tmpRes[j].__IsEqual(RQ.GetNumber(i, i))) { write = false; }
                     }
                     if (write == true)
                     {
@@ -118,7 +118,7 @@ namespace MatrixLibrary
         /// <param name="eigenValues"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : MatrixNumberBase, new()
+        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -142,7 +142,7 @@ namespace MatrixLibrary
                             {
                                 if (k == l)
                                 {
-                                    modified.WriteNumber(k, l, (T)(matrix.GetNumber(k, l) - tmpEigenValue));
+                                    modified.WriteNumber(k, l, (T)(matrix.GetNumber(k, l).__Subtraction(tmpEigenValue)));
                                 }
                                 else
                                 {
@@ -161,7 +161,7 @@ namespace MatrixLibrary
                             T sum = new T();
                             for (int l = 0; l < system.Cols; l++)
                             {
-                                sum = (T)(sum + system.GetNumber(k, l));
+                                sum = (T)(sum.__Addition(system.GetNumber(k, l)));
                             }
                             result.WriteNumber(i, k, sum);
                         }
@@ -185,7 +185,7 @@ namespace MatrixLibrary
         /// <param name="S"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : MatrixNumberBase, new()
+        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -230,7 +230,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : MatrixNumberBase, new()
+        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -284,7 +284,7 @@ namespace MatrixLibrary
                     bool write = true;
                     for (int j = 0; j < tmpRes.Count; j++)
                     {
-                        if (tmpRes[j] == RQ.GetNumber(i, i)) { write = false; }
+                        if (tmpRes[j].__IsEqual(RQ.GetNumber(i, i))) { write = false; }
                     }
                     if (write == true)
                     {
@@ -321,7 +321,7 @@ namespace MatrixLibrary
         /// <param name="eigenValues"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : MatrixNumberBase, new()
+        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -342,7 +342,7 @@ namespace MatrixLibrary
                         {
                             if (k == l)
                             {
-                                modified.WriteNumber(k, l, (T)(matrix.GetNumber(k, l) - eigenValues.GetEigenValue(i)));
+                                modified.WriteNumber(k, l, (T)(matrix.GetNumber(k, l).__Subtraction(eigenValues.GetEigenValue(i))));
                             }
                             else
                             {
@@ -358,7 +358,7 @@ namespace MatrixLibrary
                         T sum = new T();
                         for (int l = 0; l < system.Cols; l++)
                         {
-                            sum = (T)(sum + system.GetNumber(k, l));
+                            sum = (T)(sum.__Addition(system.GetNumber(k, l)));
                         }
                         result.WriteNumber(i, k, sum);
                     }
@@ -380,7 +380,7 @@ namespace MatrixLibrary
         /// <param name="S"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : MatrixNumberBase, new()
+        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 

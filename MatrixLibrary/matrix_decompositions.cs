@@ -13,7 +13,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             /*
              * 
@@ -36,9 +36,9 @@ namespace MatrixLibrary
                     T multiply = new T();
                     for (int j = 0; j < i; j++)
                     {
-                        multiply = (T)(multiply + result.GetNumber(i, j).__Exponentiate(2));
+                        multiply = (T)(multiply.__Addition(result.GetNumber(i, j).__Exponentiate(2)));
                     }
-                    T write = (T)(symmetric.GetNumber(i, i) - multiply);
+                    T write = (T)(symmetric.GetNumber(i, i).__Subtraction(multiply));
                     write = (T)write.__SquareRoot();
                     result.WriteNumber(i, i, write);
 
@@ -49,10 +49,10 @@ namespace MatrixLibrary
                             T tmpMultiply = new T();
                             for (int k = 0; k < i; k++)
                             {
-                                tmpMultiply = (T)(tmpMultiply + result.GetNumber(i, k) * result.GetNumber(j, k));
+                                tmpMultiply = (T)(tmpMultiply.__Addition(result.GetNumber(i, k).__Multiplication(result.GetNumber(j, k))));
                             }
-                            T tmpWrite = (T)(symmetric.GetNumber(j, i) - tmpMultiply);
-                            tmpWrite = (T)(tmpWrite / result.GetNumber(i, i));
+                            T tmpWrite = (T)(symmetric.GetNumber(j, i).__Subtraction(tmpMultiply));
+                            tmpWrite = (T)(tmpWrite.__Division(result.GetNumber(i, i)));
                             result.WriteNumber(j, i, tmpWrite);
                         }
                     });
@@ -73,7 +73,7 @@ namespace MatrixLibrary
         /// <param name="Q"></param>
         /// <param name="R"></param>
         /// <returns></returns>
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
+        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -89,7 +89,7 @@ namespace MatrixLibrary
                 T norm = new T();
                 for (int i = 0; i < rows; ++i)
                 {
-                    norm = (T)(norm + tmpMatrix.GetNumber(i, k).__Exponentiate(2));
+                    norm = (T)(norm.__Addition(tmpMatrix.GetNumber(i, k).__Exponentiate(2)));
                 }
                 norm = (T)norm.__SquareRoot();
                 tmpR.WriteNumber(k, k, norm);
@@ -98,7 +98,7 @@ namespace MatrixLibrary
                 {
                     for (int i = pair.Item1; i < pair.Item2; ++i)
                     {
-                        tmpQ.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k) / norm));
+                        tmpQ.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k).__Division(norm)));
                     }
                 });
 
@@ -109,13 +109,14 @@ namespace MatrixLibrary
                         T dotProduct = new T();
                         for (int i = 0; i < rows; ++i)
                         {
-                            dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * tmpQ.GetNumber(i, k)));
+                            dotProduct = (T)(dotProduct.__Addition(tmpMatrix.GetNumber(i, j).__Multiplication(tmpQ.GetNumber(i, k))));
                         }
                         tmpR.WriteNumber(k, j, (T)dotProduct);
 
                         for (int i = 0; i < rows; ++i)
                         {
-                            tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (dotProduct * tmpQ.GetNumber(i, k))));
+                            tmpMatrix.WriteNumber(i, j, 
+                                (T)(tmpMatrix.GetNumber(i, j).__Subtraction(dotProduct.__Multiplication(tmpQ.GetNumber(i, k)))));
                         }
                     }
                 });
@@ -137,7 +138,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             /*
              * 
@@ -160,9 +161,9 @@ namespace MatrixLibrary
                     T multiply = new T();
                     for (int j = 0; j < i; j++)
                     {
-                        multiply = (T)(multiply + result.GetNumber(i, j).__Exponentiate(2));
+                        multiply = (T)(multiply.__Addition(result.GetNumber(i, j).__Exponentiate(2)));
                     }
-                    T write = (T)(symmetric.GetNumber(i, i) - multiply);
+                    T write = (T)(symmetric.GetNumber(i, i).__Subtraction(multiply));
                     write = (T)write.__SquareRoot();
                     result.WriteNumber(i, i, write);
 
@@ -171,10 +172,10 @@ namespace MatrixLibrary
                         multiply = new T();
                         for (int k = 0; k < i; k++)
                         {
-                            multiply = (T)(multiply + result.GetNumber(i, k) * result.GetNumber(j, k));
+                            multiply = (T)(multiply.__Addition(result.GetNumber(i, k).__Multiplication(result.GetNumber(j, k))));
                         }
-                        write = (T)(symmetric.GetNumber(j, i) - multiply);
-                        write = (T)(write / result.GetNumber(i, i));
+                        write = (T)(symmetric.GetNumber(j, i).__Subtraction(multiply));
+                        write = (T)(write.__Division(result.GetNumber(i, i)));
                         result.WriteNumber(j, i, write);
                     }
                 }
@@ -186,7 +187,7 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : MatrixNumberBase, new()
+        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -202,14 +203,14 @@ namespace MatrixLibrary
                 T norm = new T();
                 for (int i = 0; i < rows; ++i)
                 {
-                    norm = (T)(norm + tmpMatrix.GetNumber(i, k).__Exponentiate(2));
+                    norm = (T)(norm.__Addition(tmpMatrix.GetNumber(i, k).__Exponentiate(2)));
                 }
                 norm = (T)norm.__SquareRoot();
                 R.WriteNumber(k, k, norm);
 
                 for (int i = 0; i < rows; ++i)
                 {
-                    Q.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k) / norm));
+                    Q.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k).__Division(norm)));
                 }
 
                 for (int j = k + 1; j < cols; ++j)
@@ -217,13 +218,14 @@ namespace MatrixLibrary
                     T dotProduct = new T();
                     for (int i = 0; i < rows; ++i)
                     {
-                        dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * Q.GetNumber(i, k)));
+                        dotProduct = (T)(dotProduct.__Addition(tmpMatrix.GetNumber(i, j).__Multiplication(Q.GetNumber(i, k))));
                     }
                     R.WriteNumber(k, j, (T)dotProduct);
 
                     for (int i = 0; i < rows; ++i)
                     {
-                        tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (R.GetNumber(k, j) * Q.GetNumber(i, k))));
+                        tmpMatrix.WriteNumber(i, j, 
+                            (T)(tmpMatrix.GetNumber(i, j).__Subtraction(R.GetNumber(k, j).__Multiplication(Q.GetNumber(i, k)))));
                     }
                 }
             }

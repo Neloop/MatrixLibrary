@@ -13,7 +13,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static T Determinant<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static T Determinant<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             return DeterminantInternal(matrix);
         }
@@ -24,7 +24,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : MatrixNumberBase, new()
+        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumberBase, new()
         {
             if (matrix == null || (replace == true && b == null)) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -53,15 +53,15 @@ namespace MatrixLibrary
                                 {
                                     modified.SwapElements(k, l, i, l);
                                 }
-                                multiplyResult = (T)(-multiplyResult);
+                                multiplyResult = (T)(multiplyResult.__Negate());
 
                                 T divide = modified.GetNumber(i, j); // cislo kterym se bude delit cely radek
-                                multiplyResult = (T)(divide * multiplyResult);
+                                multiplyResult = (T)(divide.__Multiplication(multiplyResult));
                                 Parallel.ForEach(modified.GetColsChunks(j), (pair) =>
                                 {
                                     for (int l = pair.Item1; l < pair.Item2; l++) // radek ktery byl posunut nahoru bude vydelen tak aby pivot byl 1
                                     {
-                                        modified.WriteNumber(i, l, (T)(modified.GetNumber(i, l) / divide));
+                                        modified.WriteNumber(i, l, (T)(modified.GetNumber(i, l).__Division(divide)));
                                     }
                                 });
 
@@ -72,12 +72,12 @@ namespace MatrixLibrary
                                         T tmpDivide = modified.GetNumber(a, j);
                                         if (!tmpDivide.IsZero())
                                         {
-                                            lock (multiplyResultLock) { multiplyResult = (T)(tmpDivide * multiplyResult); }
+                                            lock (multiplyResultLock) { multiplyResult = (T)(tmpDivide.__Multiplication(multiplyResult)); }
 
                                             for (int ab = j; ab < modified.Cols; ab++)
                                             {
-                                                T tmp = (T)(modified.GetNumber(a, ab) / tmpDivide);
-                                                tmp = (T)(tmp - modified.GetNumber(i, ab));
+                                                T tmp = (T)(modified.GetNumber(a, ab).__Division(tmpDivide));
+                                                tmp = (T)(tmp.__Subtraction(modified.GetNumber(i, ab)));
                                                 modified.WriteNumber(a, ab, tmp);
                                             }
                                         }
@@ -98,12 +98,12 @@ namespace MatrixLibrary
                     else // na miste pivotu je nenulove cislo, tudiz se zmeni na jednicku a vynuluji se sloupce pod nim
                     {
                         T divide = modified.GetNumber(i, j);
-                        multiplyResult = (T)(divide * multiplyResult);
+                        multiplyResult = (T)(divide.__Multiplication(multiplyResult));
                         Parallel.ForEach(modified.GetColsChunks(j), (pair) =>
                         {
                             for (int k = pair.Item1; k < pair.Item2; k++) // vydeli aktualni radek cislem na zacatku tak, aby byl pivot 1
                             {
-                                modified.WriteNumber(i, k, (T)(modified.GetNumber(i, k) / divide));
+                                modified.WriteNumber(i, k, (T)(modified.GetNumber(i, k).__Division(divide)));
                             }
                         });
 
@@ -114,12 +114,12 @@ namespace MatrixLibrary
                                 T tmpDivide = modified.GetNumber(k, j);
                                 if (!tmpDivide.IsZero())
                                 {
-                                    multiplyResult = (T)(tmpDivide * multiplyResult);
+                                    multiplyResult = (T)(tmpDivide.__Multiplication(multiplyResult));
 
                                     for (int l = j; l < modified.Cols; l++)
                                     {
-                                        T tmp = (T)(modified.GetNumber(k, l) / tmpDivide);
-                                        tmp = (T)(tmp - modified.GetNumber(i, l));
+                                        T tmp = (T)(modified.GetNumber(k, l).__Division(tmpDivide));
+                                        tmp = (T)(tmp.__Subtraction(modified.GetNumber(i, l)));
                                         modified.WriteNumber(k, l, tmp);
                                     }
                                 }
@@ -138,7 +138,7 @@ namespace MatrixLibrary
                 result = (T)(modified.GetNumber(i, i) * result);
             }*/
 
-            result = (T)(multiplyResult * result);
+            result = (T)(multiplyResult.__Multiplication(result));
 
             return result;
         }
@@ -150,7 +150,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
+        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumberBase, new()
         {
             if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -170,7 +170,7 @@ namespace MatrixLibrary
                 for (int i = pair.Item1; i < pair.Item2; i++)
                 {
                     T x = Computations.DeterminantInternal(matrix, true, i, b);
-                    x = (T)(x / tmpDeterminant);
+                    x = (T)(x.__Division(tmpDeterminant));
 
                     result.WriteNumber(i, 0, x);
                 }
@@ -186,7 +186,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
+        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumberBase, new()
         {
             /*
              * 
@@ -288,7 +288,7 @@ namespace MatrixLibrary
             }
             else
             {
-                result = new Matrix<T>(rows, zeroRows + 1);
+                result = new Matrix<T>(cols, zeroRows + 1);
                 List<int> parameters = new List<int>();
                 object parametersLock = new object();
                 Matrix<T> parametrise = Matrix<T>.GetUninitializedMatrix(rows - zeroRows, cols + 1);
@@ -338,8 +338,8 @@ namespace MatrixLibrary
                             {
                                 for (int l = 0; l < result.Cols; l++) // Dosazuje z už vypočítaných výsledků
                                 {
-                                    T temp = (T)(result.GetNumber(k, l) * (-parametrise.GetNumber(j, k)));
-                                    temp = (T)(temp + result.GetNumber(j, l));
+                                    T temp = (T)(result.GetNumber(k, l).__Multiplication(parametrise.GetNumber(i, k).__Negate()));
+                                    temp = (T)(temp.__Addition(result.GetNumber(j, l)));
                                     result.WriteNumber(j, l, temp);
                                 }
                             }
@@ -362,7 +362,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static T Determinant<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static T Determinant<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             return DeterminantInternal(matrix);
         }
@@ -373,7 +373,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : MatrixNumberBase, new()
+        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumberBase, new()
         {
             if (matrix == null || (replace == true && b == null)) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -401,13 +401,13 @@ namespace MatrixLibrary
                                 {
                                     modified.SwapElements(k, l, i, l);
                                 }
-                                multiplyResult = (T)(-multiplyResult);
+                                multiplyResult = (T)(multiplyResult.__Negate());
 
                                 T divide = modified.GetNumber(i, j); // cislo kterym se bude delit cely radek
-                                multiplyResult = (T)(divide * multiplyResult);
+                                multiplyResult = (T)(divide.__Multiplication(multiplyResult));
                                 for (int l = j; l < modified.Cols; l++) // radek ktery byl posunut nahoru bude vydelen tak aby pivot byl 1
                                 {
-                                    modified.WriteNumber(i, l, (T)(modified.GetNumber(i, l) / divide));
+                                    modified.WriteNumber(i, l, (T)(modified.GetNumber(i, l).__Division(divide)));
                                 }
 
                                 for (int a = i + 1; a < modified.Rows; a++) // vynuluje sloupce pod aktualnim sloupcem j
@@ -415,12 +415,12 @@ namespace MatrixLibrary
                                     divide = modified.GetNumber(a, j);
                                     if (!divide.IsZero())
                                     {
-                                        multiplyResult = (T)(divide * multiplyResult);
+                                        multiplyResult = (T)(divide.__Multiplication(multiplyResult));
 
                                         for (int ab = j; ab < modified.Cols; ab++)
                                         {
-                                            T tmp = (T)(modified.GetNumber(a, ab) / divide);
-                                            tmp = (T)(tmp - modified.GetNumber(i, ab));
+                                            T tmp = (T)(modified.GetNumber(a, ab).__Division(divide));
+                                            tmp = (T)(tmp.__Subtraction(modified.GetNumber(i, ab)));
                                             modified.WriteNumber(a, ab, tmp);
                                         }
                                     }
@@ -440,10 +440,10 @@ namespace MatrixLibrary
                     else // na miste pivotu je nenulove cislo, tudiz se zmeni na jednicku a vynuluji se sloupce pod nim
                     {
                         T divide = modified.GetNumber(i, j);
-                        multiplyResult = (T)(divide * multiplyResult);
+                        multiplyResult = (T)(divide.__Multiplication(multiplyResult));
                         for (int k = j; k < modified.Cols; k++) // vydeli aktualni radek cislem na zacatku tak, aby byl pivot 1
                         {
-                            modified.WriteNumber(i, k, (T)(modified.GetNumber(i, k) / divide));
+                            modified.WriteNumber(i, k, (T)(modified.GetNumber(i, k).__Division(divide)));
                         }
 
                         for (int k = i + 1; k < modified.Rows; k++) // tento cyklus vynuluje sloupce pod sloupcem j
@@ -451,12 +451,12 @@ namespace MatrixLibrary
                             divide = modified.GetNumber(k, j);
                             if (!divide.IsZero())
                             {
-                                multiplyResult = (T)(divide * multiplyResult);
+                                multiplyResult = (T)(divide.__Multiplication(multiplyResult));
 
                                 for (int l = j; l < modified.Cols; l++)
                                 {
-                                    T tmp = (T)(modified.GetNumber(k, l) / divide);
-                                    tmp = (T)(tmp - modified.GetNumber(i, l));
+                                    T tmp = (T)(modified.GetNumber(k, l).__Division(divide));
+                                    tmp = (T)(tmp.__Subtraction(modified.GetNumber(i, l)));
                                     modified.WriteNumber(k, l, tmp);
                                 }
                             }
@@ -473,7 +473,7 @@ namespace MatrixLibrary
                 result = (T)(modified.GetNumber(i, i) * result);
             }*/
 
-            result = (T)(multiplyResult * result);
+            result = (T)(multiplyResult.__Multiplication(result));
 
             return result;
         }
@@ -485,7 +485,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
+        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumberBase, new()
         {
             if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -502,7 +502,7 @@ namespace MatrixLibrary
             for (int i = 0; i < cols; i++)
             {
                 T x = Computations.DeterminantInternal(matrix, true, i, b);
-                x = (T)(x / determinant);
+                x = (T)(x.__Division(determinant));
 
                 result.WriteNumber(i, 0, x);
             }
@@ -517,7 +517,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : MatrixNumberBase, new()
+        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumberBase, new()
         {
             /*
              * 
@@ -609,7 +609,7 @@ namespace MatrixLibrary
             }
             else
             {
-                result = new Matrix<T>(rows, zeroRows + 1);
+                result = new Matrix<T>(cols, zeroRows + 1);
                 List<int> parameters = new List<int>();
                 Matrix<T> parametrise = Matrix<T>.GetUninitializedMatrix(rows - zeroRows, cols + 1);
                 int add = 0;
@@ -654,8 +654,8 @@ namespace MatrixLibrary
                             {
                                 for (int l = 0; l < result.Cols; l++) // Dosazuje z už vypočítaných výsledků
                                 {
-                                    T temp = (T)(result.GetNumber(k, l) * (-parametrise.GetNumber(j, k)));
-                                    temp = (T)(temp + result.GetNumber(j, l));
+                                    T temp = (T)(result.GetNumber(k, l).__Multiplication(parametrise.GetNumber(i, k).__Negate()));
+                                    temp = (T)(temp.__Addition(result.GetNumber(j, l)));
                                     result.WriteNumber(j, l, temp);
                                 }
                             }

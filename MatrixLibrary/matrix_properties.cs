@@ -15,7 +15,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static bool IsInvertible<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static bool IsInvertible<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -56,7 +56,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static int Rank<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static int Rank<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -87,7 +87,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -127,7 +127,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             /*
              * Neurčuje semi-definitnost (pozitivní/negativní)
@@ -172,9 +172,9 @@ namespace MatrixLibrary
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
                     {
-                        if (determinant[i] > zero) { lock (positiveLock) { positive++; } }
-                        if ((i % 2) == 0 && determinant[i] >= zero) { negative = false; }
-                        if ((i % 2) == 1 && determinant[i] <= zero) { negative = false; }
+                        if (determinant[i].__IsGreaterThan(zero)) { lock (positiveLock) { positive++; } }
+                        if ((i % 2) == 0 && (determinant[i].__IsGreaterThan(zero) || determinant[i].__IsEqual(zero))) { negative = false; }
+                        if ((i % 2) == 1 && (determinant[i].__IsLessThan(zero) || determinant[i].__IsEqual(zero))) { negative = false; }
                     }
                 });
 
@@ -194,7 +194,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static bool IsInvertible<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static bool IsInvertible<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -230,7 +230,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static int Rank<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static int Rank<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -257,7 +257,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -292,7 +292,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             /*
              * Neurčuje semi-definitnost (pozitivní/negativní)
@@ -331,9 +331,9 @@ namespace MatrixLibrary
                 T zero = new T();
                 for (int i = 0; i < rows; i++)
                 {
-                    if (determinant[i] > zero) { positive++; }
-                    if ((i % 2) == 0 && determinant[i] >= zero) { negative = false; }
-                    if ((i % 2) == 1 && determinant[i] <= zero) { negative = false; }
+                    if (determinant[i].__IsGreaterThan(zero)) { positive++; }
+                    if ((i % 2) == 0 && (determinant[i].__IsGreaterThan(zero) || determinant[i].__IsEqual(zero))) { negative = false; }
+                    if ((i % 2) == 1 && (determinant[i].__IsLessThan(zero) || determinant[i].__IsEqual(zero))) { negative = false; }
                 }
 
                 if (positive == rows) { result = DefinityClassification.PositiveDefinite; }

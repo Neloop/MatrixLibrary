@@ -13,7 +13,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -42,7 +42,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -62,7 +62,7 @@ namespace MatrixLibrary
                     {
                         for (int j = 0; j < dim; j++)
                         {
-                            result.WriteNumber(i, j, (T)(result.GetNumber(i, j) / two));
+                            result.WriteNumber(i, j, (T)(result.GetNumber(i, j).__Division(two)));
                         }
                     }
                 });
@@ -80,7 +80,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -112,7 +112,7 @@ namespace MatrixLibrary
                                 {
                                     for (int l = pair.Item1; l < pair.Item2; l++)
                                     {
-                                        result.WriteNumber(i, l, (T)(result.GetNumber(i, l) / divide));
+                                        result.WriteNumber(i, l, (T)(result.GetNumber(i, l).__Division(divide)));
                                     }
                                 });
 
@@ -125,8 +125,8 @@ namespace MatrixLibrary
                                         {
                                             for (int b = j; b < cols; b++)
                                             {
-                                                T tmp = (T)(result.GetNumber(a, b) / tmpDivide);
-                                                tmp = (T)(tmp - result.GetNumber(i, b));
+                                                T tmp = (T)(result.GetNumber(a, b).__Division(tmpDivide));
+                                                tmp = (T)(tmp.__Subtraction(result.GetNumber(i, b)));
                                                 result.WriteNumber(a, b, tmp);
                                             }
                                         }
@@ -146,7 +146,7 @@ namespace MatrixLibrary
                         {
                             for (int k = pair.Item1; k < pair.Item2; k++)
                             {
-                                result.WriteNumber(i, k, (T)(result.GetNumber(i, k) / divide));
+                                result.WriteNumber(i, k, (T)(result.GetNumber(i, k).__Division(divide)));
                             }
                         });
 
@@ -159,8 +159,8 @@ namespace MatrixLibrary
                                 {
                                     for (int l = j; l < cols; l++)
                                     {
-                                        T tmp = (T)(result.GetNumber(k, l) / tmpDivide);
-                                        tmp = (T)(tmp - result.GetNumber(i, l));
+                                        T tmp = (T)(result.GetNumber(k, l).__Division(tmpDivide));
+                                        tmp = (T)(tmp.__Subtraction(result.GetNumber(i, l)));
                                         result.WriteNumber(k, l, tmp);
                                     }
                                 }
@@ -181,7 +181,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -241,7 +241,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -331,7 +331,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -367,7 +367,7 @@ namespace MatrixLibrary
                             }
                         }
 
-                        result.WriteNumber(j, i, (T)(multiply * Computations.Determinant(modified)));
+                        result.WriteNumber(j, i, (T)(multiply.__Multiplication(Computations.Determinant(modified))));
                     }
                 }
             });
@@ -381,7 +381,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -395,7 +395,7 @@ namespace MatrixLibrary
                 T norm = new T();
                 for (int i = 0; i < rows; ++i)
                 {
-                    norm = (T)(norm + tmpMatrix.GetNumber(i, k).__Exponentiate(2));
+                    norm = (T)(norm.__Addition(tmpMatrix.GetNumber(i, k).__Exponentiate(2)));
                 }
                 norm = (T)norm.__SquareRoot();
 
@@ -403,7 +403,7 @@ namespace MatrixLibrary
                 {
                     for (int i = pair.Item1; i < pair.Item2; ++i)
                     {
-                        result.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k) / norm));
+                        result.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k).__Division(norm)));
                     }
                 });
 
@@ -414,12 +414,13 @@ namespace MatrixLibrary
                         T dotProduct = new T();
                         for (int i = 0; i < rows; ++i)
                         {
-                            dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * result.GetNumber(i, k)));
+                            dotProduct = (T)(dotProduct.__Addition(tmpMatrix.GetNumber(i, j).__Multiplication(result.GetNumber(i, k))));
                         }
 
                         for (int i = 0; i < rows; ++i)
                         {
-                            tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (dotProduct * result.GetNumber(i, k))));
+                            tmpMatrix.WriteNumber(i, j, 
+                                (T)(tmpMatrix.GetNumber(i, j).__Subtraction(dotProduct.__Multiplication(result.GetNumber(i, k)))));
                         }
                     }
                 });
@@ -437,7 +438,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -463,7 +464,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -481,7 +482,7 @@ namespace MatrixLibrary
                 {
                     for (int j = 0; j < dim; j++)
                     {
-                        result.WriteNumber(i, j, (T)(result.GetNumber(i, j) / two));
+                        result.WriteNumber(i, j, (T)(result.GetNumber(i, j).__Division(two)));
                     }
                 }
             }
@@ -498,7 +499,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -528,7 +529,7 @@ namespace MatrixLibrary
                                 T divide = result.GetNumber(i, j);
                                 for (int l = j; l < cols; l++)
                                 {
-                                    result.WriteNumber(i, l, (T)(result.GetNumber(i, l) / divide));
+                                    result.WriteNumber(i, l, (T)(result.GetNumber(i, l).__Division(divide)));
                                 }
 
                                 for (int a = i + 1; a < rows; a++)
@@ -538,8 +539,8 @@ namespace MatrixLibrary
                                     {
                                         for (int b = j; b < cols; b++)
                                         {
-                                            T tmp = (T)(result.GetNumber(a, b) / divide);
-                                            tmp = (T)(tmp - result.GetNumber(i, b));
+                                            T tmp = (T)(result.GetNumber(a, b).__Division(divide));
+                                            tmp = (T)(tmp.__Subtraction(result.GetNumber(i, b)));
                                             result.WriteNumber(a, b, tmp);
                                         }
                                     }
@@ -556,7 +557,7 @@ namespace MatrixLibrary
                         T divide = result.GetNumber(i, j);
                         for (int k = j; k < cols; k++)
                         {
-                            result.WriteNumber(i, k, (T)(result.GetNumber(i, k) / divide));
+                            result.WriteNumber(i, k, (T)(result.GetNumber(i, k).__Division(divide)));
                         }
 
                         for (int k = i + 1; k < rows; k++)
@@ -566,8 +567,8 @@ namespace MatrixLibrary
                             {
                                 for (int l = j; l < cols; l++)
                                 {
-                                    T tmp = (T)(result.GetNumber(k, l) / divide);
-                                    tmp = (T)(tmp - result.GetNumber(i, l));
+                                    T tmp = (T)(result.GetNumber(k, l).__Division(divide));
+                                    tmp = (T)(tmp.__Subtraction(result.GetNumber(i, l)));
                                     result.WriteNumber(k, l, tmp);
                                 }
                             }
@@ -586,7 +587,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -641,7 +642,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -719,7 +720,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -753,7 +754,7 @@ namespace MatrixLibrary
                         }
                     }
                     T tmp = Computations.Determinant(modified);
-                    result.WriteNumber(j, i, (T)(multiply * tmp));
+                    result.WriteNumber(j, i, (T)(multiply.__Multiplication(tmp)));
                 }
             }
 
@@ -766,7 +767,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : MatrixNumberBase, new()
+        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -780,13 +781,13 @@ namespace MatrixLibrary
                 T norm = new T();
                 for (int i = 0; i < rows; ++i)
                 {
-                    norm = (T)(norm + tmpMatrix.GetNumber(i, k).__Exponentiate(2));
+                    norm = (T)(norm.__Addition(tmpMatrix.GetNumber(i, k).__Exponentiate(2)));
                 }
                 norm = (T)norm.__SquareRoot();
 
                 for (int i = 0; i < rows; ++i)
                 {
-                    result.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k) / norm));
+                    result.WriteNumber(i, k, (T)(tmpMatrix.GetNumber(i, k).__Division(norm)));
                 }
 
                 for (int j = k + 1; j < cols; ++j)
@@ -794,12 +795,13 @@ namespace MatrixLibrary
                     T dotProduct = new T();
                     for (int i = 0; i < rows; ++i)
                     {
-                        dotProduct = (T)(dotProduct + (tmpMatrix.GetNumber(i, j) * result.GetNumber(i, k)));
+                        dotProduct = (T)(dotProduct.__Addition(tmpMatrix.GetNumber(i, j).__Multiplication(result.GetNumber(i, k))));
                     }
 
                     for (int i = 0; i < rows; ++i)
                     {
-                        tmpMatrix.WriteNumber(i, j, (T)(tmpMatrix.GetNumber(i, j) - (dotProduct * result.GetNumber(i, k))));
+                        tmpMatrix.WriteNumber(i, j, 
+                            (T)(tmpMatrix.GetNumber(i, j).__Subtraction(dotProduct.__Multiplication(result.GetNumber(i, k)))));
                     }
                 }
             }

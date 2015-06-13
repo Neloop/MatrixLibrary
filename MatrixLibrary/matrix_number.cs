@@ -5,136 +5,42 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
-    public abstract class MatrixNumberBase
+    public interface IMatrixNumberBase
     {
-        public abstract MatrixNumberBase AddInt(int add);
-        public abstract MatrixNumberBase AddDouble(double add);
-        public abstract MatrixNumberBase Copy();
-        public abstract void CopyFrom(MatrixNumberBase number);
-        public abstract double ToDouble();
-        public abstract bool IsZero();
-        public abstract bool IsOne();
+        IMatrixNumberBase AddInt(int add);
+        IMatrixNumberBase AddDouble(double add);
+        IMatrixNumberBase Copy();
+        void CopyFrom(IMatrixNumberBase number);
+        double ToDouble();
+        bool IsZero();
+        bool IsOne();
 
-        public static MatrixNumberBase operator +(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (first == null && second == null) { throw new MatrixLibraryException("Both numbers were nulls"); }
-            else if (first == null) { return second.Copy(); }
-            else if (second == null) { return first.Copy(); }
-
-            return first.__Addition(second);
-        }
-        public static MatrixNumberBase operator -(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (first == null && second == null) { throw new MatrixLibraryException("Both numbers were nulls"); }
-            else if (first == null) { return second.Copy(); }
-            else if (second == null) { return first.Copy(); }
-
-            return first.__Subtraction(second);
-        }
-        public static MatrixNumberBase operator -(MatrixNumberBase number)
-        {
-            if (number == null) { throw new MatrixLibraryException("Number is null"); }
-
-            return number.__Negate();
-        }
-        public static MatrixNumberBase operator *(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (first == null && second == null) { throw new MatrixLibraryException("Both numbers were nulls"); }
-            else if (first == null) { return second.Copy(); }
-            else if (second == null) { return first.Copy(); }
-
-            return first.__Multiplication(second);
-        }
-        public static MatrixNumberBase operator /(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (first == null && second == null) { throw new MatrixLibraryException("Both numbers were nulls"); }
-            else if (first == null) { return second.Copy(); }
-            else if (second == null) { return first.Copy(); }
-
-            return first.__Division(second);
-        }
-        public static bool operator ==(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (ReferenceEquals(first, second)) { return true; }
-            if (ReferenceEquals(first, null) || ReferenceEquals(second, null)) { return false; }
-
-            return first.__IsEqual(second);
-        }
-        public static bool operator !=(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (ReferenceEquals(first, second)) { return true; }
-            if (ReferenceEquals(first, null) || ReferenceEquals(second, null)) { return false; }
-
-            return !first.__IsEqual(second);
-        }
-        public static bool operator <=(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (first == null && second == null) { throw new MatrixLibraryException("Both numbers were nulls"); }
-            else if (first == null || second == null) { return false; }
-
-            if (first.__IsEqual(second) == true) { return true; }
-            else { return first.__IsLessThan(second); }
-        }
-        public static bool operator >=(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (first == null && second == null) { throw new MatrixLibraryException("Both numbers were nulls"); }
-            else if (first == null || second == null) { return false; }
-
-            if (first.__IsEqual(second) == true) { return true; }
-            else { return first.__IsGreaterThan(second); }
-        }
-        public static bool operator <(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (first == null && second == null) { throw new MatrixLibraryException("Both numbers were nulls"); }
-            else if (first == null || second == null) { return false; }
-
-            return first.__IsLessThan(second);
-        }
-        public static bool operator >(MatrixNumberBase first, MatrixNumberBase second)
-        {
-            if (first == null && second == null) { throw new MatrixLibraryException("Both numbers were nulls"); }
-            else if (first == null || second == null) { return false; }
-
-            return first.__IsGreaterThan(second);
-        }
-        public override bool Equals(object obj)
-        {
-            return (this == (MatrixNumberBase)obj);
-        }
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-        public override string ToString()
-        {
-            return __ToString();
-        }
-
-        public abstract MatrixNumberBase __Addition(MatrixNumberBase second);
-        public abstract MatrixNumberBase __Subtraction(MatrixNumberBase second);
-        public abstract MatrixNumberBase __Multiplication(MatrixNumberBase second);
-        public abstract MatrixNumberBase __Division(MatrixNumberBase second);
-        public abstract MatrixNumberBase __Exponentiate(int exponent);
-        public abstract MatrixNumberBase __SquareRoot();
-        public abstract MatrixNumberBase __Negate();
-        public abstract bool __IsEqual(MatrixNumberBase second);
-        public abstract bool __IsLessThan(MatrixNumberBase second);
-        public abstract bool __IsGreaterThan(MatrixNumberBase second);
-        public abstract string __ToString();
+        IMatrixNumberBase __Addition(IMatrixNumberBase second);
+        IMatrixNumberBase __Subtraction(IMatrixNumberBase second);
+        IMatrixNumberBase __Multiplication(IMatrixNumberBase second);
+        IMatrixNumberBase __Division(IMatrixNumberBase second);
+        IMatrixNumberBase __Exponentiate(int exponent);
+        IMatrixNumberBase __SquareRoot();
+        IMatrixNumberBase __Negate();
+        bool __IsEqual(IMatrixNumberBase second);
+        bool __IsLessThan(IMatrixNumberBase second);
+        bool __IsGreaterThan(IMatrixNumberBase second);
+        string __ToString();
     }
 
-    public class MatrixNumberInt : MatrixNumberBase
+    public struct MatrixNumberInt : IMatrixNumberBase
     {
         public int Number { get; private set; }
-        public MatrixNumberInt() { }
-        public MatrixNumberInt(int number) { Number = number; }
+        public MatrixNumberInt(int number) : this() { Number = number; }
 
-        public override MatrixNumberBase Copy()
+        public IMatrixNumberBase Copy()
         {
             return new MatrixNumberInt(Number);
         }
-        public override void CopyFrom(MatrixNumberBase number)
+        public void CopyFrom(IMatrixNumberBase number)
         {
+            if (ReferenceEquals(number, null)) { return; }
+
             if (number is MatrixNumberInt)
             {
                 MatrixNumberInt tmpNumber = (MatrixNumberInt)number;
@@ -145,7 +51,7 @@ namespace MatrixLibrary
                 Number = (int)number.ToDouble();
             }
         }
-        public override string __ToString()
+        public string __ToString()
         {
             return Number.ToString();
         }
@@ -153,69 +59,75 @@ namespace MatrixLibrary
         {
             return __ToString();
         }
-        public override double ToDouble()
+        public double ToDouble()
         {
             return (double)Number;
         }
-        public override bool IsZero()
+
+        public bool IsZero()
         {
             return Number == 0;
         }
-        public override bool IsOne()
+        public bool IsOne()
         {
             return Number == 1;
         }
-        public override MatrixNumberBase AddInt(int add)
+        public IMatrixNumberBase AddInt(int add)
         {
             Number += add;
             return this;
         }
-        public override MatrixNumberBase AddDouble(double add)
+        public IMatrixNumberBase AddDouble(double add)
         {
             Number += (int)add;
             return this;
         }
-        public override MatrixNumberBase __Addition(MatrixNumberBase second)
+
+        public IMatrixNumberBase __Addition(IMatrixNumberBase second)
         {
+            if (ReferenceEquals(second, null)) { return Copy(); }
             return new MatrixNumberInt(Number + (int)second.ToDouble());
         }
-        public override MatrixNumberBase __Subtraction(MatrixNumberBase second)
+        public IMatrixNumberBase __Subtraction(IMatrixNumberBase second)
         {
+            if (ReferenceEquals(second, null)) { return Copy(); }
             return new MatrixNumberInt(Number - (int)second.ToDouble());
         }
-        public override MatrixNumberBase __Multiplication(MatrixNumberBase second)
+        public IMatrixNumberBase __Multiplication(IMatrixNumberBase second)
         {
+            if (ReferenceEquals(second, null)) { return Copy(); }
             return new MatrixNumberInt(Number * (int)second.ToDouble());
         }
-        public override MatrixNumberBase __Division(MatrixNumberBase second)
+        public IMatrixNumberBase __Division(IMatrixNumberBase second)
         {
+            if (ReferenceEquals(second, null)) { return Copy(); }
             return new MatrixNumberInt(Number / (int)second.ToDouble());
         }
-        public override MatrixNumberBase __Exponentiate(int exponent)
+        public IMatrixNumberBase __Exponentiate(int exponent)
         {
             return new MatrixNumberInt((int)Math.Pow((double)Number, (double)exponent));
         }
-        public override MatrixNumberBase __Negate()
+        public IMatrixNumberBase __Negate()
         {
             return new MatrixNumberInt(-Number);
         }
-        public override MatrixNumberBase __SquareRoot()
+        public IMatrixNumberBase __SquareRoot()
         {
             throw new NotImplementedException();
         }
-        public override bool __IsEqual(MatrixNumberBase second)
+        public bool __IsEqual(IMatrixNumberBase second)
         {
             if (ReferenceEquals(this, second)) { return true; }
             if (ReferenceEquals(this, null) || ReferenceEquals(second, null)) { return false; }
             return Number == second.ToDouble();
         }
-        public override bool __IsLessThan(MatrixNumberBase second)
+        public bool __IsLessThan(IMatrixNumberBase second)
         {
             if (ReferenceEquals(this, second)) { return false; }
             if (ReferenceEquals(this, null) || ReferenceEquals(second, null)) { return false; }
             return Number < second.ToDouble();
         }
-        public override bool __IsGreaterThan(MatrixNumberBase second)
+        public bool __IsGreaterThan(IMatrixNumberBase second)
         {
             if (ReferenceEquals(this, second)) { return false; }
             if (ReferenceEquals(this, null) || ReferenceEquals(second, null)) { return false; }
@@ -223,46 +135,37 @@ namespace MatrixLibrary
         }
     }
 
-    public class MatrixNumber : MatrixNumberBase  // reprezentuje jednotlivé prvky v matici pomocí zlomků, jednotlivé zlomky nelze upravovat, pouze zobrazovat
+    public struct MatrixNumber : IMatrixNumberBase  // reprezentuje jednotlivé prvky v matici pomocí zlomků, jednotlivé zlomky nelze upravovat, pouze zobrazovat
     {
-        public MatrixNumber()
-        {
-            Numerator = 0;
-            Denominator = 0;
-            RealPart = 0;
-        }
-
-        public MatrixNumber(int number)
+        public MatrixNumber(int number) : this()
         {
             Numerator = number;
             if (number != 0) { Denominator = 1; }
             else { Denominator = 0; }
             RealPart = 0;
         }
-
-        public MatrixNumber(double number)
+        public MatrixNumber(double number) : this()
         {
             Numerator = 0;
             Denominator = 0;
             RealPart = number;
             Regulate();
         }
-
-        public MatrixNumber(int numerator, int denominator)
+        public MatrixNumber(int numerator, int denominator) : this()
         {
             Numerator = numerator;
             Denominator = denominator;
             RealPart = 0;
         }
-
-        public MatrixNumber(MatrixNumber source)
+        public MatrixNumber(MatrixNumber source) : this()
         {
             Numerator = source.Numerator;
             Denominator = source.Denominator;
             RealPart = source.RealPart;
         }
 
-        public override double ToDouble() // Vrací hodnotu objektu Cislo v reálném čísle
+
+        public double ToDouble() // Vrací hodnotu objektu Cislo v reálném čísle
         {
             double result;
             if (Numerator != 0 && Denominator != 0)
@@ -276,15 +179,15 @@ namespace MatrixLibrary
             }
             return result;
         }
-
-        public override MatrixNumberBase Copy()
+        public IMatrixNumberBase Copy()
         {
             MatrixNumber copy = new MatrixNumber(this);
             return copy;
         }
-
-        public override void CopyFrom(MatrixNumberBase number)
+        public void CopyFrom(IMatrixNumberBase number)
         {
+            if (ReferenceEquals(number, null)) { return; }
+
             if (number is MatrixNumber)
             {
                 MatrixNumber tmpNumber = (MatrixNumber)number;
@@ -345,7 +248,6 @@ namespace MatrixLibrary
                 DecomposeRealPart();
             }
         }
-
         private void DecomposeRealPart()
         {
             int tmp, tmp_2;
@@ -404,7 +306,7 @@ namespace MatrixLibrary
         public int Denominator { get; private set; }
         public double RealPart { get; private set; } // Iracionální čísla (přičítá se ke zlomku) reprezentovaná doublem
 
-        public override MatrixNumberBase AddInt(int add)
+        public IMatrixNumberBase AddInt(int add)
         {
             MatrixNumber tmp = (MatrixNumber)__Addition(new MatrixNumber(add));
             Numerator = tmp.Numerator;
@@ -412,8 +314,7 @@ namespace MatrixLibrary
             RealPart = tmp.RealPart;
             return this;
         }
-
-        public override MatrixNumberBase AddDouble(double add)
+        public IMatrixNumberBase AddDouble(double add)
         {
             MatrixNumber tmp = (MatrixNumber)__Addition(new MatrixNumber(add));
             Numerator = tmp.Numerator;
@@ -423,20 +324,20 @@ namespace MatrixLibrary
         }
 
         static private MatrixNumber Zero = new MatrixNumber();
-        public override bool IsZero()
+        public bool IsZero()
         {
-            return (this == Zero);
+            return (this.__IsEqual(Zero));
         }
 
         static private MatrixNumber One = new MatrixNumber(1);
-        public override bool IsOne()
+        public bool IsOne()
         {
-            return (this == One);
+            return (this.__IsEqual(One));
         }
 
-        public override MatrixNumberBase __Addition(MatrixNumberBase second)
+        public IMatrixNumberBase __Addition(IMatrixNumberBase second)
         {
-            if (second == null) { return Copy(); }
+            if (ReferenceEquals(second, null)) { return Copy(); }
 
             MatrixNumber result = new MatrixNumber();
 
@@ -472,9 +373,9 @@ namespace MatrixLibrary
             result.Regulate();
             return result;
         }
-        public override MatrixNumberBase __Subtraction(MatrixNumberBase second)
+        public IMatrixNumberBase __Subtraction(IMatrixNumberBase second)
         {
-            if (second == null) { return Copy(); }
+            if (ReferenceEquals(second, null)) { return Copy(); }
 
             MatrixNumber result = new MatrixNumber();
 
@@ -509,9 +410,9 @@ namespace MatrixLibrary
             result.Regulate();
             return result;
         }
-        public override MatrixNumberBase __Multiplication(MatrixNumberBase second)
+        public IMatrixNumberBase __Multiplication(IMatrixNumberBase second)
         {
-            if (second == null) { return Copy(); }
+            if (ReferenceEquals(second, null)) { return Copy(); }
 
             MatrixNumber result = new MatrixNumber();
 
@@ -540,9 +441,9 @@ namespace MatrixLibrary
             result.Regulate();
             return result;
         }
-        public override MatrixNumberBase __Division(MatrixNumberBase second)
+        public IMatrixNumberBase __Division(IMatrixNumberBase second)
         {
-            if (second == null) { return Copy(); }
+            if (ReferenceEquals(second, null)) { return Copy(); }
 
             MatrixNumber result = new MatrixNumber();
 
@@ -605,7 +506,7 @@ namespace MatrixLibrary
             result.Regulate();
             return result;
         }
-        public override MatrixNumberBase __Exponentiate(int exponent)
+        public IMatrixNumberBase __Exponentiate(int exponent)
         {
             MatrixNumber result = new MatrixNumber();
 
@@ -632,7 +533,7 @@ namespace MatrixLibrary
             result.Regulate();
             return result;
         }
-        public override MatrixNumberBase __SquareRoot()
+        public IMatrixNumberBase __SquareRoot()
         {
             MatrixNumber result = new MatrixNumber();
 
@@ -696,7 +597,7 @@ namespace MatrixLibrary
             result.Regulate();
             return result;
         }
-        public override MatrixNumberBase __Negate()
+        public IMatrixNumberBase __Negate()
         {
             MatrixNumber result = new MatrixNumber();
             result.Numerator = (-1) * Numerator;
@@ -704,7 +605,7 @@ namespace MatrixLibrary
             result.Denominator = Denominator;
             return result;
         }
-        public override bool __IsEqual(MatrixNumberBase second)
+        public bool __IsEqual(IMatrixNumberBase second)
         {
             if (ReferenceEquals(this, second)) { return true; }
             if (ReferenceEquals(this, null) || ReferenceEquals(second, null)) { return false; }
@@ -726,7 +627,7 @@ namespace MatrixLibrary
                 else { return false; }
             }
         }
-        public override bool __IsLessThan(MatrixNumberBase second)
+        public bool __IsLessThan(IMatrixNumberBase second)
         {
             if (ReferenceEquals(this, second)) { return false; }
             if (ReferenceEquals(this, null) || ReferenceEquals(second, null)) { return false; }
@@ -738,7 +639,7 @@ namespace MatrixLibrary
             if (first_d < second_d) { return true; }
             else { return false; }
         }
-        public override bool __IsGreaterThan(MatrixNumberBase second)
+        public bool __IsGreaterThan(IMatrixNumberBase second)
         {
             if (ReferenceEquals(this, second)) { return false; }
             if (ReferenceEquals(this, null) || ReferenceEquals(second, null)) { return false; }
@@ -750,18 +651,18 @@ namespace MatrixLibrary
             if (first_d > second_d) { return true; }
             else { return false; }
         }
-        public override string __ToString()
+        public string __ToString()
         {
             return ToDouble().ToString();
         }
 
         public override string ToString()
         {
-            return ToDouble().ToString();
+            return __ToString();
         }
         public override bool Equals(object obj)
         {
-            return (this == (MatrixNumber)obj);
+            return (this.__IsEqual((MatrixNumber)obj));
         }
         public override int GetHashCode()
         {
@@ -790,5 +691,23 @@ namespace MatrixLibrary
         private static double Accuracy = 0.0000001;
         private static int HalfOfMaxInt = int.MaxValue / 2;
         private static int HalfOfMinInt = int.MinValue / 2;
+
+        public static MatrixNumber operator +(MatrixNumber first, MatrixNumber second)
+        {
+            return (MatrixNumber)first.__Addition(second);
+        }
+        public static MatrixNumber operator -(MatrixNumber first, MatrixNumber second)
+        {
+            return (MatrixNumber)first.__Subtraction(second);
+        }
+
+        public static bool operator ==(MatrixNumber first, MatrixNumber second)
+        {
+            return first.__IsEqual(second);
+        }
+        public static bool operator !=(MatrixNumber first, MatrixNumber second)
+        {
+            return !first.__IsEqual(second);
+        }
     }
 }

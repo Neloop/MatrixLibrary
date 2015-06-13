@@ -21,7 +21,7 @@ namespace MatrixLibrary
         public EigenValuesNotFoundException(string message, Exception inner) : base(message, inner) { }
     }
     
-    public class EigenValues<T> where T : MatrixNumberBase, new() // slouží víceméně jen k prohlížení, ne k měnění, či počítání
+    public class EigenValues<T> where T : IMatrixNumberBase, new() // slouží víceméně jen k prohlížení, ne k měnění, či počítání
     {
         T[] EigenValuesInternal;
 
@@ -46,7 +46,7 @@ namespace MatrixLibrary
         }
     }
     
-    public class Matrix<T> where T : MatrixNumberBase, new()
+    public class Matrix<T> where T : IMatrixNumberBase, new()
     {
         private T[] MatrixInternal;
         public int Rows { get; private set; }
@@ -474,7 +474,7 @@ namespace MatrixLibrary
                 {
                     for (int j = 0; j < first.Cols; j++)
                     {
-                        if (first.GetNumber(i, j) != second.GetNumber(i, j))
+                        if (!first.GetNumber(i, j).__IsEqual(second.GetNumber(i, j)))
                         {
                             Console.WriteLine("!!! Different Numbers: {0}; {1}", first.GetNumber(i, j), second.GetNumber(i, j));
                             result = false;
@@ -497,7 +497,7 @@ namespace MatrixLibrary
                 {
                     for (int j = 0; j < first.Cols; j++)
                     {
-                        if (first.GetNumber(i, j) == second.GetNumber(i, j)) { result = true; break; }
+                        if (first.GetNumber(i, j).__IsEqual(second.GetNumber(i, j))) { result = true; break; }
                     }
                     if (result == true) { break; }
                 }
@@ -506,7 +506,7 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static T[] DoVectorOperation(T[] first, T[] second, Func<MatrixNumberBase, MatrixNumberBase, MatrixNumberBase> operation)
+        public static T[] DoVectorOperation(T[] first, T[] second, Func<IMatrixNumberBase, IMatrixNumberBase, IMatrixNumberBase> operation)
         {
             if (first.Length != second.Length) { throw new MatrixLibraryException("Vectors do not have the same length!"); }
 
@@ -514,7 +514,7 @@ namespace MatrixLibrary
 
             for (int i = 0; i < first.Length; ++i)
             {
-                result[i] = (T)operation((MatrixNumberBase)first[i], (MatrixNumberBase)second[i]);
+                result[i] = (T)operation((IMatrixNumberBase)first[i], (IMatrixNumberBase)second[i]);
             }
 
             return result;

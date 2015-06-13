@@ -11,7 +11,7 @@ namespace MatrixTestApp
     {
         static Random RandomGenerator = new Random();
 
-        static void WriteTwoMatrixes<T>(Matrix<T> matrix1, Matrix<T> matrix2, Matrix<T> result, string operationName) where T : MatrixNumberBase, new()
+        static void WriteTwoMatrixes<T>(Matrix<T> matrix1, Matrix<T> matrix2, Matrix<T> result, string operationName) where T : IMatrixNumberBase, new()
         {
             int maxRows = Math.Max(Math.Max(matrix1.Rows, matrix2.Rows), result.Rows);
             int half = maxRows / 2;
@@ -56,7 +56,7 @@ namespace MatrixTestApp
                 Console.WriteLine();
             }
         }
-        static void WriteMatrix<T>(Matrix<T> matrix, Matrix<T> result, string operationName) where T : MatrixNumberBase, new()
+        static void WriteMatrix<T>(Matrix<T> matrix, Matrix<T> result, string operationName) where T : IMatrixNumberBase, new()
         {
             int maxRows = Math.Max(matrix.Rows, result.Rows);
             int half = maxRows / 2;
@@ -496,11 +496,10 @@ namespace MatrixTestApp
 
 
 
-            ExitOrContinue();
             /**********************************************************************************/
             /***************************** ARRAYS PARALIZATION ********************************/
             /**********************************************************************************/
-
+            ExitOrContinue();
             WriteSeparator(); WriteSeparator("ARRAYS PARALIZATION");
             rowsAndCols = 23000;
             Console.WriteLine("Array will have {0} rows and cols", rowsAndCols);
@@ -538,13 +537,12 @@ namespace MatrixTestApp
 
 
 
-            ExitOrContinue();
             /**********************************************************************************/
             /***************************** MATRIX PARALIZATION ********************************/
             /**********************************************************************************/
-
+            ExitOrContinue();
             WriteSeparator(); WriteSeparator("MATRIX PARALIZATION");
-            rowsAndCols = 5000;
+            rowsAndCols = 10000;
             Console.WriteLine("Matrix will have {0} rows and cols", rowsAndCols);
             Console.WriteLine("Generating matrix...");
             A = new Matrix<MatrixNumber>(rowsAndCols, rowsAndCols);
@@ -602,7 +600,7 @@ namespace MatrixTestApp
             bool exceptCaughtMulti = false;
             EigenValues<MatrixNumber> resultSingleEigen = null;
             EigenValues<MatrixNumber> resultMultiEigen = null;
-            GenerateMatrixes(3000, out A, out B, out b);
+            GenerateMatrixes(5000, out A, out B, out b);
 
 
             /********** Addition **********/
@@ -640,7 +638,7 @@ namespace MatrixTestApp
             ExitOrContinue();
             WriteSeparator();
 
-            GenerateMatrixes(300, out A, out B, out b);
+            GenerateMatrixes(350, out A, out B, out b);
 
 
 
