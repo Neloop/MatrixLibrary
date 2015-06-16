@@ -504,26 +504,35 @@ namespace MatrixTestApp
             rowsAndCols = 23000;
             Console.WriteLine("Array will have {0} rows and cols", rowsAndCols);
             Console.WriteLine("Generating array...");
+            int [,] AA = new int[rowsAndCols, rowsAndCols];
             int [,] BB = new int[rowsAndCols, rowsAndCols];
+            for (int i = 0; i < rowsAndCols; ++i)
+            {
+                for (int j = 0; j < rowsAndCols; ++j)
+                {
+                    AA[i, j] = RandomGenerator.Next(-10, 10);
+                    BB[i, j] = RandomGenerator.Next(-10, 10); ;
+                }
+            }
 
-            Console.WriteLine("Single-threaded multidimensional array going through...");
+            Console.WriteLine("Single-threaded multidimensional array addition...");
             stopwatchSingle.Restart();
             for (int i = 0; i < rowsAndCols; i++)
             {
                 for (int j = 0; j < rowsAndCols; ++j)
                 {
-                    BB[i, j] = (BB[i, j] + 5) ^ 5;
+                    AA[i, j] = AA[i, j] + BB[i, j];
                 }
             }
             stopwatchSingle.Stop();
 
-            Console.WriteLine("Multi-threaded multidimensional array going through...");
+            Console.WriteLine("Multi-threaded multidimensional array addition...");
             stopwatchMulti.Restart();
             Parallel.For(0, rowsAndCols, (i) =>
             {
                 for (int j = 0; j < rowsAndCols; ++j)
                 {
-                    BB[i, j] = (BB[i, j] + 5) ^ 5;
+                    AA[i, j] = AA[i, j] + BB[i, j];
                 }
             });
             stopwatchMulti.Stop();
@@ -533,56 +542,6 @@ namespace MatrixTestApp
             WriteSeparator();
 
 
-
-
-
-
-            /**********************************************************************************/
-            /***************************** MATRIX PARALIZATION ********************************/
-            /**********************************************************************************/
-            ExitOrContinue();
-            WriteSeparator(); WriteSeparator("MATRIX PARALIZATION");
-            rowsAndCols = 10000;
-            Console.WriteLine("Matrix will have {0} rows and cols", rowsAndCols);
-            Console.WriteLine("Generating matrix...");
-            A = new Matrix<MatrixNumber>(rowsAndCols, rowsAndCols);
-
-            Console.WriteLine("Single-threaded multidimensional array going through...");
-            stopwatchSingle.Restart();
-            MatrixNumber five = new MatrixNumber(5);
-            for (int i = 0; i < rowsAndCols; i++)
-            {
-                int ia = 0;
-                for (int j = 0; j < rowsAndCols; ++j)
-                {
-                    A.GetNumber(i, j);
-                    ia += (ia + 5) ^ 5;
-                    A.WriteNumber(i, j, five);
-                }
-            }
-            stopwatchSingle.Stop();
-
-            Console.WriteLine("Multi-threaded multidimensional array going through...");
-            stopwatchMulti.Restart();
-            Parallel.ForEach(A.GetRowsChunks(), (pair) =>
-            {
-                //Console.WriteLine(System.Threading.Thread.CurrentThread.ManagedThreadId);
-                for (int i = pair.Item1; i < pair.Item2; ++i)
-                {
-                    int ia = 0;
-                    for (int j = 0; j < rowsAndCols; ++j)
-                    {
-                        A.GetNumber(i, j);
-                        ia += (ia + 5) ^ 5;
-                        A.WriteNumber(i, j, five);
-                    }
-                }
-            });
-            stopwatchMulti.Stop();
-
-            Console.WriteLine("Single-threaded: {0}; Multi-threaded: {1}", stopwatchSingle.Elapsed, stopwatchMulti.Elapsed);
-
-            WriteSeparator();
 
 
 
