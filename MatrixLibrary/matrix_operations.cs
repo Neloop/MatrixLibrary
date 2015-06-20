@@ -21,10 +21,8 @@ namespace MatrixLibrary
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
             {
-                int rows = matrix1.Rows;
                 int cols = matrix1.Cols;
-
-                result = Matrix<T>.GetUninitializedMatrix(rows, cols);
+                result = Matrix<T>.GetUninitializedMatrix(matrix1.Rows, cols);
 
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
@@ -134,9 +132,8 @@ namespace MatrixLibrary
             Matrix<T> result;
             if (matrix1.Rows == matrix2.Rows && matrix1.Cols == matrix2.Cols)
             {
-                int rows = matrix1.Rows;
                 int cols = matrix1.Cols;
-                result = Matrix<T>.GetUninitializedMatrix(rows, cols);
+                result = Matrix<T>.GetUninitializedMatrix(matrix1.Rows, cols);
 
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
@@ -168,13 +165,12 @@ namespace MatrixLibrary
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             Matrix<T> result;
-            int rows1, cols1, cols2;
-            rows1 = matrix1.Rows;
+            int cols1, cols2;
             cols1 = matrix1.Cols;
             cols2 = matrix2.Cols;
             if (matrix2.Rows == cols1)
             {
-                result = Matrix<T>.GetUninitializedMatrix(rows1, cols2);
+                result = Matrix<T>.GetUninitializedMatrix(matrix1.Rows, cols2);
 
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
@@ -211,13 +207,14 @@ namespace MatrixLibrary
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
             if (number == null) { throw new MatrixLibraryException("In given number reference was null value!"); }
 
-            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
+            int cols = matrix.Cols;
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, cols);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; ++i)
                 {
-                    for (int j = 0; j < matrix.Cols; j++)
+                    for (int j = 0; j < cols; j++)
                     {
                         result.WriteNumber(i, j, (T)(matrix.GetNumber(i, j).__Multiplication(number)));
                     }
@@ -485,7 +482,7 @@ namespace MatrixLibrary
                 Matrix<T> S = null;
                 if (tryEigenvalues == true)
                 {
-                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 10); }
+                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 100); }
                     catch (EigenValuesNotFoundException) { exponentiate = null; }
                 }
 
@@ -709,11 +706,12 @@ namespace MatrixLibrary
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
             if (number == null) { throw new MatrixLibraryException("In given number reference was null value!"); }
 
-            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
+            int cols = matrix.Cols;
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Rows, cols);
 
             for (int i = 0; i < matrix.Rows; i++)
             {
-                for (int j = 0; j < matrix.Cols; j++)
+                for (int j = 0; j < cols; j++)
                 {
                     result.WriteNumber(i, j, (T)(matrix.GetNumber(i, j).__Multiplication(number)));
                 }
@@ -916,7 +914,7 @@ namespace MatrixLibrary
                 Matrix<T> S = null;
                 if (tryEigenvalues == true)
                 {
-                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 10); }
+                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 100); }
                     catch (EigenValuesNotFoundException) { exponentiate = null; }
                 }
 

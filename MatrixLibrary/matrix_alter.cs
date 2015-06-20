@@ -19,8 +19,7 @@ namespace MatrixLibrary
 
             Matrix<T> result;
             int rows = matrix.Rows;
-            int cols = matrix.Cols;
-            result = Matrix<T>.GetUninitializedMatrix(cols, rows);
+            result = Matrix<T>.GetUninitializedMatrix(matrix.Cols, rows);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
@@ -54,8 +53,7 @@ namespace MatrixLibrary
                 Matrix<T> transpose = ParallelAlteringOperations.Transposition(matrix);
                 result = ParallelClassicOperations.Addition(matrix, transpose);
 
-                T two = new T();
-                two.AddInt(2);
+                T two = (T)new T().AddInt(2);
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++) // Vydělí všechna čísla dvěma
@@ -252,12 +250,8 @@ namespace MatrixLibrary
                 int cols = matrix.Cols;
                 result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
-                int halfOfRow;
-                int halfOfCol;
-                if ((rows % 2) == 0) { halfOfRow = rows / 2; }
-                else { halfOfRow = (rows / 2) + 1; }
-                if ((cols % 2) == 0) { halfOfCol = cols / 2; }
-                else { halfOfCol = (cols / 2) + 1; }
+                int halfOfRow = matrix.GetHalfOfRows();
+                int halfOfCol = matrix.GetHalfOfCols();
 
                 Matrix<T> modify = Matrix<T>.GetUninitializedMatrix(rows, cols * 2); // Matice upravit má stejný počet řádků jako matice a 2x větší počet sloupců
 
@@ -476,8 +470,7 @@ namespace MatrixLibrary
                 Matrix<T> transpose = AlteringOperations.Transposition(matrix);
                 result = ClassicOperations.Addition(matrix, transpose);
 
-                T two = new T();
-                two.AddInt(2);
+                T two = (T)new T().AddInt(2);
                 for (int i = 0; i < dim; i++) // Vydělí všechna čísla dvěma
                 {
                     for (int j = 0; j < dim; j++)
@@ -653,12 +646,8 @@ namespace MatrixLibrary
                 int cols = matrix.Cols;
                 result = Matrix<T>.GetUninitializedMatrix(rows, cols);
 
-                int halfOfRow;
-                int halfOfCol;
-                if ((rows % 2) == 0) { halfOfRow = rows / 2; }
-                else { halfOfRow = (rows / 2) + 1; }
-                if ((cols % 2) == 0) { halfOfCol = cols / 2; }
-                else { halfOfCol = (cols / 2) + 1; }
+                int halfOfRow = matrix.GetHalfOfRows();
+                int halfOfCol = matrix.GetHalfOfCols();
 
                 Matrix<T> modify = Matrix<T>.GetUninitializedMatrix(rows, cols * 2); // Matice upravit má stejný počet řádků jako matice a 2x větší počet sloupců
 

@@ -115,7 +115,7 @@ namespace MatrixLibrary
 
                         for (int i = 0; i < rows; ++i)
                         {
-                            tmpMatrix.WriteNumber(i, j, 
+                            tmpMatrix.WriteNumber(i, j,
                                 (T)(tmpMatrix.GetNumber(i, j).__Subtraction(dotProduct.__Multiplication(tmpQ.GetNumber(i, k)))));
                         }
                     }

@@ -270,6 +270,10 @@ namespace MatrixTestApp
         {
             Matrix<MatrixNumber> A = new Matrix<MatrixNumber>(1, 1);
             /************************VSE PRELOZIME******************************/
+            ClassicOperations.Addition(A, A); ParallelClassicOperations.Addition(A, A);
+            ClassicOperations.Subtraction(A, A); ParallelClassicOperations.Subtraction(A, A);
+            ClassicOperations.MultiplyWithNumber(A, new MatrixNumber()); ParallelClassicOperations.MultiplyWithNumber(A, new MatrixNumber());
+            ClassicOperations.Multiplication(A, A); ParallelClassicOperations.Multiplication(A, A);
             AlteringOperations.Adjugate(A); ParallelAlteringOperations.Adjugate(A);
             AlteringOperations.Gauss(A); ParallelAlteringOperations.Gauss(A);
             Computations.Cramer(A, A); ParallelComputations.Cramer(A, A);

@@ -256,6 +256,17 @@ namespace MatrixLibrary
             MatrixInternal[(secondRow * Cols + secondCol) * PaddingBetweenNumbers + PaddingFromBegin] = temp;
         }
 
+        public int GetHalfOfRows()
+        {
+            if ((Rows % 2) == 0) { return Rows / 2; }
+            else { return (Rows / 2) + 1; }
+        }
+        public int GetHalfOfCols()
+        {
+            if ((Cols % 2) == 0) { return Cols / 2; }
+            else { return (Cols / 2) + 1; }
+        }
+
         public IEnumerable<Tuple<int, int>> GetRowsChunks()
         {
             int chunkCount = 2 * Environment.ProcessorCount;
@@ -276,6 +287,8 @@ namespace MatrixLibrary
         }
         public IEnumerable<Tuple<int, int>> GetRowsChunks(int startPos)
         {
+            if (startPos >= Rows) { yield return new Tuple<int, int>(Rows, Rows); }
+
             int chunkCount = 2 * Environment.ProcessorCount;
             int chunkLength = (Rows - startPos) / chunkCount;
 
@@ -293,9 +306,8 @@ namespace MatrixLibrary
         }
         public IEnumerable<Tuple<int, int>> GetRowsChunks(int startPos, int length)
         {
-#if !UNCHECKED_BOUNDARIES
-            if ((startPos + length) > Rows || startPos >= Rows) { throw new MatrixLibraryException("Bad indices specified!"); }
-#endif
+            if ((startPos + length) > Rows || startPos >= Rows) { yield return new Tuple<int, int>(Rows, Rows); }
+
             int chunkCount = 2 * Environment.ProcessorCount;
             int chunkLength = length / chunkCount;
 
@@ -352,6 +364,8 @@ namespace MatrixLibrary
         }
         public IEnumerable<Tuple<int, int>> GetColsChunks(int startPos)
         {
+            if (startPos >= Cols) { yield return new Tuple<int, int>(Cols, Cols); }
+
             int chunkCount = 2 * Environment.ProcessorCount;
             int chunkLength = (Cols - startPos) / chunkCount;
 
@@ -362,6 +376,25 @@ namespace MatrixLibrary
                 {
                     int end = i + chunkLength;
                     if (end > Cols) { end = Cols; }
+
+                    yield return new Tuple<int, int>(i, end);
+                }
+            }
+        }
+        public IEnumerable<Tuple<int, int>> GetColsChunks(int startPos, int length)
+        {
+            if ((startPos + length) > Cols || startPos >= Cols) { yield return new Tuple<int, int>(Cols, Cols); }
+
+            int chunkCount = 2 * Environment.ProcessorCount;
+            int chunkLength = length / chunkCount;
+
+            if (chunkCount >= length) { yield return new Tuple<int, int>(startPos, startPos + length); }
+            else
+            {
+                for (int i = startPos; i < (startPos + length); i += chunkLength)
+                {
+                    int end = i + chunkLength;
+                    if (end > (startPos + length)) { end = startPos + length; }
 
                     yield return new Tuple<int, int>(i, end);
                 }

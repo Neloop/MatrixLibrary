@@ -20,12 +20,10 @@ namespace MatrixLibrary
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             bool result = true;
+            int cols = matrix.Cols;
 
-            if (matrix.Rows == matrix.Cols)
+            if (matrix.Rows == cols)
             {
-                int rows = matrix.Rows;
-                int cols = matrix.Cols;
-
                 Matrix<T> temporaryM = ParallelAlteringOperations.Gauss(matrix);
                 Parallel.ForEach(temporaryM.GetRowsChunks(), (pair, loopState) =>
                 {
@@ -64,13 +62,14 @@ namespace MatrixLibrary
             int result = matrix.Rows;
 
             Matrix<T> gauss = ParallelAlteringOperations.Gauss(matrix);
+            int cols = gauss.Cols;
 
             Parallel.ForEach(gauss.GetRowsChunks(), (pair) =>
             {
                 for (int i = pair.Item1; i < pair.Item2; i++)
                 {
                     int zeroes = 0;
-                    for (int j = 0; j < gauss.Cols; j++)
+                    for (int j = 0; j < cols; j++)
                     {
                         if (gauss.GetNumber(i, j).IsZero()) { zeroes++; }
                     }
@@ -97,12 +96,13 @@ namespace MatrixLibrary
             {
                 Matrix<T> transposition = ParallelAlteringOperations.Transposition(matrix);
                 Matrix<T> multiplied = ParallelClassicOperations.Multiplication(transposition, matrix);
+                int cols_mult = multiplied.Cols;
 
                 Parallel.ForEach(multiplied.GetRowsChunks(), (pair, loopState) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
                     {
-                        for (int j = 0; j < multiplied.Cols; j++)
+                        for (int j = 0; j < cols_mult; j++)
                         {
                             if (i == j)
                             {
@@ -145,8 +145,7 @@ namespace MatrixLibrary
 
             if (matrix.Rows == matrix.Cols)
             {
-                int rows = matrix.Rows;
-                T[] determinant = new T[rows];
+                T[] determinant = new T[matrix.Rows];
 
                 Parallel.ForEach(matrix.GetRowsChunks(), (pair) =>
                 {
@@ -178,7 +177,7 @@ namespace MatrixLibrary
                     }
                 });
 
-                if (positive == rows) { result = DefinityClassification.PositiveDefinite; }
+                if (positive == matrix.Rows) { result = DefinityClassification.PositiveDefinite; }
                 else if (negative == true) { result = DefinityClassification.NegativeDefinite; }
             }
 
@@ -237,11 +236,13 @@ namespace MatrixLibrary
             int result = matrix.Rows;
 
             Matrix<T> gauss = AlteringOperations.Gauss(matrix);
+            int rows = gauss.Rows;
+            int cols = gauss.Cols;
 
-            for (int i = 0; i < gauss.Rows; i++)
+            for (int i = 0; i < rows; i++)
             {
                 int zeroes = 0;
-                for (int j = 0; j < gauss.Cols; j++)
+                for (int j = 0; j < cols; j++)
                 {
                     if (gauss.GetNumber(i, j).IsZero()) { zeroes++; }
                 }
@@ -265,10 +266,12 @@ namespace MatrixLibrary
             {
                 Matrix<T> transposition = AlteringOperations.Transposition(matrix);
                 Matrix<T> multiplied = ClassicOperations.Multiplication(transposition, matrix);
+                int rows_mult = multiplied.Rows;
+                int cols_mult = multiplied.Cols;
 
-                for (int i = 0; i < multiplied.Rows; i++)
+                for (int i = 0; i < rows_mult; i++)
                 {
-                    for (int j = 0; j < multiplied.Cols; j++)
+                    for (int j = 0; j < cols_mult; j++)
                     {
                         if (i == j)
                         {

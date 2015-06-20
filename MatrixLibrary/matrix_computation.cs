@@ -35,21 +35,23 @@ namespace MatrixLibrary
             Matrix<T> modified;
             if (replace == false) { modified = new Matrix<T>(matrix); }
             else { modified = new Matrix<T>(matrix, col, b); }
+            int rows = modified.Rows;
+            int cols = modified.Cols;
 
-            for (int i = 0; i < modified.Rows; ++i)
+            for (int i = 0; i < rows; ++i)
             {
-                for (int j = i; j < modified.Cols; ++j)
+                for (int j = i; j < cols; ++j)
                 {
                     if (modified.GetNumber(i, j).IsZero()) // na miste kde mel byt pivot je nula, zkusi se najit nenulove cislo ve stejnem sloupci
                     {
                         // pokud je prvek nula, tak se koukne pod něj a případně prohodí řádek a vydělí řádky pod ním (potom se breakne), 
                         // pokud i pod ním jsou nuly, pak se breakne (nemusí prostě se nechá doběhnout) cyklus a jde na další sloupec
                         bool end = false;
-                        for (int k = i + 1; k < modified.Rows; k++)
+                        for (int k = i + 1; k < rows; k++)
                         {
                             if (!modified.GetNumber(k, j).IsZero())
                             {
-                                for (int l = j; l < modified.Cols; l++) // cyklus ktery vymeni prvky na dvou radcich
+                                for (int l = j; l < cols; l++) // cyklus ktery vymeni prvky na dvou radcich
                                 {
                                     modified.SwapElements(k, l, i, l);
                                 }
@@ -74,7 +76,7 @@ namespace MatrixLibrary
                                         {
                                             lock (multiplyResultLock) { multiplyResult = (T)(tmpDivide.__Multiplication(multiplyResult)); }
 
-                                            for (int ab = j; ab < modified.Cols; ab++)
+                                            for (int ab = j; ab < cols; ab++)
                                             {
                                                 T tmp = (T)(modified.GetNumber(a, ab).__Division(tmpDivide));
                                                 tmp = (T)(tmp.__Subtraction(modified.GetNumber(i, ab)));
@@ -87,13 +89,13 @@ namespace MatrixLibrary
                                 break;
                             }
 
-                            if (k == (modified.Rows - 1)) { return new T(); }
+                            if (k == (rows - 1)) { return new T(); }
                         }
 
                         if (end == true) { break; }
 
                         // pouzije se v pripade, ze posledni sloupec je nulovy, v jinych pripadech by se sem nikdy nemelo dojit
-                        if (i == (modified.Rows - 1)) { return new T(); }
+                        if (i == (rows - 1)) { return new T(); }
                     }
                     else // na miste pivotu je nenulove cislo, tudiz se zmeni na jednicku a vynuluji se sloupce pod nim
                     {
@@ -116,7 +118,7 @@ namespace MatrixLibrary
                                 {
                                     multiplyResult = (T)(tmpDivide.__Multiplication(multiplyResult));
 
-                                    for (int l = j; l < modified.Cols; l++)
+                                    for (int l = j; l < cols; l++)
                                     {
                                         T tmp = (T)(modified.GetNumber(k, l).__Division(tmpDivide));
                                         tmp = (T)(tmp.__Subtraction(modified.GetNumber(i, l)));
@@ -133,7 +135,7 @@ namespace MatrixLibrary
 
             T result = new T();
             result.AddInt(1);
-            /*for (int i = 0; i < modified.Rows; i++) // Vynásobí prvky na diagonále (meli by byt vsechno jednicky, takze je tato operace vicemene zbytecna)
+            /*for (int i = 0; i < rows; i++) // Vynásobí prvky na diagonále (meli by byt vsechno jednicky, takze je tato operace vicemene zbytecna)
             {
                 result = (T)(modified.GetNumber(i, i) * result);
             }*/
@@ -154,13 +156,10 @@ namespace MatrixLibrary
         {
             if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
-            int rows = matrix.Rows;
-            int cols = matrix.Cols;
-
             if (b.Cols != 1) { throw new MatrixLibraryException("b is not vector which does not have one column!"); }
             if (b.Rows != matrix.Rows) { throw new MatrixLibraryException("Given matrix and vector b do not have same number of rows!"); }
 
-            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, 1);
+            Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Cols, 1);
             T determinant = ParallelComputations.Determinant(matrix);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
@@ -200,12 +199,8 @@ namespace MatrixLibrary
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            int halfOfRows;
-            int halfOfCols;
-            if ((rows % 2) == 0) { halfOfRows = rows / 2; }
-            else { halfOfRows = (rows / 2) + 1; }
-            if ((cols % 2) == 0) { halfOfCols = cols / 2; }
-            else { halfOfCols = (cols / 2) + 1; }
+            int halfOfRows = matrix.GetHalfOfRows();
+            int halfOfCols = matrix.GetHalfOfCols();
 
             Matrix<T> tmpMatrix = Matrix<T>.GetUninitializedMatrix(rows, cols + 1);
 
@@ -383,21 +378,23 @@ namespace MatrixLibrary
             Matrix<T> modified;
             if (replace == false) { modified = new Matrix<T>(matrix); }
             else { modified = new Matrix<T>(matrix, col, b); }
+            int rows = modified.Rows;
+            int cols = modified.Cols;
 
-            for (int i = 0; i < modified.Rows; ++i)
+            for (int i = 0; i < rows; ++i)
             {
-                for (int j = i; j < modified.Cols; ++j)
+                for (int j = i; j < cols; ++j)
                 {
                     if (modified.GetNumber(i, j).IsZero()) // na miste kde mel byt pivot je nula, zkusi se najit nenulove cislo ve stejnem sloupci
                     {
                         // pokud je prvek nula, tak se koukne pod něj a případně prohodí řádek a vydělí řádky pod ním (potom se breakne), 
                         // pokud i pod ním jsou nuly, pak se breakne (nemusí prostě se nechá doběhnout) cyklus a jde na další sloupec
                         bool end = false;
-                        for (int k = i + 1; k < modified.Rows; k++)
+                        for (int k = i + 1; k < rows; k++)
                         {
                             if (!modified.GetNumber(k, j).IsZero())
                             {
-                                for (int l = j; l < modified.Cols; l++) // cyklus ktery vymeni prvky na dvou radcich
+                                for (int l = j; l < cols; l++) // cyklus ktery vymeni prvky na dvou radcich
                                 {
                                     modified.SwapElements(k, l, i, l);
                                 }
@@ -405,7 +402,7 @@ namespace MatrixLibrary
 
                                 T divide = modified.GetNumber(i, j); // cislo kterym se bude delit cely radek
                                 multiplyResult = (T)(divide.__Multiplication(multiplyResult));
-                                for (int l = j; l < modified.Cols; l++) // radek ktery byl posunut nahoru bude vydelen tak aby pivot byl 1
+                                for (int l = j; l < cols; l++) // radek ktery byl posunut nahoru bude vydelen tak aby pivot byl 1
                                 {
                                     modified.WriteNumber(i, l, (T)(modified.GetNumber(i, l).__Division(divide)));
                                 }
@@ -417,7 +414,7 @@ namespace MatrixLibrary
                                     {
                                         multiplyResult = (T)(divide.__Multiplication(multiplyResult));
 
-                                        for (int ab = j; ab < modified.Cols; ab++)
+                                        for (int ab = j; ab < cols; ab++)
                                         {
                                             T tmp = (T)(modified.GetNumber(a, ab).__Division(divide));
                                             tmp = (T)(tmp.__Subtraction(modified.GetNumber(i, ab)));
@@ -429,31 +426,31 @@ namespace MatrixLibrary
                                 break;
                             }
 
-                            if (k == (modified.Rows - 1)) { return new T(); }
+                            if (k == (rows - 1)) { return new T(); }
                         }
 
                         if (end == true) { break; }
 
                         // pouzije se v pripade, ze posledni sloupec je nulovy, v jinych pripadech by se sem nikdy nemelo dojit
-                        if (i == (modified.Rows - 1)) { return new T(); }
+                        if (i == (rows - 1)) { return new T(); }
                     }
                     else // na miste pivotu je nenulove cislo, tudiz se zmeni na jednicku a vynuluji se sloupce pod nim
                     {
                         T divide = modified.GetNumber(i, j);
                         multiplyResult = (T)(divide.__Multiplication(multiplyResult));
-                        for (int k = j; k < modified.Cols; k++) // vydeli aktualni radek cislem na zacatku tak, aby byl pivot 1
+                        for (int k = j; k < cols; k++) // vydeli aktualni radek cislem na zacatku tak, aby byl pivot 1
                         {
                             modified.WriteNumber(i, k, (T)(modified.GetNumber(i, k).__Division(divide)));
                         }
 
-                        for (int k = i + 1; k < modified.Rows; k++) // tento cyklus vynuluje sloupce pod sloupcem j
+                        for (int k = i + 1; k < rows; k++) // tento cyklus vynuluje sloupce pod sloupcem j
                         {
                             divide = modified.GetNumber(k, j);
                             if (!divide.IsZero())
                             {
                                 multiplyResult = (T)(divide.__Multiplication(multiplyResult));
 
-                                for (int l = j; l < modified.Cols; l++)
+                                for (int l = j; l < cols; l++)
                                 {
                                     T tmp = (T)(modified.GetNumber(k, l).__Division(divide));
                                     tmp = (T)(tmp.__Subtraction(modified.GetNumber(i, l)));
@@ -468,7 +465,7 @@ namespace MatrixLibrary
 
             T result = new T();
             result.AddInt(1);
-            /*for (int i = 0; i < modified.Rows; i++) // Vynásobí prvky na diagonále (meli by byt vsechno jednicky, takze je tato operace vicemene zbytecna)
+            /*for (int i = 0; i < rows; i++) // Vynásobí prvky na diagonále (meli by byt vsechno jednicky, takze je tato operace vicemene zbytecna)
             {
                 result = (T)(modified.GetNumber(i, i) * result);
             }*/
@@ -531,12 +528,8 @@ namespace MatrixLibrary
             Matrix<T> result;
             int rows = matrix.Rows;
             int cols = matrix.Cols;
-            int halfOfRows;
-            int halfOfCols;
-            if ((rows % 2) == 0) { halfOfRows = rows / 2; }
-            else { halfOfRows = (rows / 2) + 1; }
-            if ((cols % 2) == 0) { halfOfCols = cols / 2; }
-            else { halfOfCols = (cols / 2) + 1; }
+            int halfOfRows = matrix.GetHalfOfRows();
+            int halfOfCols = matrix.GetHalfOfCols();
 
             Matrix<T> tmpMatrix = Matrix<T>.GetUninitializedMatrix(rows, cols + 1);
 
