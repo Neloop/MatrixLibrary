@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ParallelDecompositions
     {
         /// <summary>
@@ -13,7 +16,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             /*
              * 
@@ -73,7 +76,7 @@ namespace MatrixLibrary
         /// <param name="Q"></param>
         /// <param name="R"></param>
         /// <returns></returns>
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumberBase, new()
+        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -130,6 +133,9 @@ namespace MatrixLibrary
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Decompositions
     {
         /// <summary>
@@ -138,7 +144,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             /*
              * 
@@ -187,7 +193,15 @@ namespace MatrixLibrary
             return result;
         }
 
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumberBase, new()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="matrix"></param>
+        /// <param name="Q"></param>
+        /// <param name="R"></param>
+        /// <returns></returns>
+        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 

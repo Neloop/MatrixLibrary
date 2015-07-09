@@ -11,7 +11,7 @@ namespace MatrixTestApp
     {
         static Random RandomGenerator = new Random();
 
-        static void WriteTwoMatrixes<T>(Matrix<T> matrix1, Matrix<T> matrix2, Matrix<T> result, string operationName) where T : IMatrixNumberBase, new()
+        static void WriteTwoMatrixes<T>(Matrix<T> matrix1, Matrix<T> matrix2, Matrix<T> result, string operationName) where T : IMatrixNumber, new()
         {
             int maxRows = Math.Max(Math.Max(matrix1.Rows, matrix2.Rows), result.Rows);
             int half = maxRows / 2;
@@ -56,7 +56,7 @@ namespace MatrixTestApp
                 Console.WriteLine();
             }
         }
-        static void WriteMatrix<T>(Matrix<T> matrix, Matrix<T> result, string operationName) where T : IMatrixNumberBase, new()
+        static void WriteMatrix<T>(Matrix<T> matrix, Matrix<T> result, string operationName) where T : IMatrixNumber, new()
         {
             int maxRows = Math.Max(matrix.Rows, result.Rows);
             int half = maxRows / 2;

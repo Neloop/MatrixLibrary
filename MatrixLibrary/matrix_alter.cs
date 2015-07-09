@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ParallelAlteringOperations
     {
         /// <summary>
@@ -13,7 +16,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -41,7 +44,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -78,7 +81,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -179,7 +182,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -239,7 +242,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -325,7 +328,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -375,7 +378,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -424,6 +427,9 @@ namespace MatrixLibrary
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class AlteringOperations
     {
         /// <summary>
@@ -432,7 +438,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Transposition<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -458,7 +464,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Symmetric<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -492,7 +498,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Gauss<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -580,7 +586,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> GaussJordan<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -635,7 +641,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Inverse<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -709,7 +715,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Adjugate<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -756,7 +762,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Orthogonal<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 

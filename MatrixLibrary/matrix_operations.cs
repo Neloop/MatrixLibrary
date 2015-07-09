@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ParallelClassicOperations
     {
         /// <summary>
@@ -14,7 +17,7 @@ namespace MatrixLibrary
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
-        public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -55,7 +58,7 @@ namespace MatrixLibrary
         /// <param name="row2"></param>
         /// <param name="col2"></param>
         /// <returns></returns>
-        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumberBase, new()
+        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -93,7 +96,7 @@ namespace MatrixLibrary
         /// <param name="row2"></param>
         /// <param name="col2"></param>
         /// <returns></returns>
-        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumberBase, new()
+        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -125,7 +128,7 @@ namespace MatrixLibrary
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
-        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -160,7 +163,7 @@ namespace MatrixLibrary
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
-        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -202,7 +205,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="number"></param>
         /// <returns></returns>
-        public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : IMatrixNumberBase, new()
+        public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
             if (number == null) { throw new MatrixLibraryException("In given number reference was null value!"); }
@@ -231,7 +234,7 @@ namespace MatrixLibrary
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
-        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumberBase, new()
+        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -471,7 +474,7 @@ namespace MatrixLibrary
         /// <param name="exponent"></param>
         /// <param name="tryEigenvalues"></param>
         /// <returns></returns>
-        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -516,6 +519,9 @@ namespace MatrixLibrary
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ClassicOperations
     {
         /// <summary>
@@ -525,7 +531,7 @@ namespace MatrixLibrary
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
-        public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -564,7 +570,7 @@ namespace MatrixLibrary
         /// <param name="row2"></param>
         /// <param name="col2"></param>
         /// <returns></returns>
-        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumberBase, new()
+        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -599,7 +605,7 @@ namespace MatrixLibrary
         /// <param name="row2"></param>
         /// <param name="col2"></param>
         /// <returns></returns>
-        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumberBase, new()
+        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -628,7 +634,7 @@ namespace MatrixLibrary
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
-        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -661,7 +667,7 @@ namespace MatrixLibrary
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
-        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -701,7 +707,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="number"></param>
         /// <returns></returns>
-        public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : IMatrixNumberBase, new()
+        public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
             if (number == null) { throw new MatrixLibraryException("In given number reference was null value!"); }
@@ -727,7 +733,7 @@ namespace MatrixLibrary
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
-        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumberBase, new()
+        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -903,7 +909,7 @@ namespace MatrixLibrary
         /// <param name="exponent"></param>
         /// <param name="tryEigenvalues"></param>
         /// <returns></returns>
-        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 

@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ParallelComputations
     {
         /// <summary>
@@ -13,7 +16,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static T Determinant<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static T Determinant<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             return DeterminantInternal(matrix);
         }
@@ -24,7 +27,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumberBase, new()
+        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumber, new()
         {
             if (matrix == null || (replace == true && b == null)) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -152,7 +155,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
         {
             if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -185,7 +188,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumberBase, new()
+        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
         {
             /*
              * 
@@ -349,6 +352,9 @@ namespace MatrixLibrary
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Computations
     {
         /// <summary>
@@ -357,7 +363,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static T Determinant<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static T Determinant<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             return DeterminantInternal(matrix);
         }
@@ -368,7 +374,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumberBase, new()
+        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumber, new()
         {
             if (matrix == null || (replace == true && b == null)) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -482,7 +488,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
         {
             if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -514,7 +520,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumberBase, new()
+        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
         {
             /*
              * 

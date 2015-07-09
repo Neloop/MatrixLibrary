@@ -6,6 +6,9 @@ using System.Threading;
 
 namespace MatrixLibrary
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ParallelCharacteristics
     {
         /// <summary>
@@ -15,7 +18,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : IMatrixNumberBase, new()
+        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -118,7 +121,7 @@ namespace MatrixLibrary
         /// <param name="eigenValues"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumberBase, new()
+        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -185,7 +188,7 @@ namespace MatrixLibrary
         /// <param name="S"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -221,6 +224,9 @@ namespace MatrixLibrary
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Characteristics
     {
         /// <summary>
@@ -230,7 +236,7 @@ namespace MatrixLibrary
         /// <param name="matrix"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : IMatrixNumberBase, new()
+        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -321,7 +327,7 @@ namespace MatrixLibrary
         /// <param name="eigenValues"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumberBase, new()
+        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -380,7 +386,7 @@ namespace MatrixLibrary
         /// <param name="S"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumberBase, new()
+        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 

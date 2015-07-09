@@ -5,8 +5,14 @@ using System.Threading.Tasks;
 
 namespace MatrixLibrary
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public enum DefinityClassification { Indefinite, PositiveDefinite, NegativeDefinite };
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ParallelProperties
     {
         /// <summary>
@@ -15,7 +21,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static bool IsInvertible<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static bool IsInvertible<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -54,7 +60,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static int Rank<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static int Rank<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -86,7 +92,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -127,7 +133,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             /*
              * Neurčuje semi-definitnost (pozitivní/negativní)
@@ -185,6 +191,9 @@ namespace MatrixLibrary
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Properties
     {
         /// <summary>
@@ -193,7 +202,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static bool IsInvertible<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static bool IsInvertible<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -229,7 +238,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static int Rank<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static int Rank<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -258,7 +267,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -295,7 +304,7 @@ namespace MatrixLibrary
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
         /// <returns></returns>
-        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : IMatrixNumberBase, new()
+        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             /*
              * Neurčuje semi-definitnost (pozitivní/negativní)
