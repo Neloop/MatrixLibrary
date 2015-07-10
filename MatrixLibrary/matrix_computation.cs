@@ -22,10 +22,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Pokud matice není regulární je vracena 0
+        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
+        /// <param name="replace"></param>
+        /// <param name="col"></param>
+        /// <param name="b"></param>
         /// <returns></returns>
         internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumber, new()
         {
@@ -369,10 +372,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Pokud matice není regulární je vracena 0
+        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="matrix"></param>
+        /// <param name="replace"></param>
+        /// <param name="col"></param>
+        /// <param name="b"></param>
         /// <returns></returns>
         internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumber, new()
         {

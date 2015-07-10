@@ -8,7 +8,21 @@ namespace MatrixLibrary
     /// <summary>
     /// 
     /// </summary>
-    public enum DefinityClassification { Indefinite, PositiveDefinite, NegativeDefinite };
+    public enum DefinityClassification
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        Indefinite,
+        /// <summary>
+        /// 
+        /// </summary>
+        PositiveDefinite,
+        /// <summary>
+        /// 
+        /// </summary>
+        NegativeDefinite
+    };
 
     /// <summary>
     /// 
