@@ -6,36 +6,36 @@ using System.Threading.Tasks;
 namespace MatrixLibrary
 {
     /// <summary>
-    /// 
+    /// Enumeration which is used to better representation for result of matrix definity.
     /// </summary>
     public enum DefinityClassification
     {
         /// <summary>
-        /// 
+        /// Matrix is indefinite.
         /// </summary>
         Indefinite,
         /// <summary>
-        /// 
+        /// Matrix is positive-definite.
         /// </summary>
         PositiveDefinite,
         /// <summary>
-        /// 
+        /// Matrix is negative-definite.
         /// </summary>
         NegativeDefinite
     };
 
     /// <summary>
-    /// 
+    /// Namespace of parallel extension methods which represents properties which matrix might have had.
     /// </summary>
-    public static class ParallelProperties
+    public static class ParallelPropertiesExtensions
     {
         /// <summary>
-        /// 
+        /// Tells if given <paramref name="matrix"/> is invertible/regular.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static bool IsInvertible<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix which will be inspected if its invertible.</param>
+        /// <returns>True if <paramref name="matrix"/> is invertible, false otherwise.</returns>
+        public static bool IsInvertibleParallel<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -44,7 +44,7 @@ namespace MatrixLibrary
 
             if (matrix.Rows == cols)
             {
-                Matrix<T> temporaryM = ParallelAlteringOperations.Gauss(matrix);
+                Matrix<T> temporaryM = ParallelAlteringOperationsExtensions.GaussParallel(matrix);
                 Parallel.ForEach(temporaryM.GetRowsChunks(), (pair, loopState) =>
                 {
                     for (int i = pair.Item1; i < pair.Item2; i++)
@@ -69,19 +69,19 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// Determines what rank given <paramref name="matrix"/> object has.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static int Rank<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Source Matrix object which rank is wanted.</param>
+        /// <returns>Integral value representing number of independent vectors in <paramref name="matrix"/>.</returns>
+        public static int RankParallel<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             object resultLock = new object();
             int result = matrix.Rows;
 
-            Matrix<T> gauss = ParallelAlteringOperations.Gauss(matrix);
+            Matrix<T> gauss = ParallelAlteringOperationsExtensions.GaussParallel(matrix);
             int cols = gauss.Cols;
 
             Parallel.ForEach(gauss.GetRowsChunks(), (pair) =>
@@ -101,12 +101,12 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// Determines whether object <paramref name="matrix"/> is orthogonal or not.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix class which will be analyzed for orthogonality.</param>
+        /// <returns>True if given <paramref name="matrix"/> is orthogonal, false otherwise.</returns>
+        public static bool IsOrthogonalParallel<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -114,7 +114,7 @@ namespace MatrixLibrary
 
             if (matrix.Rows == matrix.Cols)
             {
-                Matrix<T> transposition = ParallelAlteringOperations.Transposition(matrix);
+                Matrix<T> transposition = ParallelAlteringOperationsExtensions.TranspositionParallel(matrix);
                 Matrix<T> multiplied = ParallelClassicOperations.Multiplication(transposition, matrix);
                 int cols_mult = multiplied.Cols;
 
@@ -142,12 +142,12 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Rozlišuje se definitnost (pozitivní/negativní), indefinitnost; podle vráceného čísla
+        /// Detect if given <paramref name="matrix"/> is positive-definite, negative-definite or indefinite.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix object which is source for computation of this method.</param>
+        /// <returns>Enumeration which values reprezents state of definity of <paramref name="matrix"/>.</returns>
+        public static DefinityClassification DefinityParallel<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             /*
              * Neurčuje semi-definitnost (pozitivní/negativní)
@@ -179,7 +179,7 @@ namespace MatrixLibrary
                                 det.WriteNumber(k, l, matrix.GetNumber(k, l));
                             }
                         }
-                        determinant[i] = Computations.Determinant(det);
+                        determinant[i] = ComputationsExtensions.Determinant(det);
                     }
                 });
 
@@ -206,17 +206,17 @@ namespace MatrixLibrary
     }
 
     /// <summary>
-    /// 
+    /// Namespace of extension methods which represents properties which matrix might have had.
     /// </summary>
-    public static class Properties
+    public static class PropertiesExtensions
     {
         /// <summary>
-        /// 
+        /// Tells if given <paramref name="matrix"/> is invertible/regular.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static bool IsInvertible<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix which will be inspected if its invertible.</param>
+        /// <returns>True if <paramref name="matrix"/> is invertible, false otherwise.</returns>
+        public static bool IsInvertible<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -225,7 +225,7 @@ namespace MatrixLibrary
                 int rows = matrix.Rows;
                 int cols = matrix.Cols;
 
-                Matrix<T> temporaryM = AlteringOperations.Gauss(matrix);
+                Matrix<T> temporaryM = AlteringOperationsExtensions.Gauss(matrix);
                 for (int i = 0; i < rows; i++)
                 {
                     int zeroes = 0;
@@ -247,18 +247,18 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// Determines what rank given <paramref name="matrix"/> object has.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static int Rank<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Source Matrix object which rank is wanted.</param>
+        /// <returns>Integral value representing number of independent vectors in <paramref name="matrix"/>.</returns>
+        public static int Rank<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             int result = matrix.Rows;
 
-            Matrix<T> gauss = AlteringOperations.Gauss(matrix);
+            Matrix<T> gauss = AlteringOperationsExtensions.Gauss(matrix);
             int rows = gauss.Rows;
             int cols = gauss.Cols;
 
@@ -276,18 +276,18 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// Determines whether object <paramref name="matrix"/> is orthogonal or not.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static bool IsOrthogonal<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix class which will be analyzed for orthogonality.</param>
+        /// <returns>True if given <paramref name="matrix"/> is orthogonal, false otherwise.</returns>
+        public static bool IsOrthogonal<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             if (matrix.Rows == matrix.Cols)
             {
-                Matrix<T> transposition = AlteringOperations.Transposition(matrix);
+                Matrix<T> transposition = AlteringOperationsExtensions.Transposition(matrix);
                 Matrix<T> multiplied = ClassicOperations.Multiplication(transposition, matrix);
                 int rows_mult = multiplied.Rows;
                 int cols_mult = multiplied.Cols;
@@ -311,14 +311,14 @@ namespace MatrixLibrary
 
             return true;
         }
-        
+
         /// <summary>
-        /// Rozlišuje se definitnost (pozitivní/negativní), indefinitnost; podle vráceného čísla
+        /// Detect if given <paramref name="matrix"/> is positive-definite, negative-definite or indefinite.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static DefinityClassification Definity<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix object which is source for computation of this method.</param>
+        /// <returns>Enumeration which values reprezents state of definity of <paramref name="matrix"/>.</returns>
+        public static DefinityClassification Definity<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             /*
              * Neurčuje semi-definitnost (pozitivní/negativní)
@@ -349,7 +349,7 @@ namespace MatrixLibrary
                             det.WriteNumber(k, l, matrix.GetNumber(k, l));
                         }
                     }
-                    determinant[i] = Computations.Determinant(det);
+                    determinant[i] = ComputationsExtensions.Determinant(det);
                 }
 
                 int positive = 0;

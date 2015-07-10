@@ -13,7 +13,7 @@ namespace MatrixLibrary
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
@@ -48,7 +48,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Sčítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="rowsResult"></param>
         /// <param name="colsResult"></param>
         /// <param name="matrix1"></param>
@@ -86,7 +86,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Odečítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="rowsResult"></param>
         /// <param name="colsResult"></param>
         /// <param name="matrix1"></param>
@@ -124,7 +124,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
@@ -159,7 +159,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Pokud se počet sloupců první a počet řádků druhé matice nerovnají, pak je vyhozena vyjimka
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
@@ -201,7 +201,7 @@ namespace MatrixLibrary
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix"></param>
         /// <param name="number"></param>
         /// <returns></returns>
@@ -230,7 +230,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Strassen-Winograd
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
@@ -469,7 +469,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Zkusí využít vlastních čísel, pokud se v daném čase nevypočítají, přejde se k Strassenovi
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix"></param>
         /// <param name="exponent"></param>
         /// <param name="tryEigenvalues"></param>
@@ -485,7 +485,7 @@ namespace MatrixLibrary
                 Matrix<T> S = null;
                 if (tryEigenvalues == true)
                 {
-                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 100); }
+                    try { exponentiate = CharacteristicsExtensions.Diagonal(matrix, out S, 100); }
                     catch (EigenValuesNotFoundException) { exponentiate = null; }
                 }
 
@@ -508,7 +508,7 @@ namespace MatrixLibrary
                     });
 
                     result = ParallelClassicOperations.Multiplication(S, exponentiate);
-                    result = ParallelClassicOperations.Multiplication(result, AlteringOperations.Inverse(S));
+                    result = ParallelClassicOperations.Multiplication(result, AlteringOperationsExtensions.Inverse(S));
                 }
             }
             else
@@ -527,7 +527,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
@@ -560,7 +560,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Sčítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="rowsResult"></param>
         /// <param name="colsResult"></param>
         /// <param name="matrix1"></param>
@@ -595,7 +595,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Odečítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="rowsResult"></param>
         /// <param name="colsResult"></param>
         /// <param name="matrix1"></param>
@@ -630,7 +630,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
@@ -663,7 +663,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Pokud se počet sloupců první a počet řádků druhé matice nerovnají, pak je vyhozena vyjimka
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
@@ -703,7 +703,7 @@ namespace MatrixLibrary
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix"></param>
         /// <param name="number"></param>
         /// <returns></returns>
@@ -729,7 +729,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Strassen-Winograd
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix1"></param>
         /// <param name="matrix2"></param>
         /// <returns></returns>
@@ -904,7 +904,7 @@ namespace MatrixLibrary
         /// <summary>
         /// Zkusí využít vlastních čísel, pokud se v daném čase nevypočítají, přejde se k Strassenovi
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix"></param>
         /// <param name="exponent"></param>
         /// <param name="tryEigenvalues"></param>
@@ -920,7 +920,7 @@ namespace MatrixLibrary
                 Matrix<T> S = null;
                 if (tryEigenvalues == true)
                 {
-                    try { exponentiate = Characteristics.Diagonal(matrix, out S, 100); }
+                    try { exponentiate = CharacteristicsExtensions.Diagonal(matrix, out S, 100); }
                     catch (EigenValuesNotFoundException) { exponentiate = null; }
                 }
 
@@ -939,7 +939,7 @@ namespace MatrixLibrary
                         exponentiate.WriteNumber(i, i, (T)exponentiate.GetNumber(i, i).__Exponentiate(exponent));
                     }
 
-                    result = S * exponentiate * AlteringOperations.Inverse(S);
+                    result = S * exponentiate * AlteringOperationsExtensions.Inverse(S);
                 }
             }
             else

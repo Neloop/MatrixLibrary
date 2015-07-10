@@ -6,31 +6,31 @@ using System.Threading.Tasks;
 namespace MatrixLibrary
 {
     /// <summary>
-    /// 
+    /// Namespace of parallel extension methods which unite actions about determinants and solving linear equations.
     /// </summary>
-    public static class ParallelComputations
+    public static class ParallelComputationsExtensions
     {
         /// <summary>
-        /// Pokud matice není regulární je vracena 0
+        /// Calculate determinant on given <paramref name="matrix"/> object and returns result as number.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static T Determinant<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Source container of elements which will be calculated into determinant.</param>
+        /// <returns>Class or strucct which fulfill IMatrixNumber interface and represents elements stored in Matrix.</returns>
+        public static T DeterminantParallel<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
-            return DeterminantInternal(matrix);
+            return DeterminantInternalParallel(matrix);
         }
 
         /// <summary>
-        /// 
+        /// Internal method to compute determinant of <paramref name="matrix"/> in which some particular column can be replaced with another.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="replace"></param>
-        /// <param name="col"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix on which determinant will be calculated.</param>
+        /// <param name="replace">True if column <paramref name="b"/> will be replace on index <paramref name="col"/> in <paramref name="matrix"/>.</param>
+        /// <param name="col">Index of column to replace.</param>
+        /// <param name="b">Column which maybe will be moved to <paramref name="matrix"/>.</param>
+        /// <returns>Returns determinant from <paramref name="matrix"/> or assembled matrix from <paramref name="matrix"/> and <paramref name="b"/>.</returns>
+        internal static T DeterminantInternalParallel<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumber, new()
         {
             if (matrix == null || (replace == true && b == null)) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -152,13 +152,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Vrací vlastně vektor n*1; vstupem musí být regulární matice
+        /// Solve linear equations system through Cramer algorithm which uses determinants. Input <paramref name="matrix"/> has to be regular or zero is returned.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Left side of linear equations.</param>
+        /// <param name="b">Right side of linear equations.</param>
+        /// <returns>Actually its a single column vector of individual results.</returns>
+        public static Matrix<T> CramerParallel<T>(this Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
         {
             if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -166,7 +166,7 @@ namespace MatrixLibrary
             if (b.Rows != matrix.Rows) { throw new MatrixLibraryException("Given matrix and vector b do not have same number of rows!"); }
 
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(matrix.Cols, 1);
-            T determinant = ParallelComputations.Determinant(matrix);
+            T determinant = ParallelComputationsExtensions.DeterminantParallel(matrix);
 
             Parallel.ForEach(result.GetRowsChunks(), (pair) =>
             {
@@ -174,7 +174,7 @@ namespace MatrixLibrary
 
                 for (int i = pair.Item1; i < pair.Item2; i++)
                 {
-                    T x = Computations.DeterminantInternal(matrix, true, i, b);
+                    T x = ComputationsExtensions.DeterminantInternal(matrix, true, i, b);
                     x = (T)(x.__Division(tmpDeterminant));
 
                     result.WriteNumber(i, 0, x);
@@ -185,13 +185,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Vrací sloupcové vektory: první je partikulární část, další jsou obecné části (jeden sloupec = jeden parametr)
+        /// Solve linear equations system on given <paramref name="matrix"/> and right side <paramref name="b"/>. If given <paramref name="matrix"/> is not regular than result is parametrised.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Left side of linear equations system.</param>
+        /// <param name="b">Right side of linear equations system.</param>
+        /// <returns>Returns Matrix of column vectors, first one is particular part and another are general parts, where one column is one parameter.</returns>
+        public static Matrix<T> SolveLinearEquationsParallel<T>(this Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
         {
             /*
              * 
@@ -222,7 +222,7 @@ namespace MatrixLibrary
                 }
             });
 
-            tmpMatrix = ParallelAlteringOperations.Gauss(tmpMatrix); // První gaussovka
+            tmpMatrix = ParallelAlteringOperationsExtensions.GaussParallel(tmpMatrix); // První gaussovka
 
             /*
              * 
@@ -277,7 +277,7 @@ namespace MatrixLibrary
 
             if ((rows - zeroRows) == cols) // Matice má jedno možné řešení
             {
-                tmpMatrix = ParallelAlteringOperations.Gauss(tmpMatrix);
+                tmpMatrix = ParallelAlteringOperationsExtensions.GaussParallel(tmpMatrix);
                 result = Matrix<T>.GetUninitializedMatrix(rows, 1);
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
@@ -356,30 +356,30 @@ namespace MatrixLibrary
     }
 
     /// <summary>
-    /// 
+    /// Namespace of extension methods which unite actions about determinants and solving linear equations.
     /// </summary>
-    public static class Computations
+    public static class ComputationsExtensions
     {
         /// <summary>
-        /// Pokud matice není regulární je vracena 0
+        /// Calculate determinant on given <paramref name="matrix"/> object and returns result as number.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static T Determinant<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Source container of elements which will be calculated into determinant.</param>
+        /// <returns>Class or strucct which fulfill IMatrixNumber interface and represents elements stored in Matrix.</returns>
+        public static T Determinant<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             return DeterminantInternal(matrix);
         }
 
         /// <summary>
-        /// 
+        /// Internal method to compute determinant of <paramref name="matrix"/> in which some particular column can be replaced with another.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="replace"></param>
-        /// <param name="col"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix on which determinant will be calculated.</param>
+        /// <param name="replace">True if column <paramref name="b"/> will be replace on index <paramref name="col"/> in <paramref name="matrix"/>.</param>
+        /// <param name="col">Index of column to replace.</param>
+        /// <param name="b">Column which maybe will be moved to <paramref name="matrix"/>.</param>
+        /// <returns>Returns determinant from <paramref name="matrix"/> or assembled matrix from <paramref name="matrix"/> and <paramref name="b"/>.</returns>
         internal static T DeterminantInternal<T>(Matrix<T> matrix, bool replace = false, int col = 0, Matrix<T> b = null) where T : IMatrixNumber, new()
         {
             if (matrix == null || (replace == true && b == null)) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
@@ -488,13 +488,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Vrací vlastně vektor n*1; vstupem musí být regulární matice
+        /// Solve linear equations system through Cramer algorithm which uses determinants. Input <paramref name="matrix"/> has to be regular or zero is returned.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static Matrix<T> Cramer<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Left side of linear equations.</param>
+        /// <param name="b">Right side of linear equations.</param>
+        /// <returns>Actually its a single column vector of individual results.</returns>
+        public static Matrix<T> Cramer<T>(this Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
         {
             if (matrix == null || b == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -506,11 +506,11 @@ namespace MatrixLibrary
 
             Matrix<T> result = Matrix<T>.GetUninitializedMatrix(cols, 1);
 
-            T determinant = Computations.Determinant(matrix);
+            T determinant = ComputationsExtensions.Determinant(matrix);
 
             for (int i = 0; i < cols; i++)
             {
-                T x = Computations.DeterminantInternal(matrix, true, i, b);
+                T x = ComputationsExtensions.DeterminantInternal(matrix, true, i, b);
                 x = (T)(x.__Division(determinant));
 
                 result.WriteNumber(i, 0, x);
@@ -520,13 +520,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Vrací sloupcové vektory: první je partikulární část, další jsou obecné části (jeden sloupec = jeden parametr)
+        /// Solve linear equations system on given <paramref name="matrix"/> and right side <paramref name="b"/>. If given <paramref name="matrix"/> is not regular than result is parametrised.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static Matrix<T> SolveLinearEquations<T>(Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Left side of linear equations system.</param>
+        /// <param name="b">Right side of linear equations system.</param>
+        /// <returns>Returns Matrix of column vectors, first one is particular part and another are general parts, where one column is one parameter.</returns>
+        public static Matrix<T> SolveLinearEquations<T>(this Matrix<T> matrix, Matrix<T> b) where T : IMatrixNumber, new()
         {
             /*
              * 
@@ -554,7 +554,7 @@ namespace MatrixLibrary
                 }
             }
 
-            tmpMatrix = AlteringOperations.Gauss(tmpMatrix); // První gaussovka
+            tmpMatrix = AlteringOperationsExtensions.Gauss(tmpMatrix); // První gaussovka
 
             /*
              * 
@@ -605,7 +605,7 @@ namespace MatrixLibrary
 
             if ((rows - zeroRows) == cols) // Matice má jedno možné řešení
             {
-                tmpMatrix = AlteringOperations.Gauss(tmpMatrix);
+                tmpMatrix = AlteringOperationsExtensions.Gauss(tmpMatrix);
                 result = Matrix<T>.GetUninitializedMatrix(rows, 1);
                 for (int i = 0; i < rows; i++)
                 {

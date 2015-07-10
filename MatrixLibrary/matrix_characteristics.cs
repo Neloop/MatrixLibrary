@@ -7,18 +7,18 @@ using System.Threading;
 namespace MatrixLibrary
 {
     /// <summary>
-    /// 
+    /// Namespace of methods which relate to eigen values and eigen vectors. All of them use parallel execution.
     /// </summary>
-    public static class ParallelCharacteristics
+    public static class ParallelCharacteristicsExtensions
     {
         /// <summary>
-        /// Pokud je limit nula, algoritmus počítá dokud vlastní čísla nenajde, určitý integer pak vyjadřuje počet opakování cyklu na zjištění podobné matice
+        /// On given <paramref name="matrix"/> tries to find eigen values. It can run until it finds them or can have a limit of iterations to find them.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix on which eigen values will be found.</param>
+        /// <param name="limit">If the limit is zero, then algorithm computes until it finds eigen values. If the limit is specific integer, then this integer represents number of iterations fo internal cycle.</param>
+        /// <returns>Reference to EigenValues class in which result is stored.</returns>
+        public static EigenValues<T> GetEigenValuesParallel<T>(this Matrix<T> matrix, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -36,8 +36,8 @@ namespace MatrixLibrary
                     end1 = true;
                     end2 = true;
 
-                    ParallelDecompositions.QRDecomposition(RQ, out Q, out R);
-                    RQ = ParallelClassicOperations.Multiplication(ParallelAlteringOperations.Transposition(Q), RQ);
+                    ParallelDecompositionsExtensions.QRDecompositionParallel(RQ, out Q, out R);
+                    RQ = ParallelClassicOperations.Multiplication(ParallelAlteringOperationsExtensions.TranspositionParallel(Q), RQ);
                     RQ = ParallelClassicOperations.Multiplication(RQ, Q);
 
                     Parallel.ForEach(RQ.GetRowsChunks(1), (pair) =>
@@ -114,14 +114,14 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// Tries to find eigen vectors and eigen values on specified <paramref name="matrix"/>. It can run until it finds them or can have a limit of iterations.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="eigenValues"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix on which eigen values and vectors will be found.</param>
+        /// <param name="eigenValues">The result of GetEigenValuesParallel() function which is outputed to caller.</param>
+        /// <param name="limit">This limit is passed to GetEigenValuesParallel() function.</param>
+        /// <returns>Returns new instance of Matrix in which eigen vectors are stored.</returns>
+        public static Matrix<T> GetEigenVectorsParallel<T>(this Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -129,7 +129,7 @@ namespace MatrixLibrary
             EigenValues<T> tmpEigenValues;
             if (matrix.Rows == matrix.Cols)
             {
-                tmpEigenValues = GetEigenValues(matrix, limit);
+                tmpEigenValues = GetEigenValuesParallel(matrix, limit);
                 result = Matrix<T>.GetUninitializedMatrix(tmpEigenValues.Count(), matrix.Cols);
                 Matrix<T> modified = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
                 Matrix<T> zeroVector = new Matrix<T>(matrix.Rows, 1);
@@ -155,7 +155,7 @@ namespace MatrixLibrary
                         }
                     });
 
-                    Matrix<T> system = ParallelComputations.SolveLinearEquations(modified, zeroVector);
+                    Matrix<T> system = ParallelComputationsExtensions.SolveLinearEquationsParallel(modified, zeroVector);
 
                     Parallel.ForEach(system.GetRowsChunks(), (pair) =>
                     {
@@ -181,14 +181,14 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Pomocí vlastních čísel určí diagonální matici a vrací jí
+        /// Through eigen values and vectors computes diagonal matrix and returns it.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="S"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Source matrix to diagonalization process.</param>
+        /// <param name="S">Output matrix of eigen vectors.</param>
+        /// <param name="limit">This limit is passed to GetEigenVectorsParallel() function.</param>
+        /// <returns>Diagonal matrix which consist of eigen values.</returns>
+        public static Matrix<T> DiagonalParallel<T>(this Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -197,7 +197,7 @@ namespace MatrixLibrary
             if (matrix.Rows == matrix.Cols)
             {
                 EigenValues<T> eigenValues;
-                S = GetEigenVectors(matrix, out eigenValues, limit);
+                S = GetEigenVectorsParallel(matrix, out eigenValues, limit);
 
                 if (S.Rows == S.Cols)
                 {
@@ -225,18 +225,18 @@ namespace MatrixLibrary
     }
 
     /// <summary>
-    /// 
+    /// Namespace of methods which relate to eigen values and eigen vectors.
     /// </summary>
-    public static class Characteristics
+    public static class CharacteristicsExtensions
     {
         /// <summary>
-        /// Pokud je limit nula, algoritmus počítá dokud vlastní čísla nenajde, určitý integer pak vyjadřuje počet opakování cyklu na zjištění podobné matice
+        /// On given <paramref name="matrix"/> tries to find eigen values. It can run until it finds them or can have a limit of iterations to find them.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public static EigenValues<T> GetEigenValues<T>(Matrix<T> matrix, int limit = 0) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix on which eigen values will be found.</param>
+        /// <param name="limit">If the limit is zero, then algorithm computes until it finds eigen values. If the limit is specific integer, then this integer represents number of iterations fo internal cycle.</param>
+        /// <returns>Reference to EigenValues class in which result is stored.</returns>
+        public static EigenValues<T> GetEigenValues<T>(this Matrix<T> matrix, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -254,8 +254,8 @@ namespace MatrixLibrary
                     end1 = true;
                     end2 = true;
 
-                    Decompositions.QRDecomposition(RQ, out Q, out R);
-                    RQ = AlteringOperations.Transposition(Q) * RQ * Q;
+                    DecompositionsExtensions.QRDecomposition(RQ, out Q, out R);
+                    RQ = AlteringOperationsExtensions.Transposition(Q) * RQ * Q;
 
                     for (int i = 1; i < RQ.Rows; i++)
                     {
@@ -320,21 +320,21 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// Tries to find eigen vectors and eigen values on specified <paramref name="matrix"/>. It can run until it finds them or can have a limit of iterations.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="eigenValues"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public static Matrix<T> GetEigenVectors<T>(Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix on which eigen values and vectors will be found.</param>
+        /// <param name="eigenValues">The result of GetEigenValuesParallel() function which is outputed to caller.</param>
+        /// <param name="limit">This limit is passed to GetEigenValuesParallel() function.</param>
+        /// <returns>Returns new instance of Matrix in which eigen vectors are stored.</returns>
+        public static Matrix<T> GetEigenVectors<T>(this Matrix<T> matrix, out EigenValues<T> eigenValues, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             Matrix<T> result;
             if (matrix.Rows == matrix.Cols)
             {
-                eigenValues = Characteristics.GetEigenValues(matrix, limit);
+                eigenValues = CharacteristicsExtensions.GetEigenValues(matrix, limit);
                 result = Matrix<T>.GetUninitializedMatrix(eigenValues.Count(), matrix.Cols);
                 Matrix<T> modified = Matrix<T>.GetUninitializedMatrix(matrix.Rows, matrix.Cols);
                 Matrix<T> zeroVector = new Matrix<T>(matrix.Rows, 1);
@@ -357,7 +357,7 @@ namespace MatrixLibrary
                         }
                     }
 
-                    system = Computations.SolveLinearEquations(modified, zeroVector);
+                    system = ComputationsExtensions.SolveLinearEquations(modified, zeroVector);
 
                     for (int k = 0; k < system.Rows; k++)
                     {
@@ -379,14 +379,14 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Pomocí vlastních čísel určí diagonální matici a vrací jí
+        /// Through eigen values and vectors computes diagonal matrix and returns it.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="S"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public static Matrix<T> Diagonal<T>(Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Source matrix to diagonalization process.</param>
+        /// <param name="S">Output matrix of eigen vectors.</param>
+        /// <param name="limit">This limit is passed to GetEigenVectorsParallel() function.</param>
+        /// <returns>Diagonal matrix which consist of eigen values.</returns>
+        public static Matrix<T> Diagonal<T>(this Matrix<T> matrix, out Matrix<T> S, int limit = 0) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -395,7 +395,7 @@ namespace MatrixLibrary
             if (matrix.Rows == matrix.Cols)
             {
                 EigenValues<T> eigenValues;
-                S = Characteristics.GetEigenVectors(matrix, out eigenValues, limit);
+                S = CharacteristicsExtensions.GetEigenVectors(matrix, out eigenValues, limit);
 
                 if (S.Rows == S.Cols)
                 {

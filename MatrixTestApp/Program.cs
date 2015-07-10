@@ -274,9 +274,9 @@ namespace MatrixTestApp
             ClassicOperations.Subtraction(A, A); ParallelClassicOperations.Subtraction(A, A);
             ClassicOperations.MultiplyWithNumber(A, new MatrixNumber()); ParallelClassicOperations.MultiplyWithNumber(A, new MatrixNumber());
             ClassicOperations.Multiplication(A, A); ParallelClassicOperations.Multiplication(A, A);
-            AlteringOperations.Adjugate(A); ParallelAlteringOperations.Adjugate(A);
-            AlteringOperations.Gauss(A); ParallelAlteringOperations.Gauss(A);
-            Computations.Cramer(A, A); ParallelComputations.Cramer(A, A);
+            AlteringOperationsExtensions.Adjugate(A); ParallelAlteringOperationsExtensions.AdjugateParallel(A);
+            AlteringOperationsExtensions.Gauss(A); ParallelAlteringOperationsExtensions.GaussParallel(A);
+            ComputationsExtensions.Cramer(A, A); ParallelComputationsExtensions.CramerParallel(A, A);
 
 
             int[,] inputMatrix = new int[4, 4] { {1, 0, 5, 6}, {1, 1, 6, 7}, {0, 1, 7, 8}, {10, 7, 8, 3} };
@@ -324,7 +324,7 @@ namespace MatrixTestApp
             Matrix<MatrixNumber> b = new Matrix<MatrixNumber>(inputMatrix);
 
             Console.WriteLine("Cramer");
-            resultSingle = Computations.Cramer(cram, b);
+            resultSingle = ComputationsExtensions.Cramer(cram, b);
             WriteTwoMatrixes(cram, b, resultSingle, "=");
 
             Console.WriteLine();
@@ -333,7 +333,7 @@ namespace MatrixTestApp
             b = new Matrix<MatrixNumber>(inputMatrix);
 
             Console.WriteLine("Soustava rovnic");
-            resultSingle = Computations.SolveLinearEquations(B, b);
+            resultSingle = ComputationsExtensions.SolveLinearEquations(B, b);
             //try { resultSingle = Computations.SolveLinearEquations(B, b); }
             //catch (MatrixLibraryException) { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteTwoMatrixes(B, b, resultSingle, "=");
@@ -364,12 +364,12 @@ namespace MatrixTestApp
 
             WriteSeparator();
 
-            resultSingle = AlteringOperations.Transposition(A);
+            resultSingle = A.Transposition();
             WriteMatrix(A, resultSingle, "Transponovaná");
 
             Console.WriteLine();
 
-            MatrixNumber det = Computations.Determinant(B);
+            MatrixNumber det = ComputationsExtensions.Determinant(B);
             zeroM = new int[1, 1];
             resultSingle = new Matrix<MatrixNumber>(zeroM);
             resultSingle.WriteNumber(0, 0, det);
@@ -381,29 +381,29 @@ namespace MatrixTestApp
 
             Matrix<MatrixNumber> C = new Matrix<MatrixNumber>(inputMatrix);
 
-            det = Computations.Determinant(C);
+            det = ComputationsExtensions.Determinant(C);
             resultSingle = new Matrix<MatrixNumber>(zeroM);
             resultSingle.WriteNumber(0, 0, det);
             WriteMatrix(C, resultSingle, "Determinant");
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.Gauss(B);
+            resultSingle = AlteringOperationsExtensions.Gauss(B);
             WriteMatrix(B, resultSingle, "Gauss");
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.GaussJordan(B);
+            resultSingle = AlteringOperationsExtensions.GaussJordan(B);
             WriteMatrix(B, resultSingle, "GaussJordan");
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.Adjugate(A);
+            resultSingle = AlteringOperationsExtensions.Adjugate(A);
             WriteMatrix(A, resultSingle, "Adjungovaná");
 
             Console.WriteLine();
 
-            bool regular = Properties.IsInvertible(B);
+            bool regular = PropertiesExtensions.IsInvertible(B);
             int[,] number = new int[1, 1];
             resultSingle = new Matrix<MatrixNumber>(number);
             MatrixNumber one = new MatrixNumber(1, 1);
@@ -415,7 +415,7 @@ namespace MatrixTestApp
             Console.WriteLine();
             inputMatrix = new int[4, 4];
             Matrix<MatrixNumber> D = new Matrix<MatrixNumber>(inputMatrix);
-            regular = Properties.IsInvertible(D);
+            regular = PropertiesExtensions.IsInvertible(D);
             number = new int[1, 1];
             resultSingle = new Matrix<MatrixNumber>(number);
             if (regular == true) { resultSingle.WriteNumber(0, 0, one); }
@@ -424,7 +424,7 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            bool orthogonal = Properties.IsOrthogonal(B);
+            bool orthogonal = PropertiesExtensions.IsOrthogonal(B);
             number = new int[1, 1];
             resultSingle = new Matrix<MatrixNumber>(number);
             if (orthogonal == true) { resultSingle.WriteNumber(0, 0, one); }
@@ -433,31 +433,31 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            try { resultSingle = AlteringOperations.Inverse(A); }
+            try { resultSingle = AlteringOperationsExtensions.Inverse(A); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteMatrix(A, resultSingle, "Inverzní");
 
             Console.WriteLine();
 
-            try { resultSingle = AlteringOperations.Symmetric(A); }
+            try { resultSingle = AlteringOperationsExtensions.Symmetric(A); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteMatrix(A, resultSingle, "Zesymetrizování");
 
             Console.WriteLine();
 
-            resultSingle = AlteringOperations.Orthogonal(B);
+            resultSingle = AlteringOperationsExtensions.Orthogonal(B);
             WriteMatrix(B, resultSingle, "Ortogonalizace");
 
             Console.WriteLine();
 
-            try { resultSingle = Decompositions.CholeskyDecomposition(A); }
+            try { resultSingle = DecompositionsExtensions.CholeskyDecomposition(A); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             finally { WriteMatrix(A, resultSingle, "Choleského rozklad"); }
 
             Console.WriteLine();
 
             Matrix<MatrixNumber> Q, R;
-            resultSingle = Decompositions.QRDecomposition(A, out Q, out R);
+            resultSingle = DecompositionsExtensions.QRDecomposition(A, out Q, out R);
             WriteMatrix(A, resultSingle, "QR-rozklad");
 
             Console.WriteLine();
@@ -466,7 +466,7 @@ namespace MatrixTestApp
             A = new Matrix<MatrixNumber>(zeroM);
 
             EigenValues<MatrixNumber> tmp;
-            try { tmp = Characteristics.GetEigenValues(A, 0); }
+            try { tmp = CharacteristicsExtensions.GetEigenValues(A, 0); }
             catch { tmp = new EigenValues<MatrixNumber>(new [] { new MatrixNumber(0) }); }
             resultSingle = new Matrix<MatrixNumber>(tmp.Count(), 1);
             for (int i = 0; i < resultSingle.Rows; i++)
@@ -477,14 +477,14 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            try { resultSingle = Characteristics.GetEigenVectors(A, out tmp, 0); }
+            try { resultSingle = CharacteristicsExtensions.GetEigenVectors(A, out tmp, 0); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteMatrix(A, resultSingle, "Vlastní vektory");
 
             Console.WriteLine();
 
             Matrix<MatrixNumber> S;
-            try { resultSingle = Characteristics.Diagonal(A, out S, 0); }
+            try { resultSingle = CharacteristicsExtensions.Diagonal(A, out S, 0); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
             WriteMatrix(A, resultSingle, "Diagonalizovat");
 
@@ -629,18 +629,18 @@ namespace MatrixTestApp
 
 
             /********** IsInvertible **********/
-            DoUnaryOpBool(A, Properties.IsInvertible, ParallelProperties.IsInvertible, "IsInvertible");
+            DoUnaryOpBool(A, PropertiesExtensions.IsInvertible, ParallelPropertiesExtensions.IsInvertibleParallel, "IsInvertible");
 
 
             /********** Rank **********/
             Console.WriteLine("Rank...");
             stopwatchSingle.Restart();
-            resultSingleInt = Properties.Rank(A);
+            resultSingleInt = PropertiesExtensions.Rank(A);
             stopwatchSingle.Stop();
 
             Console.WriteLine("Multi-threaded rank...");
             stopwatchMulti.Restart();
-            resultMultiInt = ParallelProperties.Rank(A);
+            resultMultiInt = ParallelPropertiesExtensions.RankParallel(A);
             stopwatchMulti.Stop();
 
             if (resultSingleInt == resultMultiInt) { Console.WriteLine("Results are the same."); }
@@ -651,34 +651,34 @@ namespace MatrixTestApp
 
 
             /********** IsOrthogonal **********/
-            DoUnaryOpBool(A, Properties.IsOrthogonal, ParallelProperties.IsOrthogonal, "IsOrthogonal");
+            DoUnaryOpBool(A, PropertiesExtensions.IsOrthogonal, ParallelPropertiesExtensions.IsOrthogonalParallel, "IsOrthogonal");
 
 
             /********** Determinant **********/
-            DoUnaryOpMatrixNumber(A, Computations.Determinant, ParallelComputations.Determinant, "Determinant");
+            DoUnaryOpMatrixNumber(A, ComputationsExtensions.Determinant, ParallelComputationsExtensions.DeterminantParallel, "Determinant");
 
 
             /********** Gauss **********/
-            DoUnaryOpMatrix(A, AlteringOperations.Gauss, ParallelAlteringOperations.Gauss, "Gauss");
+            DoUnaryOpMatrix(A, AlteringOperationsExtensions.Gauss, ParallelAlteringOperationsExtensions.GaussParallel, "Gauss");
 
 
             /********** GaussJordan **********/
-            DoUnaryOpMatrix(A, AlteringOperations.GaussJordan, ParallelAlteringOperations.GaussJordan, "GaussJordan");
+            DoUnaryOpMatrix(A, AlteringOperationsExtensions.GaussJordan, ParallelAlteringOperationsExtensions.GaussJordanParallel, "GaussJordan");
 
 
             /********** SolveLinearEquations **********/
-            DoBinaryOp(A, B, Computations.SolveLinearEquations, ParallelComputations.SolveLinearEquations, "SolveLinearEquations");
+            DoBinaryOp(A, B, ComputationsExtensions.SolveLinearEquations, ParallelComputationsExtensions.SolveLinearEquationsParallel, "SolveLinearEquations");
 
 
             /********** QRDecomposition **********/
             Console.WriteLine("QRDecomposition...");
             stopwatchSingle.Restart();
-            resultSingle = Decompositions.QRDecomposition(A, out Q, out R);
+            resultSingle = DecompositionsExtensions.QRDecomposition(A, out Q, out R);
             stopwatchSingle.Stop();
 
             Console.WriteLine("Multi-threaded QRDecomposition...");
             stopwatchMulti.Restart();
-            resultMulti = ParallelDecompositions.QRDecomposition(A, out Q, out R);
+            resultMulti = ParallelDecompositionsExtensions.QRDecompositionParallel(A, out Q, out R);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
@@ -689,7 +689,7 @@ namespace MatrixTestApp
 
 
             /********** Orthogonal **********/
-            DoUnaryOpMatrix(A, AlteringOperations.Orthogonal, ParallelAlteringOperations.Orthogonal, "Orthogonal");
+            DoUnaryOpMatrix(A, AlteringOperationsExtensions.Orthogonal, ParallelAlteringOperationsExtensions.OrthogonalParallel, "Orthogonal");
 
 
 
@@ -704,7 +704,7 @@ namespace MatrixTestApp
 
 
             /********** Inverse **********/
-            DoUnaryOpMatrix(A, AlteringOperations.Inverse, ParallelAlteringOperations.Inverse, "Inverse");
+            DoUnaryOpMatrix(A, AlteringOperationsExtensions.Inverse, ParallelAlteringOperationsExtensions.InverseParallel, "Inverse");
 
 
             /********** StrassenWinograd **********/
@@ -725,11 +725,11 @@ namespace MatrixTestApp
 
 
             /********** CholeskyDecomposition **********/
-            DoUnaryOpMatrix(A, Decompositions.CholeskyDecomposition, ParallelDecompositions.CholeskyDecomposition, "CholeskyDecomposition");
+            DoUnaryOpMatrix(A, DecompositionsExtensions.CholeskyDecomposition, ParallelDecompositionsExtensions.CholeskyDecompositionParallel, "CholeskyDecomposition");
 
             
             /********** Cramer **********/
-            DoBinaryOp(A, b, Computations.Cramer, ParallelComputations.Cramer, "Cramer");
+            DoBinaryOp(A, b, ComputationsExtensions.Cramer, ParallelComputationsExtensions.CramerParallel, "Cramer");
 
 
 
@@ -744,19 +744,19 @@ namespace MatrixTestApp
 
 
             /********** Adjugate **********/
-            DoUnaryOpMatrix(A, AlteringOperations.Adjugate, ParallelAlteringOperations.Adjugate, "Adjugate");
+            DoUnaryOpMatrix(A, AlteringOperationsExtensions.Adjugate, ParallelAlteringOperationsExtensions.AdjugateParallel, "Adjugate");
 
 
             /********** GetEigenValues **********/
             Console.WriteLine("GetEigenValues...");
             stopwatchSingle.Restart();
-            try { resultSingle = Characteristics.GetEigenVectors(A, out resultSingleEigen, 100); }
+            try { resultSingle = CharacteristicsExtensions.GetEigenVectors(A, out resultSingleEigen, 100); }
             catch (Exception e) { Console.WriteLine(e.Message); exceptCaughtSingle = true; }
             stopwatchSingle.Stop();
 
             Console.WriteLine("Multi-threaded QRDecomposition...");
             stopwatchMulti.Restart();
-            try { resultMulti = ParallelCharacteristics.GetEigenVectors(A, out resultMultiEigen, 100); }
+            try { resultMulti = ParallelCharacteristicsExtensions.GetEigenVectorsParallel(A, out resultMultiEigen, 100); }
             catch (Exception e) { Console.WriteLine(e.Message); exceptCaughtMulti = true; }
             stopwatchMulti.Stop();
 

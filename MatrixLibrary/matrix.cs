@@ -182,8 +182,8 @@ namespace MatrixLibrary
 
         private Matrix(int rows, int cols, bool initialize)
         {
-            if (rows <= 0) { throw new MatrixLibraryException("Count of rows is negative or zero!"); }
-            if (cols <= 0) { throw new MatrixLibraryException("Count of columns is negative or zero!"); }
+            if (rows < 0) { throw new MatrixLibraryException("Count of rows is negative or zero!"); }
+            if (cols < 0) { throw new MatrixLibraryException("Count of columns is negative or zero!"); }
 
             Rows = rows;
             Cols = cols;

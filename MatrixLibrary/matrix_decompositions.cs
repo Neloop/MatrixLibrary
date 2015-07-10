@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 namespace MatrixLibrary
 {
     /// <summary>
-    /// 
+    /// Namespace of parallel extensions methods containing functions relating to matrix decompositions.
     /// </summary>
-    public static class ParallelDecompositions
+    public static class ParallelDecompositionsExtensions
     {
         /// <summary>
-        /// Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
+        /// Cholesky decomposition is performed in this function and its result, matrix L, will be returned to caller.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix which will be decomposed, does not have to be symmetric.</param>
+        /// <returns>Bottom triangular Matrix L, where <paramref name="matrix"/> = L * L^(T)</returns>
+        public static Matrix<T> CholeskyDecompositionParallel<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             /*
              * 
@@ -28,8 +28,8 @@ namespace MatrixLibrary
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             Matrix<T> result;
-            Matrix<T> symmetric = ParallelAlteringOperations.Symmetric(matrix);
-            if (ParallelProperties.Definity(symmetric) == DefinityClassification.PositiveDefinite)
+            Matrix<T> symmetric = ParallelAlteringOperationsExtensions.SymmetricParallel(matrix);
+            if (ParallelPropertiesExtensions.DefinityParallel(symmetric) == DefinityClassification.PositiveDefinite)
             {
                 int dim = matrix.Rows;
                 result = new Matrix<T>(dim, dim);
@@ -69,14 +69,14 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Vrácena je matice R*Q
+        /// On given <paramref name="matrix"/> object QR decomposition is calculated, Gram-Schmidt algorithm is used.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="Q"></param>
-        /// <param name="R"></param>
-        /// <returns></returns>
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Source Matrix for computations.</param>
+        /// <param name="Q">Output parameter in which Q Matrix will be stored. Q matrix has orthonormal columns.</param>
+        /// <param name="R">Output parameter in which R Matrix will be stored. R Matrix is upper triangular.</param>
+        /// <returns>Product of R and Q multiplication is returned.</returns>
+        public static Matrix<T> QRDecompositionParallel<T>(this Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -134,17 +134,17 @@ namespace MatrixLibrary
     }
 
     /// <summary>
-    /// 
+    /// Namespace of extensions methods containing functions relating to matrix decompositions.
     /// </summary>
-    public static class Decompositions
+    public static class DecompositionsExtensions
     {
         /// <summary>
-        /// Je vrácena dolní trojúhelníková matice L, vstupní matice nemusí být symetrická, bude zesymetriována
+        /// Cholesky decomposition is performed in this function and its result, matrix L, will be returned to caller.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <returns></returns>
-        public static Matrix<T> CholeskyDecomposition<T>(Matrix<T> matrix) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Matrix which will be decomposed, does not have to be symmetric.</param>
+        /// <returns>Bottom triangular Matrix L, where <paramref name="matrix"/> = L * L^(T)</returns>
+        public static Matrix<T> CholeskyDecomposition<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
             /*
              * 
@@ -156,8 +156,8 @@ namespace MatrixLibrary
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             Matrix<T> result;
-            Matrix<T> symmetric = AlteringOperations.Symmetric(matrix);
-            if (Properties.Definity(symmetric) == DefinityClassification.PositiveDefinite)
+            Matrix<T> symmetric = AlteringOperationsExtensions.Symmetric(matrix);
+            if (PropertiesExtensions.Definity(symmetric) == DefinityClassification.PositiveDefinite)
             {
                 int dim = matrix.Rows;
                 result = new Matrix<T>(dim, dim);
@@ -194,14 +194,14 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// On given <paramref name="matrix"/> object QR decomposition is calculated, Gram-Schmidt algorithm is used.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="Q"></param>
-        /// <param name="R"></param>
-        /// <returns></returns>
-        public static Matrix<T> QRDecomposition<T>(Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumber, new()
+        /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
+        /// <param name="matrix">Source Matrix for computations.</param>
+        /// <param name="Q">Output parameter in which Q Matrix will be stored. Q matrix has orthonormal columns.</param>
+        /// <param name="R">Output parameter in which R Matrix will be stored. R Matrix is upper triangular.</param>
+        /// <returns>Product of R and Q multiplication is returned.</returns>
+        public static Matrix<T> QRDecomposition<T>(this Matrix<T> matrix, out Matrix<T> Q, out Matrix<T> R) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
