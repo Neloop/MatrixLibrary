@@ -115,7 +115,7 @@ namespace MatrixLibrary
             if (matrix.Rows == matrix.Cols)
             {
                 Matrix<T> transposition = ParallelAlteringOperationsExtensions.TranspositionParallel(matrix);
-                Matrix<T> multiplied = ParallelClassicOperations.Multiplication(transposition, matrix);
+                Matrix<T> multiplied = ParallelClassicOperations.MultiplicationParallel(transposition, matrix);
                 int cols_mult = multiplied.Cols;
 
                 Parallel.ForEach(multiplied.GetRowsChunks(), (pair, loopState) =>

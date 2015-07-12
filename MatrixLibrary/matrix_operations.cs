@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 namespace MatrixLibrary
 {
     /// <summary>
-    /// 
+    /// Namespace of parallel methods unifying some classic arithmetic operations on matrixes.
     /// </summary>
     public static class ParallelClassicOperations
     {
         /// <summary>
-        /// 
+        /// Summarize <paramref name="matrix1"/> and <paramref name="matrix2"/> and return result.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix1"></param>
-        /// <param name="matrix2"></param>
-        /// <returns></returns>
-        public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
+        /// <param name="matrix1">First parameter of addition.</param>
+        /// <param name="matrix2">Second parameter of addition.</param>
+        /// <returns>Newly created Matrix class instance storing result of addition.</returns>
+        public static Matrix<T> AdditionParallel<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -46,19 +46,22 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Sčítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// Summarize parts of two matrixes <paramref name="matrix1"/> and <paramref name="matrix2"/> and returns result. Parts are specified by indexes of starting rows and cols.
         /// </summary>
+        /// <remarks>
+        /// If one of the matrixes is too small, then missing elements are replaces by zeroes.
+        /// </remarks>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="rowsResult"></param>
-        /// <param name="colsResult"></param>
-        /// <param name="matrix1"></param>
-        /// <param name="row1"></param>
-        /// <param name="col1"></param>
-        /// <param name="matrix2"></param>
-        /// <param name="row2"></param>
-        /// <param name="col2"></param>
-        /// <returns></returns>
-        internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
+        /// <param name="rowsResult">Tells how many rows result Matrix will have.</param>
+        /// <param name="colsResult">Tells how many columns will result Matrix have.</param>
+        /// <param name="matrix1">First summand.</param>
+        /// <param name="row1">Starting row in <paramref name="matrix1"/>.</param>
+        /// <param name="col1">Starting column in <paramref name="matrix1"/>.</param>
+        /// <param name="matrix2">Second summand.</param>
+        /// <param name="row2">Starting row in <paramref name="matrix2"/>.</param>
+        /// <param name="col2">Starting column in <paramref name="matrix2"/>.</param>
+        /// <returns>Created instance of Matrix class.</returns>
+        internal static Matrix<T> AdditionOfPartsParallel<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -84,19 +87,22 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Odečítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// Subtract parts of two matrixes <paramref name="matrix1"/> and <paramref name="matrix2"/> and returns result. Parts are specified by indexes of starting rows and cols.
         /// </summary>
+        /// <remarks>
+        /// If one of the matrixes is too small, then missing elements are replaces by zeroes.
+        /// </remarks>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="rowsResult"></param>
-        /// <param name="colsResult"></param>
-        /// <param name="matrix1"></param>
-        /// <param name="row1"></param>
-        /// <param name="col1"></param>
-        /// <param name="matrix2"></param>
-        /// <param name="row2"></param>
-        /// <param name="col2"></param>
-        /// <returns></returns>
-        internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
+        /// <param name="rowsResult">Tells how many rows result Matrix will have.</param>
+        /// <param name="colsResult">Tells how many columns will result Matrix have.</param>
+        /// <param name="matrix1">Minuend.</param>
+        /// <param name="row1">Starting row in <paramref name="matrix1"/>.</param>
+        /// <param name="col1">Starting column in <paramref name="matrix1"/>.</param>
+        /// <param name="matrix2">Subtrahend.</param>
+        /// <param name="row2">Starting row in <paramref name="matrix2"/>.</param>
+        /// <param name="col2">Starting column in <paramref name="matrix2"/>.</param>
+        /// <returns>Created instance of Matrix class.</returns>
+        internal static Matrix<T> SubtractionOfPartsParallel<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -122,13 +128,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// Subtract <paramref name="matrix1"/> and <paramref name="matrix2"/> and return result.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix1"></param>
-        /// <param name="matrix2"></param>
-        /// <returns></returns>
-        public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
+        /// <param name="matrix1">Minuend.</param>
+        /// <param name="matrix2">Subtrahend.</param>
+        /// <returns>Newly created Matrix with result of subtraction.</returns>
+        public static Matrix<T> SubtractionParallel<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -157,13 +163,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Pokud se počet sloupců první a počet řádků druhé matice nerovnají, pak je vyhozena vyjimka
+        /// Classic multiplication of two matrixes with slow n^3 algorithm.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix1"></param>
-        /// <param name="matrix2"></param>
-        /// <returns></returns>
-        public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
+        /// <param name="matrix1">Multiplicant.</param>
+        /// <param name="matrix2">Multiplier.</param>
+        /// <returns>Matrix class with result of multiplication of <paramref name="matrix1"/> and <paramref name="matrix2"/>.</returns>
+        public static Matrix<T> MultiplicationParallel<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -199,13 +205,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// Given <paramref name="matrix"/> will multiply with <paramref name="number"/>.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : IMatrixNumber, new()
+        /// <param name="matrix">First parameter of multiplication.</param>
+        /// <param name="number">Number with which all <paramref name="matrix"/> elements will be multiplied.</param>
+        /// <returns>Matrix class with multiplied elements.</returns>
+        public static Matrix<T> MultiplyWithNumberParallel<T>(Matrix<T> matrix, T number) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
             if (number == null) { throw new MatrixLibraryException("In given number reference was null value!"); }
@@ -228,13 +234,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Strassen-Winograd
+        /// Strassen-Winograd algorithm which multiplies two matrixes, <paramref name="matrix1"/> and <paramref name="matrix2"/>.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix1"></param>
-        /// <param name="matrix2"></param>
-        /// <returns></returns>
-        public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
+        /// <param name="matrix1">Multiplicant.</param>
+        /// <param name="matrix2">Multiplier.</param>
+        /// <returns>Suitable newly created Matrix object.</returns>
+        public static Matrix<T> StrassenWinogradParallel<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -467,14 +473,17 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Zkusí využít vlastních čísel, pokud se v daném čase nevypočítají, přejde se k Strassenovi
+        /// Exponents <paramref name="matrix"/> with <paramref name="exponent"/>.
         /// </summary>
+        /// <remarks>
+        /// If <paramref name="tryEigenvalues"/> is set to true, then firstly it tries to exponentiate <paramref name="matrix"/> with the help of eigenvalues. If eigenvalues are not calculated in time, then algorithm will use classic multiplication.
+        /// </remarks>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="exponent"></param>
-        /// <param name="tryEigenvalues"></param>
-        /// <returns></returns>
-        public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : IMatrixNumber, new()
+        /// <param name="matrix">Matrix object which will be exponentiated.</param>
+        /// <param name="exponent">Numbers of multiplication (-1) in exponentiation.</param>
+        /// <param name="tryEigenvalues">True if eigenvalues will be used to calculate exponentiation, false otherwise.</param>
+        /// <returns>New instance of Matrix class with exponentiated matrix.</returns>
+        public static Matrix<T> ExponentiateParallel<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
@@ -494,7 +503,7 @@ namespace MatrixLibrary
                     result = new Matrix<T>(matrix);
                     for (int i = 1; i < exponent; i++)
                     {
-                        result = ParallelClassicOperations.Multiplication(result, matrix);
+                        result = ParallelClassicOperations.MultiplicationParallel(result, matrix);
                     }
                 }
                 else
@@ -507,8 +516,8 @@ namespace MatrixLibrary
                         }
                     });
 
-                    result = ParallelClassicOperations.Multiplication(S, exponentiate);
-                    result = ParallelClassicOperations.Multiplication(result, AlteringOperationsExtensions.Inverse(S));
+                    result = ParallelClassicOperations.MultiplicationParallel(S, exponentiate);
+                    result = ParallelClassicOperations.MultiplicationParallel(result, AlteringOperationsExtensions.Inverse(S));
                 }
             }
             else
@@ -520,17 +529,17 @@ namespace MatrixLibrary
     }
 
     /// <summary>
-    /// 
+    /// Namespace of methods unifying some classic arithmetic operations on matrixes.
     /// </summary>
     public static class ClassicOperations
     {
         /// <summary>
-        /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// Summarize <paramref name="matrix1"/> and <paramref name="matrix2"/> and return result.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix1"></param>
-        /// <param name="matrix2"></param>
-        /// <returns></returns>
+        /// <param name="matrix1">First parameter of addition.</param>
+        /// <param name="matrix2">Second parameter of addition.</param>
+        /// <returns>Newly created Matrix class instance storing result of addition.</returns>
         public static Matrix<T> Addition<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
@@ -558,18 +567,21 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Sčítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// Summarize parts of two matrixes <paramref name="matrix1"/> and <paramref name="matrix2"/> and returns result. Parts are specified by indexes of starting rows and cols.
         /// </summary>
+        /// <remarks>
+        /// If one of the matrixes is too small, then missing elements are replaces by zeroes.
+        /// </remarks>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="rowsResult"></param>
-        /// <param name="colsResult"></param>
-        /// <param name="matrix1"></param>
-        /// <param name="row1"></param>
-        /// <param name="col1"></param>
-        /// <param name="matrix2"></param>
-        /// <param name="row2"></param>
-        /// <param name="col2"></param>
-        /// <returns></returns>
+        /// <param name="rowsResult">Tells how many rows result Matrix will have.</param>
+        /// <param name="colsResult">Tells how many columns will result Matrix have.</param>
+        /// <param name="matrix1">First summand.</param>
+        /// <param name="row1">Starting row in <paramref name="matrix1"/>.</param>
+        /// <param name="col1">Starting column in <paramref name="matrix1"/>.</param>
+        /// <param name="matrix2">Second summand.</param>
+        /// <param name="row2">Starting row in <paramref name="matrix2"/>.</param>
+        /// <param name="col2">Starting column in <paramref name="matrix2"/>.</param>
+        /// <returns>Created instance of Matrix class.</returns>
         internal static Matrix<T> AdditionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
@@ -593,18 +605,21 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Odečítá části dvou matic od daných indexů, pokud řádky či sloupce "chybějí", jsou doplněny nulami
+        /// Subtract parts of two matrixes <paramref name="matrix1"/> and <paramref name="matrix2"/> and returns result. Parts are specified by indexes of starting rows and cols.
         /// </summary>
+        /// <remarks>
+        /// If one of the matrixes is too small, then missing elements are replaces by zeroes.
+        /// </remarks>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="rowsResult"></param>
-        /// <param name="colsResult"></param>
-        /// <param name="matrix1"></param>
-        /// <param name="row1"></param>
-        /// <param name="col1"></param>
-        /// <param name="matrix2"></param>
-        /// <param name="row2"></param>
-        /// <param name="col2"></param>
-        /// <returns></returns>
+        /// <param name="rowsResult">Tells how many rows result Matrix will have.</param>
+        /// <param name="colsResult">Tells how many columns will result Matrix have.</param>
+        /// <param name="matrix1">Minuend.</param>
+        /// <param name="row1">Starting row in <paramref name="matrix1"/>.</param>
+        /// <param name="col1">Starting column in <paramref name="matrix1"/>.</param>
+        /// <param name="matrix2">Subtrahend.</param>
+        /// <param name="row2">Starting row in <paramref name="matrix2"/>.</param>
+        /// <param name="col2">Starting column in <paramref name="matrix2"/>.</param>
+        /// <returns>Created instance of Matrix class.</returns>
         internal static Matrix<T> SubtractionOfParts<T>(int rowsResult, int colsResult, Matrix<T> matrix1, int row1, int col1, Matrix<T> matrix2, int row2, int col2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
@@ -628,12 +643,12 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Pokud se řádky a sloupce obou matic nerovnají, pak je vyhozena vyjimka
+        /// Subtract <paramref name="matrix1"/> and <paramref name="matrix2"/> and return result.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix1"></param>
-        /// <param name="matrix2"></param>
-        /// <returns></returns>
+        /// <param name="matrix1">Minuend.</param>
+        /// <param name="matrix2">Subtrahend.</param>
+        /// <returns>Newly created Matrix with result of subtraction.</returns>
         public static Matrix<T> Subtraction<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
@@ -661,12 +676,12 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Pokud se počet sloupců první a počet řádků druhé matice nerovnají, pak je vyhozena vyjimka
+        /// Classic multiplication of two matrixes with slow n^3 algorithm.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix1"></param>
-        /// <param name="matrix2"></param>
-        /// <returns></returns>
+        /// <param name="matrix1">Multiplicant.</param>
+        /// <param name="matrix2">Multiplier.</param>
+        /// <returns>Matrix class with result of multiplication of <paramref name="matrix1"/> and <paramref name="matrix2"/>.</returns>
         public static Matrix<T> Multiplication<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
@@ -701,12 +716,12 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// 
+        /// Given <paramref name="matrix"/> will multiply with <paramref name="number"/>.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="number"></param>
-        /// <returns></returns>
+        /// <param name="matrix">First parameter of multiplication.</param>
+        /// <param name="number">Number with which all <paramref name="matrix"/> elements will be multiplied.</param>
+        /// <returns>Matrix class with multiplied elements.</returns>
         public static Matrix<T> MultiplyWithNumber<T>(Matrix<T> matrix, T number) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
@@ -727,12 +742,12 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Strassen-Winograd
+        /// Strassen-Winograd algorithm which multiplies two matrixes, <paramref name="matrix1"/> and <paramref name="matrix2"/>.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix1"></param>
-        /// <param name="matrix2"></param>
-        /// <returns></returns>
+        /// <param name="matrix1">Multiplicant.</param>
+        /// <param name="matrix2">Multiplier.</param>
+        /// <returns>Suitable newly created Matrix object.</returns>
         public static Matrix<T> StrassenWinograd<T>(Matrix<T> matrix1, Matrix<T> matrix2) where T : IMatrixNumber, new()
         {
             if (matrix1 == null || matrix2 == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
@@ -900,15 +915,18 @@ namespace MatrixLibrary
             }
             return result;
         }
-        
+
         /// <summary>
-        /// Zkusí využít vlastních čísel, pokud se v daném čase nevypočítají, přejde se k Strassenovi
+        /// Exponents <paramref name="matrix"/> with <paramref name="exponent"/>.
         /// </summary>
+        /// <remarks>
+        /// If <paramref name="tryEigenvalues"/> is set to true, then firstly it tries to exponentiate <paramref name="matrix"/> with the help of eigenvalues. If eigenvalues are not calculated in time, then algorithm will use classic multiplication.
+        /// </remarks>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
-        /// <param name="matrix"></param>
-        /// <param name="exponent"></param>
-        /// <param name="tryEigenvalues"></param>
-        /// <returns></returns>
+        /// <param name="matrix">Matrix object which will be exponentiated.</param>
+        /// <param name="exponent">Numbers of multiplication (-1) in exponentiation.</param>
+        /// <param name="tryEigenvalues">True if eigenvalues will be used to calculate exponentiation, false otherwise.</param>
+        /// <returns>New instance of Matrix class with exponentiated matrix.</returns>
         public static Matrix<T> Exponentiate<T>(Matrix<T> matrix, int exponent, bool tryEigenvalues = false) where T : IMatrixNumber, new()
         {
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }

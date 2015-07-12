@@ -37,8 +37,8 @@ namespace MatrixLibrary
                     end2 = true;
 
                     ParallelDecompositionsExtensions.QRDecompositionParallel(RQ, out Q, out R);
-                    RQ = ParallelClassicOperations.Multiplication(ParallelAlteringOperationsExtensions.TranspositionParallel(Q), RQ);
-                    RQ = ParallelClassicOperations.Multiplication(RQ, Q);
+                    RQ = ParallelClassicOperations.MultiplicationParallel(ParallelAlteringOperationsExtensions.TranspositionParallel(Q), RQ);
+                    RQ = ParallelClassicOperations.MultiplicationParallel(RQ, Q);
 
                     Parallel.ForEach(RQ.GetRowsChunks(1), (pair) =>
                     {

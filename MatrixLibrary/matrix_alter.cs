@@ -54,7 +54,7 @@ namespace MatrixLibrary
                 int dim = matrix.Rows;
 
                 Matrix<T> transpose = ParallelAlteringOperationsExtensions.TranspositionParallel(matrix);
-                result = ParallelClassicOperations.Addition(matrix, transpose);
+                result = ParallelClassicOperations.AdditionParallel(matrix, transpose);
 
                 T two = (T)new T().AddInt(2);
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>

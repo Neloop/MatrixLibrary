@@ -270,10 +270,10 @@ namespace MatrixTestApp
         {
             Matrix<MatrixNumber> A = new Matrix<MatrixNumber>(1, 1);
             /************************VSE PRELOZIME******************************/
-            ClassicOperations.Addition(A, A); ParallelClassicOperations.Addition(A, A);
-            ClassicOperations.Subtraction(A, A); ParallelClassicOperations.Subtraction(A, A);
-            ClassicOperations.MultiplyWithNumber(A, new MatrixNumber()); ParallelClassicOperations.MultiplyWithNumber(A, new MatrixNumber());
-            ClassicOperations.Multiplication(A, A); ParallelClassicOperations.Multiplication(A, A);
+            ClassicOperations.Addition(A, A); ParallelClassicOperations.AdditionParallel(A, A);
+            ClassicOperations.Subtraction(A, A); ParallelClassicOperations.SubtractionParallel(A, A);
+            ClassicOperations.MultiplyWithNumber(A, new MatrixNumber()); ParallelClassicOperations.MultiplyWithNumberParallel(A, new MatrixNumber());
+            ClassicOperations.Multiplication(A, A); ParallelClassicOperations.MultiplicationParallel(A, A);
             AlteringOperationsExtensions.Adjugate(A); ParallelAlteringOperationsExtensions.AdjugateParallel(A);
             AlteringOperationsExtensions.Gauss(A); ParallelAlteringOperationsExtensions.GaussParallel(A);
             ComputationsExtensions.Cramer(A, A); ParallelComputationsExtensions.CramerParallel(A, A);
@@ -567,11 +567,11 @@ namespace MatrixTestApp
 
 
             /********** Addition **********/
-            DoBinaryOp(A, B, ClassicOperations.Addition, ParallelClassicOperations.Addition, "Addition");
+            DoBinaryOp(A, B, ClassicOperations.Addition, ParallelClassicOperations.AdditionParallel, "Addition");
 
 
             /********** Subtraction **********/
-            DoBinaryOp(A, B, ClassicOperations.Subtraction, ParallelClassicOperations.Subtraction, "Subtraction");
+            DoBinaryOp(A, B, ClassicOperations.Subtraction, ParallelClassicOperations.SubtractionParallel, "Subtraction");
 
 
             /********** MultiplyWithNumber **********/
@@ -583,7 +583,7 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded multiply with number...");
             stopwatchMulti.Restart();
-            resultMulti = ParallelClassicOperations.MultiplyWithNumber(A, multiplyNumber);
+            resultMulti = ParallelClassicOperations.MultiplyWithNumberParallel(A, multiplyNumber);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
@@ -606,7 +606,7 @@ namespace MatrixTestApp
 
 
             /********** Multiplication **********/
-            DoBinaryOp(A, B, ClassicOperations.Multiplication, ParallelClassicOperations.Multiplication, "Multiplication");
+            DoBinaryOp(A, B, ClassicOperations.Multiplication, ParallelClassicOperations.MultiplicationParallel, "Multiplication");
 
 
             /********** Exponentiate **********/
@@ -618,7 +618,7 @@ namespace MatrixTestApp
 
             Console.WriteLine("Multi-threaded exponentiate...");
             stopwatchMulti.Restart();
-            resultMulti = ParallelClassicOperations.Exponentiate(A, exponent);
+            resultMulti = ParallelClassicOperations.ExponentiateParallel(A, exponent);
             stopwatchMulti.Stop();
 
             if (resultSingle == resultMulti) { Console.WriteLine("Results are the same."); }
@@ -708,7 +708,7 @@ namespace MatrixTestApp
 
 
             /********** StrassenWinograd **********/
-            DoBinaryOp(A, B, ClassicOperations.StrassenWinograd, ParallelClassicOperations.StrassenWinograd, "StrassenWinograd");
+            DoBinaryOp(A, B, ClassicOperations.StrassenWinograd, ParallelClassicOperations.StrassenWinogradParallel, "StrassenWinograd");
 
 
 

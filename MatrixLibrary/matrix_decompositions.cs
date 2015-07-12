@@ -125,7 +125,7 @@ namespace MatrixLibrary
                 });
             }
 
-            result = ParallelClassicOperations.Multiplication(tmpR, tmpQ);
+            result = ParallelClassicOperations.MultiplicationParallel(tmpR, tmpQ);
             R = tmpR;
             Q = tmpQ;
 
