@@ -2,54 +2,94 @@
 <topic id="800a1c4c-a8fb-411b-a956-b367f741b596" revisionNumber="1">
 	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 		<introduction>
-			<para>This is a sample conceptual topic.  You can use this as a starting point for adding more conceptual
-content to your help project.</para>
+			<para>
+        This is an index page of documentation of MatrixLibrary.
+        MatrixLibrary is project of library which handles basic work with matrixes.
+        It provides representation of matrix object as well as interface for representations of elements which will be stored in matrix.
+        There are also some particular implementations of matrix element interface which can be used.
+      </para>
+      <para>
+        MatrixLibrary can handle these operations:
+      </para>
+      <list class="bullet">
+        <listItem>
+          <legacyBold>Altering operations:</legacyBold>
+          <para>Transposition, Symmetric, Gauss, Gauss-Jordan, Inverse, Adjugate, Orthogonal</para>
+        </listItem>
+        <listItem>
+          <legacyBold>Computations:</legacyBold>
+          <para>Determinant, Cramer, Linear equations system</para>
+        </listItem>
+        <listItem>
+          <legacyBold>Decompositions:</legacyBold>
+          <para>Cholesky decomposition, QR decomposition</para>
+        </listItem>
+        <listItem>
+          <legacyBold>Characteristics:</legacyBold>
+          <para>Eigenvalues, Eigenvectors, Diagonal matrix</para>
+        </listItem>
+        <listItem>
+          <legacyBold>Classic operations:</legacyBold>
+          <para>Addition, Subtraction, Multiplication, Multiply with number, Strassen-Winograd, Exponentiation</para>
+        </listItem>
+        <listItem>
+          <legacyBold>Properties:</legacyBold>
+          <para>IsInvertible, Rank, IsOrthogonal, Definity</para>
+        </listItem>
+      </list>
+      <para>There are also parallel implementation of mentioned methods.</para>
 		</introduction>
 
 		<section>
 			<title>Getting Started</title>
 			<content>
-				<para>To get started, add a documentation source to the project (a Visual Studio solution, project, or
-assembly and XML comments file).  See the <legacyBold>Getting Started</legacyBold> topics in the Sandcastle Help
-File Builder's help file for more information.  The following default items are included in this project:</para>
+				<para>
+          MatrixLibrary is available as git repository in Bitbucket service.
+          And its home directory is at 
+          <externalLink>
+            <linkText>MatrixLibrary on Bitbucket</linkText>
+            <linkAlternateText>MatrixLibrary on Bitbucket</linkAlternateText>
+            <linkUri>https://bitbucket.org/PolankaMartin/matrixlibrary</linkUri>
+          </externalLink>.
+        </para>
+        <para>
+          It goes without saying that for cloning repository, installed git program is needed.
+        </para>
+        <para>
+          On this Bitbucket project page there are guides, how to download whole repository. There are several possible ways how to do it:
+        </para>
 
 				<list class="bullet">
 					<listItem>
-						<para><localUri>ContentLayout.content</localUri> - Use the content layout file to manage the
-conceptual content in the project and define its layout in the table of contents.</para>
+						<para>Clone git repository using HTTPS</para>
+            <code>git clone https://PolankaMartin@bitbucket.org/PolankaMartin/matrixlibrary.git</code>
 					</listItem>
-
-					<listItem>
-						<para>The <localUri>.\media</localUri> folder - Place images in this folder that you will reference
-from conceptual content using <codeInline>medialLink</codeInline> or <codeInline>mediaLinkInline</codeInline>
-elements.  If you will not have any images in the file, you may remove this folder.</para>
-					</listItem>
-
-					<listItem>
-						<para>The <localUri>.\icons</localUri> folder - This contains a default logo for the help file.  You
-may replace it or remove it and the folder if not wanted.  If removed or if you change the file name, update
-the <ui>Transform Args</ui> project properties page by removing or changing the filename in the
-<codeInline>logoFile</codeInline> transform argument.  Note that unlike images referenced from conceptual topics,
-the logo file should have its <legacyBold>BuildAction</legacyBold> property set to <codeInline>Content</codeInline>.</para>
-					</listItem>
-
-					<listItem>
-						<para>The <localUri>.\Content</localUri> folder - Use this to store your conceptual topics.  You may
-name the files and organize them however you like.  One suggestion is to lay the files out on disk as you have
-them in the content layout file as shown in this project but the choice is yours.  Files can be added via the
-Solution Explorer or from within the content layout file editor.  Files must appear in the content layout file
-in order to be compiled into the help file.</para>
-					</listItem>
+          <listItem>
+            <para>Clone git repository using SSH</para>
+            <code>git clone git@bitbucket.org:PolankaMartin/matrixlibrary.git</code>
+          </listItem>
+          <listItem>
+            <para>Download repository</para>
+            <para>
+              Download of the whole repository without previously mentioned methods is possible through this page:
+              <externalLink>
+              <linkText>Download repository</linkText>
+              <linkAlternateText>Download repository</linkAlternateText>
+              <linkUri>https://bitbucket.org/PolankaMartin/matrixlibrary/downloads</linkUri>
+            </externalLink>.
+          </para>
+          </listItem>
 				</list>
 
-				<para>See the <legacyBold>Conceptual Content</legacyBold> topics in the Sandcastle Help File Builder's
-help file for more information.  See the <legacyBold> Sandcastle MAML Guide</legacyBold> for details on Microsoft
-Assistance Markup Language (MAML) which is used to create these topics.</para>
+        <para>
+          After downloading git repository there will be <localUri>./matrixlibrary</localUri> directory in which whole project is located.
+          In this directory is also VS project file (*.sln) which loads into VS2013 or suitable Mono whole project.
+          In project there are three child projects. One of them is this documentation. Another one is library itself.
+          And the last one is test application. In which there are some examples of how MatrixLibrary works.
+          Whole project is executable, respectively MarixTestApp is executable and can be run.
+        </para>
 			</content>
 		</section>
 
-		<relatedTopics>
-			<link xlink:href="350769e9-ac91-4c0d-b6dd-f23cfc8532b9" />
-		</relatedTopics>
 	</developerConceptualDocument>
 </topic>

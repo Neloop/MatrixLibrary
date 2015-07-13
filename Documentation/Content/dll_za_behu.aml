@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="ecadd62f-441f-4413-b8a4-f697af240892" revisionNumber="1">
+  <developerHowToDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <para>
+        Nejtěžší a nepříliš doporučovaný způsob integrace knihovny do programu je s pomocí Reflection a dynamického načítání knihovny za běhu.
+        To znamená, že se knihovna nijak neintegruje do aktuálního projektu, ale veškerá práce se "slinkováním" se musí provést za běhu v kódu aplikace.
+        Programátor si tudíž toto řešení musí odpracovat netriviálními konstrukcemi v jeho kódu, pomocí kterého dojde k nahrání knihovny.
+      </para>
+      <para>
+        Tento způsob není doporučený hlavně kvůli typové nebezpečnosti.
+        Hlavně použití klíčového slova dynamic sebou nese problémy s vyhazováním výjimek v případě nenalezení odpovídající metody.
+        Celkově je tento přístup pomalý a měl by být používán jen v odůvodněných případech, jakým jsou například dynamicky načítané pluginy.
+      </para>
+      <para>
+        Velkou nevýhodou v tomto případě je nemožnost využít extension metod přímo na objektu Matrix.
+      </para>
+    </introduction>
+
+    <!-- Optional procedures followed by optional code example but must have
+         at least one procedure or code example -->
+    <procedure>
+      <title>Dvě možnosti dynamického nahrání</title>
+      <steps class="ordered">
+        <step>
+          <content>
+            <para>
+              <legacyBold>Použití bez klíčového slova dynamic</legacyBold>
+            </para>
+            <code>
+              int[,] input = new int[3, 3] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+
+              var matrixLib = System.Reflection.Assembly.LoadFile(ABSOLUTE_PATH_TO_MATRIXLIBRARY.DLL);
+
+              var matrixString = String.Format("{0}`1[[{1}]]", "MatrixLibrary.Matrix", "MatrixLibrary.MatrixNumber");
+              var matrixType = matrixLib.GetType(matrixString, true);
+              var matrixNumberType = matrixLib.GetType("MatrixLibrary.MatrixNumber", true);
+
+              var matrixInstance = Activator.CreateInstance(matrixType, new object[] { input });
+
+              foreach (var item in matrixType.GetMethods())
+              {
+                  Console.WriteLine(item.Name);
+              }
+
+              var matrixMethod = matrixType.GetMethod("ToString");
+              Console.WriteLine();
+              Console.WriteLine(matrixMethod.Invoke(matrixInstance, new object[] { }));
+              Console.WriteLine();
+
+              foreach (var item in matrixLib.GetTypes())
+              {
+                  Console.WriteLine(item.Name);
+              }
+            </code>
+            <para>
+              Ukázka kódu výše reprezentuje nahrání knihovny pomocí Reflection.
+              Funkce Assembly.LoadFile je statická metoda, která nahraje DLL soubor ze zadané absolutní cesty a jeho handler vrátí.
+              S pomocí tohoto handleru se pak dají načíst jednotlivé typy uložené v assembly.
+              Jejich konstrukce se provádí pomocí statické Activator.CreateInstance, která zkonstruuje daný objekt s danými parametry.
+            </para>
+            <para>
+              Volání metod na takto vytvořené instanci, ale není přímočaré, metoda se nejdříve musí načíst pomocí funkce GetMethod na daném typu.
+              Až takováto instance metody je spustitelná pomocí funkce Invoke, které se předá objekt, na kterém se má daná funkce spustit a jednotlivé parametry.
+            </para>
+            <para>
+              Všechny metody na daném typu lze projít pomocí metody GetMethods(), která vrátí pole dostupných metod.
+              Všechny typy v dané assembly se dají projít funkcí GetTypes() spuštěné na handleru assembly.
+            </para>
+          </content>
+        </step>
+        <step>
+          <content>
+            <para>
+              <legacyBold>Použití s klíčovým slovem dynamic</legacyBold>
+            </para>
+            <code>
+              int[,] input = new int[3, 3] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+
+              var matrixLib = System.Reflection.Assembly.LoadFile(ABSOLUTE_PATH_TO_MATRIXLIBRARY.DLL);
+
+              var matrixString = String.Format("{0}`1[[{1}]]", "MatrixLibrary.Matrix", "MatrixLibrary.MatrixNumber");
+              var matrixType = matrixLib.GetType(matrixString, true);
+              var matrixNumberType = matrixLib.GetType("MatrixLibrary.MatrixNumber", true);
+
+              dynamic matrixInstance = Activator.CreateInstance(matrixType, new object[] { input });
+
+              Console.WriteLine(matrixInstance.ToString());
+
+              var matrixTypeExt = matrixLib.GetType("MatrixLibrary.ClassicOperations");
+              var matrixMethodExt = matrixTypeExt.GetMethod("Addition");
+              matrixMethodExt = matrixMethodExt.MakeGenericMethod(new Type[] { matrixNumberType });
+              var result = matrixMethodExt.Invoke(null, new object[] { matrixInstance, matrixInstance });
+
+              Console.WriteLine(result);
+            </code>
+            <para>
+              Ukázka kódu výše reprezentuje nahrání knihovny pomocí Reflection a klíčového slova dynamic.
+              Assembly je opět nahrána pomocí Assembly.LoadFile(), která vrátí daný handler, cesta k souboru musí být opět absolutní.
+              Stejně jako v minulém případě i zde se typ musí načíst pomocí funkce GetType() na handleru.
+              Vytváření instance je už ale jiné a výsledek Activator.CreateInstance() se dosazuje do dynamic proměnné.
+            </para>
+            <para>
+              Dynamic proměnná je novinka Visual C# 2010, která přichází s konceptem proměnné na které je vše dovoleno.
+              To znamená, že na ní lze volat jakoukoliv metodu, i když jí dosazený typ nedefinuje, a kompilátor to přejde bez chyb.
+              Pokud ale daný typ metodu nebo vlastnost opravdu nedefinuje, pak dojde k run-time chybě a je vyhozena výjimka.
+            </para>
+            <para>
+              Z předchozího odstavce vychází, že používání takové proměnné je pak v zásadě jednoduché, stačí na ní volat metody, které by na ní být měly.
+              Samozřejmě tím přicházíme o typovou bezpečnost a případné překlepy nejsou kompilátorem detekovány.
+              Stejně jako v předchozím případě i zde není možné používat extension metody.
+            </para>
+            <para>
+              Volání metod, které pracují s maticemi je pak hodně podobné jako volání metod na objektu matice v předchozím příkladě.
+              Nejdříve se musí načíst statická třída, která obsahuje definice těchto metod.
+              Dále se s pomocí GetMethod() načte metoda, kterou potřebujeme.
+              Protože jsou veškeré metody generické, pak je třeba je generickými opravdu udělat zavoláním funkce MakeGenericMethod().
+              A nakonec už je možné zavolat samotnou funkci pomocí funkce Invoke().
+              Tento postup by byl stejný i v předešlém příkladě.
+            </para>
+          </content>
+        </step>
+      </steps>
+      <!-- <conclusion>Optional conclusion</conclusion> -->
+    </procedure>
+
+    <para></para>
+    <para>
+      Konstrukce jména typu Matrix níže pochází z
+      <externalLink>
+        <linkText>Loading Generic Types with Assembly.LoadFrom</linkText>
+        <linkAlternateText>Loading Generic Types with Assembly.LoadFrom</linkAlternateText>
+        <linkUri>http://www.jonegerton.com/dotnet/loading-generic-types-with-assembly-loadfrom/</linkUri>
+      </externalLink>.
+      <code>String.Format("{0}`1[[{1}]]", "MatrixLibrary.Matrix", "MatrixLibrary.MatrixNumber");</code>
+    </para>
+
+    <!-- <codeExample>Optional code example</codeExample> -->
+
+    <!-- <buildInstructions>Optional instructions for building a
+         code example.</buildInstructions> -->
+
+    <!-- <robustProgramming>Optional discussion of error handling and other
+         issues related to writing solid code.</robustProgramming> -->
+
+    <!-- <security>Optional discussion of security issues.</security> -->
+
+    <relatedTopics>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID">Link text</link>
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on GitHub</linkText>
+          <linkAlternateText>Go to GitHub</linkAlternateText>
+          <linkUri>https://GitHub.com/EWSoftware/SHFB</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+    </relatedTopics>
+  </developerHowToDocument>
+</topic>

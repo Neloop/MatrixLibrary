@@ -39,7 +39,8 @@
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter, AutoDocumentDispose</MissingTags>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" xmlns="" />
-<NamespaceSummaryItem name="MatrixLibrary" isDocumented="True" xmlns="">Namespace which contains definition of Matrix and operations on it and then there is interface of numbers which are stored in Matrix with two implementations of this interface.</NamespaceSummaryItem></NamespaceSummaries>
+      <NamespaceSummaryItem name="MatrixLibrary" isDocumented="True" xmlns="">Namespace which contains definition of Matrix and operations on it and then there is interface of numbers which are stored in Matrix with two implementations of this interface.</NamespaceSummaryItem>
+    </NamespaceSummaries>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->
@@ -66,9 +67,14 @@
     <Folder Include="media" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\dll_za_behu.aml" />
+    <None Include="Content\How To Integrate Library.aml" />
+    <None Include="Content\dll_knihovna.aml" />
+    <None Include="Content\Sample of usage.aml" />
     <None Include="Content\VersionHistory\v1.0.0.0.aml" />
     <None Include="Content\VersionHistory\VersionHistory.aml" />
     <None Include="Content\Welcome.aml" />
+    <None Include="Content\zdrojovy_kod.aml" />
   </ItemGroup>
   <ItemGroup>
     <ContentLayout Include="ContentLayout.content" />

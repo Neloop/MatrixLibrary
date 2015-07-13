@@ -1,0 +1,332 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="a53e4021-2b11-44ea-b88d-6fe7f7de3452" revisionNumber="1">
+  <developerSampleDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <!-- Uncomment this to generate an outline of the section and sub-section
+           titles.  Specify a numeric value as the inner text to limit it to
+           a specific number of sub-topics when creating the outline.  Specify
+           zero (0) to limit it to top-level sections only.  -->
+      <!-- <autoOutline /> -->
+
+      <para>
+        Příklady použití už počítají s tím, že máme knihovnu integrovanou do projektu.
+        Návod na to jak knihovnu integrovat je možné nalézt na <link xlink:href="6758de23-d252-426c-b7b2-cbc946a578ae"/>.
+      </para>
+      <para>
+        Tyto příklady se ale vztahují jenom ke dvěma ze třech možných integrací.
+        Použití při dynamickém načítání knihovny za běhu programu je složitější a je lehce popsáno zde: <link xlink:href="ecadd62f-441f-4413-b8a4-f697af240892"/>.
+      </para>
+    </introduction>
+
+    <!-- <procedure>Optional procedures.  See How To document for procedure layout example.</procedure> -->
+    <!-- <requirements>Optional requirements section</requirements> -->
+    <!-- <demonstrates>Optional info about what is demonstrated</demonstrates> -->
+    <!-- <codeExample>Optional code example</codeExample> -->
+
+    <!-- Add one or more top-level section elements.  These are collapsible.
+         If using <autoOutline />, add an address attribute to identify it
+         and specify a title so that it can be jumped to with a hyperlink. -->
+    <section address="Section1">
+      <title>Interface IMatrixNumber</title>
+      <content>
+        <!-- Uncomment this to create a sub-section outline
+        <autoOutline /> -->
+        <para>
+          Práce s rozhraním IMatrixNumber je ukázána s jeho implementací MatrixNumber:
+        </para>
+        <code>
+          IMatrixNumber numberA = new MatrixNumber(5); // vytvori novou instanci tridy MatrixNumber
+          IMatrixNumber numberB = new MatrixNumber((MatrixNumber)numberA);
+              // vytvori objekt typu MatrixNumber, ktery bude zkopirovan z numberA
+
+
+          numberA.AddInt(5); // k interni reprezentaci dat prida celociselnou 5
+          Console.WriteLine(numberA.__ToString()); // vystup: 10
+
+
+          numberB.AddDouble(5.99); // k interni reprezentaci cisla se prida realne cislo 5.99
+          Console.WriteLine(numberB.__ToString()); // vystup: 10.99
+
+
+          numberA = numberB.Copy(); // do numberA priradi zkopirovanou instanci objektu numberB
+          numberB.AddInt(1);
+          Console.WriteLine(numberA.__ToString()); // vystup: 10.99
+          Console.WriteLine(numberB.__ToString()); // vystup: 11.99
+
+
+          numberA.CopyFrom(numberB); // do numberA zkopiruje interni data z numberB
+          numberB.AddInt(1);
+          Console.WriteLine(numberA.__ToString()); // vystup: 11.99
+          Console.WriteLine(numberB.__ToString()); // vystup: 12.99
+
+
+          if(!numberA.IsZero() &amp;&amp; !numberA.IsOne()) // testuje jestli je numberA nerovno nule a jednicce
+          {
+              Console.WriteLine(numberA.__ToString());
+                  // prevede interni reprezentaci na textovou formu
+                  // obycejne je k tomu vyuzita funkce ToDouble(), ktera vraci reprezentaci daneho objektu v realnem cisle
+          }
+
+
+          /* Nasledujici metody nijak nemeni objekt na kterem jsou volany */
+          numberA = numberA.__Addition(numberB); // secte dve cisla
+          numberA = numberA.__Subtraction(numberB); // odecte dve cisla
+          numberA = numberA.__Multiplication(numberB); // vynasobi dve cisla
+          numberA = numberA.__Division(numberB);
+
+          Console.WriteLine(numberA.__ToString()); // vystup: 11.99
+          Console.WriteLine(numberB.__ToString()); // vystup: 12.99
+
+          numberA = numberA.__Exponentiate(4); // umocni cislo na 4-tou
+          numberA = numberA.__SquareRoot(); // druha odmocnina z cisla
+          numberA = numberA.__Negate(); // udela z cisla cislo opacne
+
+          Console.WriteLine(numberA.__ToString()); // vystup: -143,7601
+
+          if (numberA.__IsEqual(numberB)) { Console.WriteLine("Cisla se rovnaji!"); } // test na rovnost cisel A a B
+          if (numberA.__IsLessThan(numberB)) { Console.WriteLine("Cislo A je mensi nez B!"); } // test jestli je cislo A mensi nez B
+          if (numberA.__IsGreaterThan(numberB)) { Console.WriteLine("Cislo A je vetsi nez B!"); } // test jestli je cislo A vetsi nez B
+        </code>
+      </content>
+    </section>
+
+    <section address="Section2">
+      <title>Použití objektu Matrix a jeho metod.</title>
+      <content>
+        <!-- Uncomment this to create a sub-section outline
+        <autoOutline /> -->
+        <para>
+          Objekt Matrix je v příkladech shodně konstruován s generickým parametrem MatrixNumberInt:
+        </para>
+        <code>
+          Random rdm = new Random(); // vytvori nahodny generator cisel
+          Matrix&lt;MatrixNumberInt&gt; matrixA = new Matrix&lt;MatrixNumberInt&gt;(5, 5); // vytvori matici, ktera bude mit 5x5 prvku
+
+          Console.WriteLine(matrixA.Rows + " " + matrixA.Cols); // vypise pocet radek a sloupcu matice
+
+          for (int i = 0; i &lt; matrixA.Rows; i++) // projde radky matice
+          {
+              for (int j = 0; j &lt; matrixA.Cols; ++j) // projde sloupce matice
+              {
+                  matrixA.WriteNumber(i, j, new MatrixNumberInt(rdm.Next())); // na prvek na indexech i a j zapise nahodne vygenerovane cislo
+                  matrixA[i, j] = new MatrixNumberInt(rdm.Next()); // jiny zpusob prirazeni cisla do matice
+
+                  Console.Write(matrixA.GetNumber(i, j) + " "); // na standardni vystup vypise prave vygenerovane cislo z matice
+                  Console.Write(matrixA[i, j] + " "); // jiny zpusob ziskani cisla z matice
+              }
+                
+              Console.WriteLine();
+          }
+
+          Matrix&lt;MatrixNumberInt&gt; matrixB = new Matrix&lt;MatrixNumberInt&gt;(matrixA); // vytvori novou matici, ktera bude mit stejne prvky jako matrixA
+
+          int[,] input = new int[5, 5]; // pole, ktere bude slouzit jako zdroj pro novou matici
+          for (int i = 0; i &lt; input.GetLength(0); ++i)
+          {
+              for (int j = 0; j &lt; input.GetLength(1); j++)
+              {
+                  input[i, j] = rdm.Next();
+              }
+          }
+
+          matrixA = new Matrix&lt;MatrixNumberInt&gt;(input);
+              // do promenne matrixA se priradi nove vytvoreny objekt Matrix, kteremu jako vzor slouzilo pole input
+
+
+          /* V matrixA zmenime poradi radku prohozenim jednotlivych elementu */
+          for (int i = 0; i &lt; matrixA.GetHalfOfRows(); ++i) // prochazime jenom pres pulku radek
+          {
+              for (int j = 0; j &lt; matrixA.Cols; j++)
+              {
+                  matrixA.SwapElements(i, j, matrixA.Rows - i - 1, matrixA.Cols - j - 1);
+                      // vymenime prvky na radku (i + 1) s radkem (Rows - i)
+              }
+          }
+
+
+          /* Definovane operatory */
+          matrixA = matrixA + matrixB; // secte dve matice
+          matrixA = matrixA - matrixB; // odecte dve matice
+          matrixA = matrixA * matrixB; // vynasobi dve matice
+
+          if (matrixA == matrixB) { Console.WriteLine("Matice se rovnaji!"); } // test na rovnost matic, respektive jejich prvku
+          if (matrixA != matrixB) { Console.WriteLine("Matice se nerovnaji!"); } // test na nerovnost matic
+
+
+          /* 
+           * Paralelni secteni dvou matic
+           * Funkce GetRowsChunks rozdeli radky matic do rovnomernych kousku, ktere mohou byt zpracovany ve vice vlaknech
+           */
+          Parallel.ForEach(matrixA.GetRowsChunks(), (pair) =>
+          {
+              for (int i = pair.Item1; i &lt; pair.Item2; ++i)
+              {
+                  var vectorA = matrixA.GetRow(i); // ziska cely radek i z matrixA
+                  var vectorB = matrixB.GetRow(i); // ziska cely radek i z matrixB
+
+                  var resultAdd = Matrix&lt;MatrixNumberInt&gt;.DoVectorOperation(vectorA, vectorB,
+                      (first, second) =>
+                      {
+                          return first.__Addition(second);
+                      });
+                      // funkce DoVectorOperation() provede danou operaci na vsech prvcich dvou zadanych poli
+              }
+          });
+        </code>
+      </content>
+    </section>
+
+    <section address="Section3">
+      <title>Použití metod na třídě Matrix</title>
+      <content>
+        <!-- Uncomment this to create a sub-section outline
+        <autoOutline /> -->
+        <para>
+          Je zde ukázáno použití jak funkcí, které neslouží jako extension metody (ClassicOperations), tak extension metod na objektu Matrix.
+          Objekt Matrix je v příkladech shodně konstruován s generickým parametrem MatrixNumber:
+        </para>
+        <code>
+          /* vytvorime si dve matice ktere budeme pouzivat a naplnime je daty */
+          Random rdm = new Random();
+          Matrix&lt;MatrixNumber&gt; matrixA = new Matrix&lt;MatrixNumber&gt;(5, 5);
+          Matrix&lt;MatrixNumber&gt; matrixB = new Matrix&lt;MatrixNumber&gt;(5, 5);
+          Matrix&lt;MatrixNumber&gt; resultA;
+          Matrix&lt;MatrixNumber&gt; resultB;
+
+          for (int i = 0; i &lt; matrixA.Rows; i++) // naplnime matice nahodnymi daty
+          {
+              for (int j = 0; j &lt; matrixA.Cols; j++)
+              {
+                  matrixA[i, j] = new MatrixNumber(rdm.Next());
+                  matrixB[i, j] = new MatrixNumber(rdm.Next());
+              }
+          }
+
+
+          /*
+           * Nejdrive ukazame pouziti operaci ze staticke tridy ClassicOperations, ktere nejsou jako jedine extension
+           * Jako ukazka slouzi jen nektere funkce ze zminene staticke tridy
+           */
+
+          resultA = ClassicOperations.Addition(matrixA, matrixB); // scitani dvou matic
+          resultB = ParallelClassicOperations.AdditionParallel(matrixA, matrixB); // paralelni scitani dvou matic
+          Debug.Assert(resultA == resultB);
+
+          resultA = ClassicOperations.Subtraction(matrixA, matrixB); // odecitani dvou matic
+          resultB = ParallelClassicOperations.SubtractionParallel(matrixA, matrixB); // paralelni odecitani dvou matic
+          Debug.Assert(resultA == resultB);
+
+          resultA = ClassicOperations.Multiplication(matrixA, matrixB); // nasobeni dvou matic
+          resultB = ParallelClassicOperations.MultiplicationParallel(matrixA, matrixB); // paralelni nasobeni dvou matic
+          Debug.Assert(resultA == resultB);
+
+
+          /*
+           * Ukazka pouziti extension metod
+           * Je ukazano jak pouziti jako extension metody, tak jako normalni metody volane na static tride
+           */
+
+          /* Altering operations */
+          resultA = matrixA.Transposition(); // transpozice matice, extension metoda
+          resultB = matrixA.TranspositionParallel(); // paralelni transpozice matice, extension metoda
+          Debug.Assert(resultA == resultB);
+          resultA = AlteringOperationsExtensions.Transposition(matrixA); // transpozice matice, pouziti mimo objekt Matrix
+          resultB = ParallelAlteringOperationsExtensions.TranspositionParallel(matrixA); // paralelni transpozice matice, pouziti mimo objekt Matrix
+          Debug.Assert(resultA == resultB);
+
+          resultA = matrixA.Gauss(); // gaussova eliminace, extension metoda
+          resultB = matrixA.GaussParallel(); // paralelni gaussova eliminace, extension metoda
+          Debug.Assert(resultA == resultB);
+          resultA = AlteringOperationsExtensions.Gauss(matrixA); // klasicke pouziti
+          resultB = ParallelAlteringOperationsExtensions.GaussParallel(matrixA); // klasicke pouziti
+          Debug.Assert(resultA == resultB);
+
+          /* Computations */
+          MatrixNumber resultNumberA, resultNumberB;
+          resultNumberA = matrixA.Determinant(); // extension metoda
+          resultNumberB = matrixA.DeterminantParallel(); // extension metoda
+          Debug.Assert(resultNumberA == resultNumberB);
+          resultNumberA = ComputationsExtensions.Determinant(matrixA); // klasicke pouziti
+          resultNumberB = ParallelComputationsExtensions.DeterminantParallel(matrixA); // klasicke pouziti
+          Debug.Assert(resultNumberA == resultNumberB);
+
+          /* Decompositions */
+          try
+          {
+              resultA = matrixA.CholeskyDecomposition(); // extension metoda
+              resultB = matrixA.CholeskyDecompositionParallel(); // extension metoda
+              Debug.Assert(resultA == resultB);
+              resultA = DecompositionsExtensions.CholeskyDecomposition(matrixA); // klasicke pouziti
+              resultB = ParallelDecompositionsExtensions.CholeskyDecompositionParallel(matrixA); // klasicke pouziti
+              Debug.Assert(resultA == resultB);
+          }
+          catch { } // try-catch blok kvuli definitnosti matice
+
+          /* Characteristics */
+          try
+          {
+              EigenValues&lt;MatrixNumber&gt; eigenValues;
+              resultA = matrixA.GetEigenVectors(out eigenValues); // extension metoda
+              resultB = matrixA.GetEigenVectorsParallel(out eigenValues); // extension metoda
+              Debug.Assert(resultA == resultB);
+              resultA = CharacteristicsExtensions.GetEigenVectors(matrixA, out eigenValues); // klasicke pouziti
+              resultB = ParallelCharacteristicsExtensions.GetEigenVectorsParallel(matrixA, out eigenValues); // klasicke pouziti
+              Debug.Assert(resultA == resultB);
+          }
+          catch { } // try-catch blok kvuli vyhazovani vyjimky v pripade nenalezeni vlastnich cisel
+
+          /* Properties */
+          int rankA, rankB;
+          rankA = matrixA.Rank(); // extension metoda
+          rankB = matrixB.RankParallel(); // extension metoda
+          Debug.Assert(rankA == rankB);
+          rankA = PropertiesExtensions.Rank(matrixA); // klasicke pouziti
+          rankB = ParallelPropertiesExtensions.RankParallel(matrixA); // klasicke pouziti
+        </code>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID">Link text</link>
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on GitHub</linkText>
+          <linkAlternateText>Go to GitHub</linkAlternateText>
+          <linkUri>https://GitHub.com/EWSoftware/SHFB</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+    </relatedTopics>
+  </developerSampleDocument>
+</topic>

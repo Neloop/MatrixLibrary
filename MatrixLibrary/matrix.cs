@@ -768,7 +768,7 @@ namespace MatrixLibrary
                     {
                         if (!first.GetNumber(i, j).__IsEqual(second.GetNumber(i, j)))
                         {
-                            Console.WriteLine("!!! Different Numbers: {0}; {1}", first.GetNumber(i, j), second.GetNumber(i, j));
+                            //Console.WriteLine("!!! Different Numbers: {0}; {1}", first.GetNumber(i, j), second.GetNumber(i, j));
                             result = false;
                         }
                     }
@@ -795,7 +795,7 @@ namespace MatrixLibrary
                 {
                     for (int j = 0; j < first.Cols; j++)
                     {
-                        if (first.GetNumber(i, j).__IsEqual(second.GetNumber(i, j))) { result = true; break; }
+                        if (!first.GetNumber(i, j).__IsEqual(second.GetNumber(i, j))) { result = true; break; }
                     }
                     if (result == true) { break; }
                 }

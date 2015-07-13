@@ -689,8 +689,8 @@ namespace MatrixLibrary
         /// If <paramref name="second"/> is MatrixNumber, then internal values are multiplied in the way of fractions.
         /// Otherwise current RealPart member is multiplied with the result of ToDouble() method on <paramref name="second"/>.
         /// </remarks>
-        /// <param name="second"></param>
-        /// <returns></returns>
+        /// <param name="second">Multiplier.</param>
+        /// <returns>Newly created instance of MatrixNumber with result of multiplication.</returns>
         public IMatrixNumber __Multiplication(IMatrixNumber second)
         {
             if (ReferenceEquals(second, null)) { return Copy(); }

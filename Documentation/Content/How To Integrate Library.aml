@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="6758de23-d252-426c-b7b2-cbc946a578ae" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <!-- Uncomment this to generate an outline of the section and sub-section
+           titles.  Specify a numeric value as the inner text to limit it to
+           a specific number of sub-topics when creating the outline.  Specify
+           zero (0) to limit it to top-level sections only.  -->
+      <!-- <autoOutline /> -->
+
+      <para>
+        Na této stránce bude představeno několik způsobů jak integrovat MatrixLibrary knihovnu do již existujícího projektu.
+        MatrixLibrary je distrubována pomocí gitovského repozitáře ve službě Bitbucket, jak bylo popsáno v <link xlink:href="800a1c4c-a8fb-411b-a956-b367f741b596"/>.
+        V tomto repozitáři jsou umístěny zdrojového kódy spolu s už vytvořeným projektem ve Visual Studiu 2013.
+        Tento projekt reprezentuje knihovnu, plus jednoduchý testovací program, tudíž je celý projekt spustitelný.
+      </para>
+      <para>
+        Protože se distribuje celý zdrojový kód, jsou v zásadě tři možnosti použití knihovny v kódu.
+      </para>
+    </introduction>
+
+    <!-- Add one or more top-level section elements.  These are collapsible.
+         If using <autoOutline />, add an address attribute to identify it
+         and specify a title so that it can be jumped to with a hyperlink. -->
+    <section address="Section1">
+      <title>Možnosti integrace</title>
+      <content>
+        <!-- Uncomment this to create a sub-section outline
+        <autoOutline /> -->
+        <para>
+          Jednotlivým možnostem jsou věnovány samostatné kapitoly. Odkazy na ně lze nalézt níže v seznamu.
+          Všechny možnosti jsou v zásadě správné a mají svůj smysl.
+        </para>
+
+        <list class="bullet">
+          <listItem>
+            <link xlink:href="289856a3-70ab-48bb-a85e-7e4778f43809"/>
+          </listItem>
+          <listItem>
+            <link xlink:href="f2e22559-2d77-4f75-8efc-442091effad0"/>
+          </listItem>
+          <listItem>
+            <link xlink:href="ecadd62f-441f-4413-b8a4-f697af240892"/>
+          </listItem>
+        </list>
+
+        <para>
+          Příklad použití, pokud je knihovna načtena lze najít zde: <link xlink:href="a53e4021-2b11-44ea-b88d-6fe7f7de3452"/>.
+        </para>
+      </content>
+      <!-- If a section contains a sections element, its content creates
+           sub-sections.  These are not collapsible.
+      <sections>
+          <section address="SubSection1">
+              <title>Sub-section 1</title>
+              <content>
+                  <para>Sub-section content.</para>
+              </content>
+          </section>
+          <section address="SubSection2">
+              <title>Sub-section 2</title>
+              <content>
+                  <para>Sub-section content.</para>
+              </content>
+          </section>
+      </sections> -->
+    </section>
+
+    <relatedTopics>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID"/>
+      <link xlink:href="Other Topic's ID">Link inner text</link>
+
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8270" />
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on GitHub</linkText>
+          <linkAlternateText>Go to GitHub</linkAlternateText>
+          <linkUri>https://GitHub.com/EWSoftware/SHFB</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>
