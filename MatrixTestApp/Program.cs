@@ -305,7 +305,6 @@ namespace MatrixTestApp
             Console.WriteLine();
 
             /********** Addition **********/
-
             resultSingle = ClassicOperations.Addition(A, B);
             WriteTwoMatrixes(A, B, resultSingle, "+");
 
@@ -332,7 +331,7 @@ namespace MatrixTestApp
             inputMatrix = new int[4, 1] {{2}, {5}, {-1}, {1}};
             b = new Matrix<MatrixNumber>(inputMatrix);
 
-            Console.WriteLine("Soustava rovnic");
+            Console.WriteLine("LinearEquations");
             resultSingle = ComputationsExtensions.SolveLinearEquations(B, b);
             //try { resultSingle = Computations.SolveLinearEquations(B, b); }
             //catch (MatrixLibraryException) { resultSingle = new Matrix<MatrixNumber>(1, 1); }
@@ -340,7 +339,7 @@ namespace MatrixTestApp
 
             Console.WriteLine();
 
-            Console.WriteLine("Násobení matice číslem");
+            Console.WriteLine("MultiplyWithNumber");
             MatrixNumber multiply = new MatrixNumber(2, 1);
             int[,] zeroM = new int[1, 1];
             zeroM[0, 0] = 2;
@@ -365,7 +364,7 @@ namespace MatrixTestApp
             WriteSeparator();
 
             resultSingle = A.Transposition();
-            WriteMatrix(A, resultSingle, "Transponovaná");
+            WriteMatrix(A, resultSingle, "Transposition");
 
             Console.WriteLine();
 
@@ -399,7 +398,7 @@ namespace MatrixTestApp
             Console.WriteLine();
 
             resultSingle = AlteringOperationsExtensions.Adjugate(A);
-            WriteMatrix(A, resultSingle, "Adjungovaná");
+            WriteMatrix(A, resultSingle, "Adjugate");
 
             Console.WriteLine();
 
@@ -410,7 +409,7 @@ namespace MatrixTestApp
             MatrixNumber zero = new MatrixNumber(0, 0);
             if (regular == true) { resultSingle.WriteNumber(0, 0, one); }
             else { resultSingle.WriteNumber(0, 0, zero); }
-            WriteMatrix(B, resultSingle, "Regulární");
+            WriteMatrix(B, resultSingle, "Regular");
 
             Console.WriteLine();
             inputMatrix = new int[4, 4];
@@ -420,7 +419,7 @@ namespace MatrixTestApp
             resultSingle = new Matrix<MatrixNumber>(number);
             if (regular == true) { resultSingle.WriteNumber(0, 0, one); }
             else { resultSingle.WriteNumber(0, 0, zero); }
-            WriteMatrix(D, resultSingle, "Regulární");
+            WriteMatrix(D, resultSingle, "IsRegular");
 
             Console.WriteLine();
 
@@ -429,36 +428,36 @@ namespace MatrixTestApp
             resultSingle = new Matrix<MatrixNumber>(number);
             if (orthogonal == true) { resultSingle.WriteNumber(0, 0, one); }
             else { resultSingle.WriteNumber(0, 0, zero); }
-            WriteMatrix(B, resultSingle, "Ortogonální");
+            WriteMatrix(B, resultSingle, "IsOrthogonal");
 
             Console.WriteLine();
 
             try { resultSingle = AlteringOperationsExtensions.Inverse(A); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
-            WriteMatrix(A, resultSingle, "Inverzní");
+            WriteMatrix(A, resultSingle, "Inverse");
 
             Console.WriteLine();
 
             try { resultSingle = AlteringOperationsExtensions.Symmetric(A); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
-            WriteMatrix(A, resultSingle, "Zesymetrizování");
+            WriteMatrix(A, resultSingle, "Symmetric");
 
             Console.WriteLine();
 
             resultSingle = AlteringOperationsExtensions.Orthogonal(B);
-            WriteMatrix(B, resultSingle, "Ortogonalizace");
+            WriteMatrix(B, resultSingle, "Orthogonal");
 
             Console.WriteLine();
 
             try { resultSingle = DecompositionsExtensions.CholeskyDecomposition(A); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
-            finally { WriteMatrix(A, resultSingle, "Choleského rozklad"); }
+            finally { WriteMatrix(A, resultSingle, "CholeskyDecomposition"); }
 
             Console.WriteLine();
 
             Matrix<MatrixNumber> Q, R;
             resultSingle = DecompositionsExtensions.QRDecomposition(A, out Q, out R);
-            WriteMatrix(A, resultSingle, "QR-rozklad");
+            WriteMatrix(A, resultSingle, "QRDecomposition");
 
             Console.WriteLine();
 
@@ -473,25 +472,25 @@ namespace MatrixTestApp
             {
                 resultSingle.WriteNumber(i, 0, tmp.GetEigenValue(i));
             }
-            WriteMatrix(A, resultSingle, "Vlastní čísla");
+            WriteMatrix(A, resultSingle, "EigenValues");
 
             Console.WriteLine();
 
             try { resultSingle = CharacteristicsExtensions.GetEigenVectors(A, out tmp, 0); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
-            WriteMatrix(A, resultSingle, "Vlastní vektory");
+            WriteMatrix(A, resultSingle, "EigenVectors");
 
             Console.WriteLine();
 
             Matrix<MatrixNumber> S;
             try { resultSingle = CharacteristicsExtensions.Diagonal(A, out S, 0); }
             catch { resultSingle = new Matrix<MatrixNumber>(1, 1); }
-            WriteMatrix(A, resultSingle, "Diagonalizovat");
+            WriteMatrix(A, resultSingle, "Diagonal");
 
             Console.WriteLine();
 
             resultSingle = ClassicOperations.Exponentiate(A, 4);
-            WriteMatrix(A, resultSingle, "Umocnit A^4");
+            WriteMatrix(A, resultSingle, "Exponentiate^4");
 
             Console.WriteLine();
             WriteSeparator();
