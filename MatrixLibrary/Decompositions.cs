@@ -20,8 +20,8 @@ namespace MatrixLibrary
         {
             /*
              * 
-             * Choleského rozklad: A = L * L^(T)
-             *  - matice A musí být Positivně-definitní a typu n*n
+             * Cholesky decomposition: A = L * L^(T)
+             *  - matrix A has to be positively-definite and of type n*n
              * 
              */
 
@@ -148,8 +148,8 @@ namespace MatrixLibrary
         {
             /*
              * 
-             * Choleského rozklad: A = L * L^(T)
-             *  - matice A musí být Positivně-definitní a typu n*n
+             * Cholesky decomposition: A = L * L^(T)
+             *  - matrix A has to be positively-definite and of type n*n
              * 
              */
 

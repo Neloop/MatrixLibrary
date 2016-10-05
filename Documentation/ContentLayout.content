@@ -7,8 +7,8 @@
   </Topic>
   <Topic id="a53e4021-2b11-44ea-b88d-6fe7f7de3452" visible="True" />
   <Topic id="6758de23-d252-426c-b7b2-cbc946a578ae" visible="True" isExpanded="true">
-    <Topic id="289856a3-70ab-48bb-a85e-7e4778f43809" visible="True" isSelected="true" title="Integrace zdrojového kódu" />
-    <Topic id="f2e22559-2d77-4f75-8efc-442091effad0" visible="True" title="Připojení DLL knihovny k existujícímu projektu" />
-    <Topic id="ecadd62f-441f-4413-b8a4-f697af240892" visible="True" title="Dynamické načtení DLL knihovny za běhu programu" />
+    <Topic id="289856a3-70ab-48bb-a85e-7e4778f43809" visible="True" title="Integration of source code" />
+    <Topic id="f2e22559-2d77-4f75-8efc-442091effad0" visible="True" title="Connect DLL library to existing project" />
+    <Topic id="ecadd62f-441f-4413-b8a4-f697af240892" visible="True" isSelected="true" title="Dynamically load DLL library at runtime" />
   </Topic>
 </Topics>

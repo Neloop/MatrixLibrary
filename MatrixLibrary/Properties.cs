@@ -142,23 +142,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Detect if given <paramref name="matrix"/> is positive-definite, negative-definite or indefinite.
+        /// Detect if given <paramref name="matrix"/> is positive-definite, negative-definite or indefinite based on Sylvestr's criterion.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix">Matrix object which is source for computation of this method.</param>
         /// <returns>Enumeration which values reprezents state of definity of <paramref name="matrix"/>.</returns>
         public static DefinityClassification DefinityParallel<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
-            /*
-             * Neurčuje semi-definitnost (pozitivní/negativní)
-             * Využívá se Sylvestrovo kriterium
-             * Pokud je vrácena 
-             * 0: Indefinitní
-             * 1: Pozitivně definitní
-             * 2: Negatině definitní
-             * 
-             * */
-
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             DefinityClassification result = DefinityClassification.Indefinite;
@@ -313,23 +303,13 @@ namespace MatrixLibrary
         }
 
         /// <summary>
-        /// Detect if given <paramref name="matrix"/> is positive-definite, negative-definite or indefinite.
+        /// Detect if given <paramref name="matrix"/> is positive-definite, negative-definite or indefinite based on Sylvestr's criterion.
         /// </summary>
         /// <typeparam name="T">Type of numbers which are be stored in Matrix. Must fulfill IMatrixNumber interface and have parametresless constructor.</typeparam>
         /// <param name="matrix">Matrix object which is source for computation of this method.</param>
         /// <returns>Enumeration which values reprezents state of definity of <paramref name="matrix"/>.</returns>
         public static DefinityClassification Definity<T>(this Matrix<T> matrix) where T : IMatrixNumber, new()
         {
-            /*
-             * Neurčuje semi-definitnost (pozitivní/negativní)
-             * Využívá se Sylvestrovo kriterium
-             * Pokud je vrácena 
-             * 0: Indefinitní
-             * 1: Pozitivně definitní
-             * 2: Negatině definitní
-             * 
-             * */
-
             if (matrix == null) { throw new MatrixLibraryException("In given matrix reference was null value!"); }
 
             DefinityClassification result = DefinityClassification.Indefinite;

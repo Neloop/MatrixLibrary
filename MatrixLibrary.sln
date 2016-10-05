@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixLibrary", "MatrixLibrary\MatrixLibrary.csproj", "{5129B88F-D55A-4B0D-9185-2149DFBB82AB}"
 EndProject
@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixTestApp", "MatrixTest
 	ProjectSection(ProjectDependencies) = postProject
 		{5129B88F-D55A-4B0D-9185-2149DFBB82AB} = {5129B88F-D55A-4B0D-9185-2149DFBB82AB}
 	EndProjectSection
-EndProject
-Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Documentation", "Documentation\Documentation.shfbproj", "{260B7683-3CD3-468E-A448-1707EF7A0EED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,14 +44,6 @@ Global
 		{A10CFFEF-CB9E-46B2-92DE-B6F3CD857582}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A10CFFEF-CB9E-46B2-92DE-B6F3CD857582}.Release|x64.ActiveCfg = Release|x64
 		{A10CFFEF-CB9E-46B2-92DE-B6F3CD857582}.Release|x64.Build.0 = Release|x64
-		{260B7683-3CD3-468E-A448-1707EF7A0EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{260B7683-3CD3-468E-A448-1707EF7A0EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{260B7683-3CD3-468E-A448-1707EF7A0EED}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{260B7683-3CD3-468E-A448-1707EF7A0EED}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{260B7683-3CD3-468E-A448-1707EF7A0EED}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{260B7683-3CD3-468E-A448-1707EF7A0EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{260B7683-3CD3-468E-A448-1707EF7A0EED}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{260B7683-3CD3-468E-A448-1707EF7A0EED}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

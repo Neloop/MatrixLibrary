@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>260b7683-3cd3-468e-a448-1707ef7a0eed</ProjectGuid>
-    <SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>
+    <SHFBSchemaVersion>2015.6.5.0</SHFBSchemaVersion>
     <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual Studio adds them anyway -->
     <AssemblyName>Documentation</AssemblyName>
     <RootNamespace>Documentation</RootNamespace>
@@ -64,17 +64,16 @@
     <Folder Include="Content" />
     <Folder Include="Content\VersionHistory" />
     <Folder Include="icons" />
-    <Folder Include="media" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\dll_za_behu.aml" />
+    <None Include="Content\Dynamically load DLL library at runtime.aml" />
     <None Include="Content\How To Integrate Library.aml" />
-    <None Include="Content\dll_knihovna.aml" />
+    <None Include="Content\Connect DLL library to existing project.aml" />
     <None Include="Content\Sample of usage.aml" />
     <None Include="Content\VersionHistory\v1.0.0.0.aml" />
     <None Include="Content\VersionHistory\VersionHistory.aml" />
     <None Include="Content\Welcome.aml" />
-    <None Include="Content\zdrojovy_kod.aml" />
+    <None Include="Content\Integration of source code.aml" />
   </ItemGroup>
   <ItemGroup>
     <ContentLayout Include="ContentLayout.content" />

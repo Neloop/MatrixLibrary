@@ -47,26 +47,26 @@
           MatrixLibrary is available as git repository in Bitbucket service.
           And its home directory is at 
           <externalLink>
-            <linkText>MatrixLibrary on Bitbucket</linkText>
-            <linkAlternateText>MatrixLibrary on Bitbucket</linkAlternateText>
-            <linkUri>https://bitbucket.org/PolankaMartin/matrixlibrary</linkUri>
+            <linkText>MatrixLibrary on Github</linkText>
+            <linkAlternateText>MatrixLibrary on Github</linkAlternateText>
+            <linkUri>https://github.com/Neloop/MatrixLibrary</linkUri>
           </externalLink>.
         </para>
         <para>
           It goes without saying that for cloning repository, installed git program is needed.
         </para>
         <para>
-          On this Bitbucket project page there are guides, how to download whole repository. There are several possible ways how to do it:
+          On this Github project page there are guides, how to download whole repository. There are several possible ways how to do it:
         </para>
 
 				<list class="bullet">
 					<listItem>
 						<para>Clone git repository using HTTPS</para>
-            <code>git clone https://PolankaMartin@bitbucket.org/PolankaMartin/matrixlibrary.git</code>
+            <code>git clone https://github.com/Neloop/MatrixLibrary</code>
 					</listItem>
           <listItem>
             <para>Clone git repository using SSH</para>
-            <code>git clone git@bitbucket.org:PolankaMartin/matrixlibrary.git</code>
+            <code>git clone git@github.com:Neloop/MatrixLibrary.git</code>
           </listItem>
           <listItem>
             <para>Download repository</para>
@@ -75,7 +75,7 @@
               <externalLink>
               <linkText>Download repository</linkText>
               <linkAlternateText>Download repository</linkAlternateText>
-              <linkUri>https://bitbucket.org/PolankaMartin/matrixlibrary/downloads</linkUri>
+              <linkUri>https://github.com/Neloop/MatrixLibrary/archive/master.zip</linkUri>
             </externalLink>.
           </para>
           </listItem>
@@ -83,7 +83,7 @@
 
         <para>
           After downloading git repository there will be <localUri>./matrixlibrary</localUri> directory in which whole project is located.
-          In this directory is also VS project file (*.sln) which loads into VS2013 or suitable Mono whole project.
+          In this directory is also VS project file (*.sln) which loads into VS2015 or suitable Mono whole project.
           In project there are three child projects. One of them is this documentation. Another one is library itself.
           And the last one is test application. In which there are some examples of how MatrixLibrary works.
           Whole project is executable, respectively MarixTestApp is executable and can be run.

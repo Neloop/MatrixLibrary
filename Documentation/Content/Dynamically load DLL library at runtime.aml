@@ -12,29 +12,28 @@
 
     <introduction>
       <para>
-        Nejtěžší a nepříliš doporučovaný způsob integrace knihovny do programu je s pomocí Reflection a dynamického načítání knihovny za běhu.
-        To znamená, že se knihovna nijak neintegruje do aktuálního projektu, ale veškerá práce se "slinkováním" se musí provést za běhu v kódu aplikace.
-        Programátor si tudíž toto řešení musí odpracovat netriviálními konstrukcemi v jeho kódu, pomocí kterého dojde k nahrání knihovny.
+        Hardest way of integration MatrixLibrary into application is through Reflection and dynamic loading of library at runtime.
+        This means that library is not integrated into current project and all work with linking has to be executed at runtime.
       </para>
       <para>
-        Tento způsob není doporučený hlavně kvůli typové nebezpečnosti.
-        Hlavně použití klíčového slova dynamic sebou nese problémy s vyhazováním výjimek v případě nenalezení odpovídající metody.
-        Celkově je tento přístup pomalý a měl by být používán jen v odůvodněných případech, jakým jsou například dynamicky načítané pluginy.
+        This way is not recommended because of missing type checks.
+        Especially using of keyword dynamic is problematic and thus calling of any method or property can cause throwing exceptions.
+        In general this method is slow and should be used only in special cases, like dynamically loaded plugins or so.
       </para>
       <para>
-        Velkou nevýhodou v tomto případě je nemožnost využít extension metod přímo na objektu Matrix.
+        Kind of disadvantage in this case is that extension methods cannot be used directly on Matrix object.
       </para>
     </introduction>
 
     <!-- Optional procedures followed by optional code example but must have
          at least one procedure or code example -->
     <procedure>
-      <title>Dvě možnosti dynamického nahrání</title>
+      <title>Two ways of dynamic loading</title>
       <steps class="ordered">
         <step>
           <content>
             <para>
-              <legacyBold>Použití bez klíčového slova dynamic</legacyBold>
+              <legacyBold>Usage without keyword dynamic</legacyBold>
             </para>
             <code>
               int[,] input = new int[3, 3] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
@@ -63,25 +62,25 @@
               }
             </code>
             <para>
-              Ukázka kódu výše reprezentuje nahrání knihovny pomocí Reflection.
-              Funkce Assembly.LoadFile je statická metoda, která nahraje DLL soubor ze zadané absolutní cesty a jeho handler vrátí.
-              S pomocí tohoto handleru se pak dají načíst jednotlivé typy uložené v assembly.
-              Jejich konstrukce se provádí pomocí statické Activator.CreateInstance, která zkonstruuje daný objekt s danými parametry.
+              Example above represents loading of library into application using Reflection.
+              Function Assembly.LoadFile is static method which loads DLL file/assembly from given absolute value and return its handler.
+              Gained handler can be used to load particular types saved in assembly.
+              Construction of types is done with static Activator.CreateInstance function, which will construct object with given parameters.
             </para>
             <para>
-              Volání metod na takto vytvořené instanci, ale není přímočaré, metoda se nejdříve musí načíst pomocí funkce GetMethod na daném typu.
-              Až takováto instance metody je spustitelná pomocí funkce Invoke, které se předá objekt, na kterém se má daná funkce spustit a jednotlivé parametry.
+              Calling of methods on created instance is not straightforward, method has to be at first loaded with GetMethod on given type.
+              After that method can be executed with Invoke function which needs object on which will be called and of course function parameters.
             </para>
             <para>
-              Všechny metody na daném typu lze projít pomocí metody GetMethods(), která vrátí pole dostupných metod.
-              Všechny typy v dané assembly se dají projít funkcí GetTypes() spuštěné na handleru assembly.
+              All methods on instance can be go through with GetMethods function which will return array of available methods.
+              All types in particular assembly is iterable with GetTypes run on assebmly's handler.
             </para>
           </content>
         </step>
         <step>
           <content>
             <para>
-              <legacyBold>Použití s klíčovým slovem dynamic</legacyBold>
+              <legacyBold>Usage with keyword dynamic</legacyBold>
             </para>
             <code>
               int[,] input = new int[3, 3] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
@@ -104,28 +103,26 @@
               Console.WriteLine(result);
             </code>
             <para>
-              Ukázka kódu výše reprezentuje nahrání knihovny pomocí Reflection a klíčového slova dynamic.
-              Assembly je opět nahrána pomocí Assembly.LoadFile(), která vrátí daný handler, cesta k souboru musí být opět absolutní.
-              Stejně jako v minulém případě i zde se typ musí načíst pomocí funkce GetType() na handleru.
-              Vytváření instance je už ale jiné a výsledek Activator.CreateInstance() se dosazuje do dynamic proměnné.
+              Code above represents loading library with Reflection and keyword dynamic.
+              Assembly is again loaded with Assembly.LoadFile method which will return handler.
+              Like in previous way, type has to be loaded with GetType function on handler.
+              After that instance is also created in same way with Activator.CreateInstance, but its result is given into dynamic variable.
             </para>
             <para>
-              Dynamic proměnná je novinka Visual C# 2010, která přichází s konceptem proměnné na které je vše dovoleno.
-              To znamená, že na ní lze volat jakoukoliv metodu, i když jí dosazený typ nedefinuje, a kompilátor to přejde bez chyb.
-              Pokud ale daný typ metodu nebo vlastnost opravdu nedefinuje, pak dojde k run-time chybě a je vyhozena výjimka.
+              Dynamic variables is new functionality of Visual C# 2015 and generally its variable on which everything is allowed.
+              That means, any method can be called on it event if assigned type does not have it and compiler will allow it.
+              But if given type method or property really not define, than runtime error will be caused.
             </para>
             <para>
-              Z předchozího odstavce vychází, že používání takové proměnné je pak v zásadě jednoduché, stačí na ní volat metody, které by na ní být měly.
-              Samozřejmě tím přicházíme o typovou bezpečnost a případné překlepy nejsou kompilátorem detekovány.
-              Stejně jako v předchozím případě i zde není možné používat extension metody.
+              From previous paragraph appear that usage of dynamic variable is very simple, everything needed is to call methods with right names.
+              Of course this is point where type checks are missing and typing error are not detected by compiler.
+              Like in previous example even in this case extension methods cannot be used.
             </para>
             <para>
-              Volání metod, které pracují s maticemi je pak hodně podobné jako volání metod na objektu matice v předchozím příkladě.
-              Nejdříve se musí načíst statická třída, která obsahuje definice těchto metod.
-              Dále se s pomocí GetMethod() načte metoda, kterou potřebujeme.
-              Protože jsou veškeré metody generické, pak je třeba je generickými opravdu udělat zavoláním funkce MakeGenericMethod().
-              A nakonec už je možné zavolat samotnou funkci pomocí funkce Invoke().
-              Tento postup by byl stejný i v předešlém příkladě.
+              Calling of methods which works on matrixes is then very similar as calling them on Matrix object.
+              Firtstly static class which contains their definitions has to be loaded and then these methods have to be loaded with GetMethod function.
+              Because all methods are generic, there is needed to call MakeGenericMethod function.
+              At the end methods can be called with Invoke function, like described in previous example.
             </para>
           </content>
         </step>
@@ -135,7 +132,7 @@
 
     <para></para>
     <para>
-      Konstrukce jména typu Matrix níže pochází z
+      Matrix class name construction comes from
       <externalLink>
         <linkText>Loading Generic Types with Assembly.LoadFrom</linkText>
         <linkAlternateText>Loading Generic Types with Assembly.LoadFrom</linkAlternateText>

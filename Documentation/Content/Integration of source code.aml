@@ -12,59 +12,58 @@
 
     <introduction>
       <para>
-        V zásadě asi nejjednodušší způsob integrace knihovny MatrixLibrary do již existujícího projektu.
-        Předpokládá se, že uživatel má stažen gitovský projekt ze služby Bitbucket.
-        Postup získání je popsán zde: <link xlink:href="800a1c4c-a8fb-411b-a956-b367f741b596"/>.
+        The easiest way to integrate MatrixLibrary is simply copying library source codes into existing project.
+        How to get MatrixLibrary and its source codes is written here: <link xlink:href="800a1c4c-a8fb-411b-a956-b367f741b596"/>.
       </para>
       <para>
-        Integrace zdrojového kódu do existujícího projektu je založená na tom, že si programátor, který chce využít MatrixLibrary knihovnu, vezme zdrojové soubory knihovny a jednoduše je přidá do svého projektu, jako kdyby přidával další svůj kód.
-        Díky tomu budou matice a metody na nich vždycky dostupné v daném programu a nebude třeba připojovat dodatečný *.dll soubor, který by obsahoval kód knihovny.
-        Výsledná aplikace tedy nebude závislá na externí knihovně.
+        Integration of source codes into existing project is based on simply adding MatrixLibrary source codes into project as any other newly created file.
+        Thanks to that matrixes and its method will be always available in the program and there will be no need to join another *.dll file.
+        In result project will not be dependent on external library.
       </para>
     </introduction>
 
     <!-- Optional procedures followed by optional code example but must have
          at least one procedure or code example -->
     <procedure>
-      <title>Postup integrace</title>
+      <title>Integration procedure</title>
       <steps class="ordered">
         <step>
           <content>
-            <para><legacyBold>Nalezení zdrojových souborů knihovny MatrixLibrary.</legacyBold></para>
+            <para><legacyBold>Find source codes of MatrixLibrary.</legacyBold></para>
             <para>
-              Zdrojové soubory, které obsahují kód matice a metod na ní jsou umístěny ve složce <localUri>./MatrixLibrary</localUri>.
-              Ta je relativní k výchozí složce celého projektu knihovny MatrixLibrary. Ve zmíněné složce jsou pak jmenovitě tyto soubory:
+              Source codes are located at <localUri>./MatrixLibrary</localUri> folder, there are files with needed structures and also files with particular operations.
+              Most importantly there are these files which should be included in your project:
             </para>
             <list class="bullet">
-              <listItem>matrix.cs</listItem>
-              <listItem>matrix_number.cs</listItem>
-              <listItem>matrix_alter.cs</listItem>
-              <listItem>matrix_computation.cs</listItem>
-              <listItem>matrix_decomposition.cs</listItem>
-              <listItem>matrix_characteristics.cs</listItem>
-              <listItem>matrix_operations.cs</listItem>
-              <listItem>matrix_properties.cs</listItem>
+              <listItem>Matrix.cs</listItem>
+              <listItem>MatrixNumber.cs</listItem>
+              <listItem>AlteringOperations.cs</listItem>
+              <listItem>Computations.cs</listItem>
+              <listItem>Decompositions.cs</listItem>
+              <listItem>Characteristics.cs</listItem>
+              <listItem>ClassicOperations.cs</listItem>
+              <listItem>Properties.cs</listItem>
             </list>
           </content>
         </step>
         <step>
           <content>
-            <para><legacyBold>Přidání souborů do projektu ve Visual Studiu.</legacyBold></para>
+            <para><legacyBold>Add files into Visual Studio project.</legacyBold></para>
             <para>
-              Je doporučeno, pokud se bude kód takto integrovat do projektu, aby soubory knihovny MatrixLibrary byly odděleny od ostatních souborů projektu.
-              To může být dosaženo jednoduše například zkopírováním celého gitovského repozitáře do složky projektu, do kterého se knihovna bude integrovat.
-              Ve Visual Studiu pak stačí k danému projektu přidat existující položky (jejichž seznam je uveden v kroku výše), které nalezneme při tomto postupu ve složce <localUri>./matrixlibrary/MatrixLibrary</localUri>.
+              In this case of integration best practise is to separate source files of MatrixLibrary (aka. give project some structure).
+              Maybe the best solution will be clone whole git repository into your project and keep its internal structure.
+              If your project is also maintained with git versioning system, just use git submodules to keep MatrixLibrary in your project.
             </para>
           </content>
         </step>
         <step>
           <content>
             <para>
-              <legacyBold>Překlad.</legacyBold>
+              <legacyBold>Compilation.</legacyBold>
             </para>
             <para>
-              Při překladu pak není třeba dělat žádné dodatečné úpravy v projektu.
-              S takto integrovanými zdrojovými kódy knihovny se aktuální projekt jednoduše přeloží, tak jak se překládal před integrací.
+              There is no need for further modification in project.
+              All should be set and ready for compilation.
             </para>
           </content>
         </step>

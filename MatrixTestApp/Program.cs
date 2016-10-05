@@ -20,7 +20,7 @@ namespace MatrixTestApp
             {
                 if (matrix1.Rows > i)
                 {
-                    for (int j = 0; j < matrix1.Cols; j++) // první matice
+                    for (int j = 0; j < matrix1.Cols; j++) // first matrix
                     {
                         T tmp = matrix1.GetNumber(i, j);
                         Console.Write("{0,4} ", tmp.ToDouble());
@@ -28,12 +28,12 @@ namespace MatrixTestApp
                 }
                 else { for (int j = 0; j < matrix1.Cols; j++) { Console.Write("     "); } }
 
-                if (i == half) { Console.Write(" {0} ", operationName); } // operace
+                if (i == half) { Console.Write(" {0} ", operationName); } // operation
                 else { Console.Write("   "); }
 
                 if (matrix2.Rows > i)
                 {
-                    for (int j = 0; j < matrix2.Cols; j++) // druhá matice
+                    for (int j = 0; j < matrix2.Cols; j++) // second matrix
                     {
                         T tmp = matrix2.GetNumber(i, j);
                         Console.Write("{0,4} ", tmp.ToDouble());
@@ -46,7 +46,7 @@ namespace MatrixTestApp
 
                 if (result.Rows > i)
                 {
-                    for (int j = 0; j < result.Cols; j++) // výsledek matice
+                    for (int j = 0; j < result.Cols; j++) // result of matrix
                     {
                         T tmp = result.GetNumber(i, j);
                         Console.Write("{0,4} ", tmp.ToDouble());
@@ -269,7 +269,7 @@ namespace MatrixTestApp
         static void Main(string[] args)
         {
             Matrix<MatrixNumber> A = new Matrix<MatrixNumber>(1, 1);
-            /************************VSE PRELOZIME******************************/
+            /******************BUILD ALL THINGS AT FIRST***********************/
             ClassicOperations.Addition(A, A); ParallelClassicOperations.AdditionParallel(A, A);
             ClassicOperations.Subtraction(A, A); ParallelClassicOperations.SubtractionParallel(A, A);
             ClassicOperations.MultiplyWithNumber(A, new MatrixNumber()); ParallelClassicOperations.MultiplyWithNumberParallel(A, new MatrixNumber());
@@ -351,13 +351,13 @@ namespace MatrixTestApp
 
             /*
              * 
-             * Operace s jednou maticí...
+             * Operations with one matrix
              * 
              * 
              */
 
             inputMatrix = new int[3, 3] { { 1, 0, 5 }, { 1, 1, 6 }, { 0, 1, 7 } };
-            //vstup = new int[4, 4] {{1, 0, 5, 6}, {1, 1, 6, 7}, {0, 1, 7, 8}, {10, 7, 8, 3}};
+            //inputMatrix = new int[4, 4] {{1, 0, 5, 6}, {1, 1, 6, 7}, {0, 1, 7, 8}, {10, 7, 8, 3}};
 
             A = new Matrix<MatrixNumber>(inputMatrix);
 

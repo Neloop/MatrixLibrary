@@ -59,7 +59,7 @@ namespace MatrixLibrary
                 T two = (T)new T().AddInt(2);
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
-                    for (int i = pair.Item1; i < pair.Item2; i++) // Vydělí všechna čísla dvěma
+                    for (int i = pair.Item1; i < pair.Item2; i++) // Divide all numbers with number two
                     {
                         for (int j = 0; j < dim; j++)
                         {
@@ -140,7 +140,7 @@ namespace MatrixLibrary
 
                         if (end == true) { break; }
                     }
-                    else // Pokud se narazilo na nenulový prvek (=pivot)
+                    else // in case pivot was encountered
                     {
                         T divide = result.GetNumber(i, j);
                         Parallel.ForEach(result.GetColsChunks(j), (pair) =>
@@ -200,12 +200,12 @@ namespace MatrixLibrary
             if ((cols % 2) == 0) { halfOfCol = cols / 2; }
             else { halfOfCol = (cols / 2) + 1; }
 
-            result = ParallelAlteringOperationsExtensions.GaussParallel(matrix); // První Gaussovka
+            result = ParallelAlteringOperationsExtensions.GaussParallel(matrix); // first gauss elimination
 
             bool isZeroRow = false;
             Parallel.ForEach(result.GetHalfRowsChunks(), (pair) =>
             {
-                for (int i = pair.Item1; i < pair.Item2; i++) // Vymění se prvky v matici a následně se provede "obrácená" Gaussovka
+                for (int i = pair.Item1; i < pair.Item2; i++) // reallocate elements in matrix and execute "reversed" gauss
                 {
                     int zeroRow1 = 0;
                     int zeroRow2 = 0;
@@ -225,7 +225,7 @@ namespace MatrixLibrary
 
             Parallel.ForEach(result.GetHalfRowsChunks(), (pair) =>
             {
-                for (int i = pair.Item1; i < pair.Item2; i++) // Vymění se prvky v matici a vrátí výsledek
+                for (int i = pair.Item1; i < pair.Item2; i++) // reallocate matrix elements and return result
                 {
                     for (int j = 0; j < cols; j++)
                     {
@@ -259,11 +259,11 @@ namespace MatrixLibrary
                 int halfOfRow = matrix.GetHalfOfRows();
                 int halfOfCol = matrix.GetHalfOfCols();
 
-                Matrix<T> modify = Matrix<T>.GetUninitializedMatrix(rows, cols * 2); // Matice upravit má stejný počet řádků jako matice a 2x větší počet sloupců
+                Matrix<T> modify = Matrix<T>.GetUninitializedMatrix(rows, cols * 2);
 
                 Parallel.ForEach(modify.GetRowsChunks(), (pair) =>
                 {
-                    for (int i = pair.Item1; i < pair.Item2; i++) // Zapíše do matice upravit původní matici
+                    for (int i = pair.Item1; i < pair.Item2; i++) // write original (given) matrix to the temporary one
                     {
                         for (int j = 0; j < cols; j++)
                         {
@@ -276,7 +276,7 @@ namespace MatrixLibrary
                 T zero = new T();
                 Parallel.ForEach(modify.GetRowsChunks(), (pair) =>
                 {
-                    for (int i = pair.Item1; i < pair.Item2; i++) // Zapíše do matice upravit jednotkovou matici
+                    for (int i = pair.Item1; i < pair.Item2; i++) // write identity matrix
                     {
                         for (int j = cols; j < (cols * 2); j++)
                         {
@@ -286,30 +286,28 @@ namespace MatrixLibrary
                     }
                 });
 
-                modify = ParallelAlteringOperationsExtensions.GaussParallel(modify); // První Gaussovka
-
-                // Převrácení a druhá Gaussovka:
+                modify = ParallelAlteringOperationsExtensions.GaussParallel(modify); // first gauss
 
                 Parallel.ForEach(modify.GetHalfRowsChunks(), (pair) =>
                 {
-                    for (int i = pair.Item1; i < pair.Item2; i++) // Převrácení
+                    for (int i = pair.Item1; i < pair.Item2; i++) // reallocate elements
                     {
                         for (int j = 0; j < cols; j++)
                         {
                             if ((rows % 2) == 1 && halfOfCol == j && (halfOfRow - 1) == i) { break; }
                             modify.SwapElements(i, j, rows - i - 1, cols - j - 1);
-
-                            // Převrácení původně jednotkové matice:
+                            
+                            // reallocate elements of identity matrix part
                             modify.SwapElements(i, cols + j, rows - i - 1, (cols * 2) - j - 1);
                         }
                     }
                 });
 
-                modify = ParallelAlteringOperationsExtensions.GaussParallel(modify); // Druhá Gaussovka
+                modify = ParallelAlteringOperationsExtensions.GaussParallel(modify); // second gauss
 
                 Parallel.ForEach(result.GetRowsChunks(), (pair) =>
                 {
-                    for (int i = pair.Item1; i < pair.Item2; i++) // Převrácení a složení výsledné matice
+                    for (int i = pair.Item1; i < pair.Item2; i++) // reallocate elements and write result
                     {
                         for (int j = 0; j < cols; j++)
                         {
@@ -480,7 +478,7 @@ namespace MatrixLibrary
                 result = ClassicOperations.Addition(matrix, transpose);
 
                 T two = (T)new T().AddInt(2);
-                for (int i = 0; i < dim; i++) // Vydělí všechna čísla dvěma
+                for (int i = 0; i < dim; i++) // divide all values with number two
                 {
                     for (int j = 0; j < dim; j++)
                     {
@@ -554,7 +552,7 @@ namespace MatrixLibrary
 
                         if (end == true) { break; }
                     }
-                    else // Pokud se narazilo na nenulový prvek (=pivot)
+                    else // in case of pivot
                     {
                         T divide = result.GetNumber(i, j);
                         for (int k = j; k < cols; k++)
@@ -607,11 +605,11 @@ namespace MatrixLibrary
             if ((cols % 2) == 0) { halfOfCol = cols / 2; }
             else { halfOfCol = (cols / 2) + 1; }
 
-            result = AlteringOperationsExtensions.Gauss(matrix); // První Gaussovka
+            result = AlteringOperationsExtensions.Gauss(matrix); // first gauss
 
             int zeroRow1, zeroRow2;
             bool isZeroRow = false;
-            for (int i = 0; i < halfOfRow; i++) // Vymění se prvky v matici a následně se provede "obrácená" Gaussovka
+            for (int i = 0; i < halfOfRow; i++) // reallocate elements in matrix and execute first gauss
             {
                 zeroRow1 = 0;
                 zeroRow2 = 0;
@@ -628,7 +626,7 @@ namespace MatrixLibrary
             }
             if (isZeroRow == false) { result = AlteringOperationsExtensions.Gauss(result); }
 
-            for (int i = 0; i < halfOfRow; i++) // Vymění se prvky v matici a vrátí výsledek
+            for (int i = 0; i < halfOfRow; i++) // reallocate elements and write result
             {
                 for (int j = 0; j < cols; j++)
                 {
@@ -661,9 +659,9 @@ namespace MatrixLibrary
                 int halfOfRow = matrix.GetHalfOfRows();
                 int halfOfCol = matrix.GetHalfOfCols();
 
-                Matrix<T> modify = Matrix<T>.GetUninitializedMatrix(rows, cols * 2); // Matice upravit má stejný počet řádků jako matice a 2x větší počet sloupců
+                Matrix<T> modify = Matrix<T>.GetUninitializedMatrix(rows, cols * 2);
 
-                for (int i = 0; i < rows; i++) // Zapíše do matice upravit původní matici
+                for (int i = 0; i < rows; i++) // write original matrix into temporary one
                 {
                     for (int j = 0; j < cols; j++)
                     {
@@ -673,7 +671,7 @@ namespace MatrixLibrary
                 T one = new T();
                 one.AddInt(1);
                 T zero = new T();
-                for (int i = 0; i < rows; i++) // Zapíše do matice upravit jednotkovou matici
+                for (int i = 0; i < rows; i++) // write identity matrix
                 {
                     for (int j = cols; j < (cols * 2); j++)
                     {
@@ -682,25 +680,23 @@ namespace MatrixLibrary
                     }
                 }
 
-                modify = AlteringOperationsExtensions.Gauss(modify); // První Gaussovka
+                modify = AlteringOperationsExtensions.Gauss(modify); // first gauss
 
-                // Převrácení a druhá Gaussovka:
-
-                for (int i = 0; i < halfOfRow; i++) // Převrácení
+                for (int i = 0; i < halfOfRow; i++) // reallocate elements
                 {
                     for (int j = 0; j < cols; j++)
                     {
                         if ((rows % 2) == 1 && halfOfCol == j && (halfOfRow - 1) == i) { break; }
                         modify.SwapElements(i, j, rows - i - 1, cols - j - 1);
-
-                        // Převrácení původně jednotkové matice:
+                        
+                        // reallocate identity matrix part
                         modify.SwapElements(i, cols + j, rows - i - 1, (cols * 2) - j - 1);
                     }
                 }
 
-                modify = AlteringOperationsExtensions.Gauss(modify); // Druhá Gaussovka
+                modify = AlteringOperationsExtensions.Gauss(modify); // second gauss
 
-                for (int i = 0; i < rows; i++) // Převrácení a složení výsledné matice
+                for (int i = 0; i < rows; i++) // reallocate and write result
                 {
                     for (int j = 0; j < cols; j++)
                     {

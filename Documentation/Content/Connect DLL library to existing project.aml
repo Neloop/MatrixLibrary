@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="f2e22559-2d77-4f75-8efc-442091effad0" revisionNumber="1">
+  <developerHowToDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <para>
+        Recommended way of integrating MatrixLibrary is to connect DLL file to project.
+        How to download source codes with created VS project is described in <link xlink:href="800a1c4c-a8fb-411b-a956-b367f741b596"/>.
+      </para>
+      <para>
+        Connecting DLL library is based on adding MatrixLibrary as subproject to the current one.
+        This subproject is setup to compile as library and thus compilation results in DLL file, which contains whole MatrixLibrary functionality.
+        Resulted DLL file is then automatically connected/copied to runnable assembly and has to be distributed with whole project.
+      </para>
+    </introduction>
+
+    <!-- Optional procedures followed by optional code example but must have
+         at least one procedure or code example -->
+    <procedure>
+      <title>Integration procedure</title>
+      <steps class="ordered">
+        <step>
+          <content>
+            <para>
+              <legacyBold>Add existing subproject into current one.</legacyBold>
+            </para>
+            <para>
+              Library has to be added to solution in Visual Studio, this will ensure that library will be compiled into DLL file which will be linkable into another subprojects.
+            </para>
+            <para>
+              Adding itself is done by copying folder <localUri>./matrixlibrary/MatrixLibrary</localUri> into final project default folder.
+            </para>
+            <para>
+              Another step is to add MatrixLibrary subproject into final solution, this is done by right clicking on solution, selecting Add and then Existing project, where suitable *.csproj file should be located and added.
+              This will provide us MatrixLibrary into current solution as subproject and results into compilation of library at build time.
+            </para>
+          </content>
+        </step>
+        <step>
+          <content>
+            <para>
+              <legacyBold>Add reference to MatrixLibrary into project in which it will be used.</legacyBold>
+            </para>
+            <para>
+              At this moment subproject is added into solution, but this not means that we can just use it in another subprojects.
+              To make it work we need to add reference on MatrixLibrary into particular projects.
+            </para>
+            <para>
+              This can be handled by clicking on particular project and selecting Add and then Reference button.
+              In dialog window select element Solution and then Projects, after that MatrixLibrary should be visible and ready to add.
+           
+            </para>
+            <para>
+              After that reference to MatrixLibrary should be added, this basically means that we can start using it in our project.
+              By this step there were added external dependency on DLL file, which has to be accessible on runtime, VS handle this itself and copy DLL file into same folder as runnable application.
+            </para>
+          </content>
+        </step>
+        <step>
+          <content>
+            <para>
+              <legacyBold>Compilation.</legacyBold>
+            </para>
+            <para>
+              Compilation should be fine at this moment and everything should work.
+              Subproject MatrixLibrary is in this case compiled into DLL library form.
+              Dependent projects on this library is then connected to it and in its build folders should have copied library.
+              This library has to be distributed with whole project, because without it application will not work.
+            </para>
+          </content>
+        </step>
+      </steps>
+      <!-- <conclusion>Optional conclusion</conclusion> -->
+    </procedure>
+
+    <para>
+      Similar way is possible to use in case that we have only library in form of DLL file.
+      In that case there is no need to add subproject, only thing which is needed is to add reference to MatrixLibrary DLL file.
+    </para>
+
+    <!-- <codeExample>Optional code example</codeExample> -->
+
+    <!-- <buildInstructions>Optional instructions for building a
+         code example.</buildInstructions> -->
+
+    <!-- <robustProgramming>Optional discussion of error handling and other
+         issues related to writing solid code.</robustProgramming> -->
+
+    <!-- <security>Optional discussion of security issues.</security> -->
+
+    <relatedTopics>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID">Link text</link>
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on GitHub</linkText>
+          <linkAlternateText>Go to GitHub</linkAlternateText>
+          <linkUri>https://GitHub.com/EWSoftware/SHFB</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+    </relatedTopics>
+  </developerHowToDocument>
+</topic>

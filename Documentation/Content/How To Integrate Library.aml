@@ -18,13 +18,13 @@
       <!-- <autoOutline /> -->
 
       <para>
-        Na této stránce bude představeno několik způsobů jak integrovat MatrixLibrary knihovnu do již existujícího projektu.
-        MatrixLibrary je distrubována pomocí gitovského repozitáře ve službě Bitbucket, jak bylo popsáno v <link xlink:href="800a1c4c-a8fb-411b-a956-b367f741b596"/>.
-        V tomto repozitáři jsou umístěny zdrojového kódy spolu s už vytvořeným projektem ve Visual Studiu 2013.
-        Tento projekt reprezentuje knihovnu, plus jednoduchý testovací program, tudíž je celý projekt spustitelný.
+        On this page can be found some of the ways how to integrate MatrixLibrary into your project.
+        MatrixLibrary is distributed with git repository which can be found on Github as described in <link xlink:href="800a1c4c-a8fb-411b-a956-b367f741b596"/>.
+        In this repository there are source codes with already created Visual Studio 2015 project.
+        This project represents library plus simple testing program, thus whole project is runnable.
       </para>
       <para>
-        Protože se distribuje celý zdrojový kód, jsou v zásadě tři možnosti použití knihovny v kódu.
+        MatrixLibrary is distributed in form of source codes, so there are at least three different usage in your project.
       </para>
     </introduction>
 
@@ -32,13 +32,13 @@
          If using <autoOutline />, add an address attribute to identify it
          and specify a title so that it can be jumped to with a hyperlink. -->
     <section address="Section1">
-      <title>Možnosti integrace</title>
+      <title>Integration:</title>
       <content>
         <!-- Uncomment this to create a sub-section outline
         <autoOutline /> -->
         <para>
-          Jednotlivým možnostem jsou věnovány samostatné kapitoly. Odkazy na ně lze nalézt níže v seznamu.
-          Všechny možnosti jsou v zásadě správné a mají svůj smysl.
+          In this documentation three ways how to integrate MatrixLibrary are introduced.
+          All three ways are separated into individual pages, links are provided below.
         </para>
 
         <list class="bullet">
@@ -54,7 +54,7 @@
         </list>
 
         <para>
-          Příklad použití, pokud je knihovna načtena lze najít zde: <link xlink:href="a53e4021-2b11-44ea-b88d-6fe7f7de3452"/>.
+          Examples of usage can be found here: <link xlink:href="a53e4021-2b11-44ea-b88d-6fe7f7de3452"/>.
         </para>
       </content>
       <!-- If a section contains a sections element, its content creates

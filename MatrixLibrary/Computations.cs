@@ -141,10 +141,6 @@ namespace MatrixLibrary
 
             T result = new T();
             result.AddInt(1);
-            /*for (int i = 0; i < rows; i++) // Vynásobí prvky na diagonále (meli by byt vsechno jednicky, takze je tato operace vicemene zbytecna)
-            {
-                result = (T)(modified.GetNumber(i, i) * result);
-            }*/
 
             result = (T)(multiplyResult.__Multiplication(result));
 
@@ -195,8 +191,8 @@ namespace MatrixLibrary
         {
             /*
              * 
-             * Výsledek je ve tvaru: x = (x1,x2,x3,...) + [t*(t1,t2,t3,...) + s*(s1,s2,s3,...) + ...]
-             *  - vektory jsou ve výsledné matici sloupce
+             * Result is in form: x = (x1,x2,x3,...) + [t*(t1,t2,t3,...) + s*(s1,s2,s3,...) + ...]
+             *  - vectors are in result matrix in columns
              * 
              */
 
